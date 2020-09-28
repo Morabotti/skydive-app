@@ -1,0 +1,21 @@
+<!ELEMENT dataset (
+    account*,
+    session*)>
+
+<!ELEMENT account EMPTY>
+<!ATTLIST account
+    id CDATA #REQUIRED
+    username CDATA #IMPLIED
+    password_hash CDATA #REQUIRED
+    password_salt CDATA #REQUIRED
+    role CDATA #REQUIRED
+    deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT session EMPTY>
+<!ATTLIST session
+    id CDATA #REQUIRED
+    token CDATA #REQUIRED
+    valid_until CDATA #REQUIRED
+    account_id CDATA #REQUIRED
+>

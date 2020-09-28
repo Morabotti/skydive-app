@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="Jesse Batman">
+        <createTable tableName="account">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints unique="true" nullable="false" />
+            </column>
+            <column name="password_hash" type="binary(32)">
+                <constraints nullable="false" />
+            </column>
+            <column name="password_salt" type="binary(16)">
+                <constraints nullable="false" />
+            </column>
+            <column name="role" type="enum('admin', 'owner', 'pilot', 'user')">
+                <constraints nullable="false" />
+            </column>
+            <column name="deleted_at" type="datetime" />
+        </createTable>
+        <createTable tableName="session">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="token" type="varchar(36)">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="valid_until" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="account_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_session_account"
+                        references="account(id)" />
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

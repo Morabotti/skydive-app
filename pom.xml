@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>fi.morabotti</groupId>
+    <artifactId>skydive</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <repositories>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+    </repositories>
+
+
+    <parent>
+        <groupId>fi.jubic</groupId>
+        <artifactId>snoozy-starter-jooq</artifactId>
+        <version>0.6.6</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easyvalue</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easyutils</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easymapper-jooq</artifactId>
+            <version>0.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easymapper-generator-jooq</artifactId>
+            <version>0.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easymapper-generator-core</artifactId>
+            <version>0.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easymapper-core</artifactId>
+            <version>0.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.jubic</groupId>
+            <artifactId>easyschedule-inmemory</artifactId>
+            <version>0.1.8</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <snoozy.mainClass>fi.morabotti.skydive.Application</snoozy.mainClass>
+        <snoozy.jooq.jdbcUrl>jdbc:mysql://localhost:3306/skydive</snoozy.jooq.jdbcUrl>
+        <snoozy.jooq.jdbcDriver>com.mysql.jdbc.Driver</snoozy.jooq.jdbcDriver>
+        <snoozy.jooq.user>test</snoozy.jooq.user>
+        <snoozy.jooq.password>test</snoozy.jooq.password>
+        <snoozy.jooq.databaseMetaName>org.jooq.meta.mysql.MySQLDatabase</snoozy.jooq.databaseMetaName>
+        <snoozy.jooq.includes>.*</snoozy.jooq.includes>
+        <snoozy.jooq.excludes>
+            DATABASECHANGELOG
+            | DATABASECHANGELOGLOCK
+        </snoozy.jooq.excludes>
+        <snoozy.jooq.inputSchema>skydive</snoozy.jooq.inputSchema>
+        <snoozy.jooq.targetPackage>fi.morabotti.skydive.db</snoozy.jooq.targetPackage>
+    </properties>
+</project>
