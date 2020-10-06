@@ -1,5 +1,7 @@
 # skydive-app
 
+Very nice application
+
 ## Requirements
 ### Backend:
 * Java JRE
