@@ -18,7 +18,7 @@
             <column name="password_salt" type="binary(16)">
                 <constraints nullable="false" />
             </column>
-            <column name="role" type="enum('admin', 'owner', 'pilot', 'user')">
+            <column name="role" type="enum('admin', 'club', 'pilot', 'user')">
                 <constraints nullable="false" />
             </column>
             <column name="deleted_at" type="datetime" />
@@ -39,6 +39,213 @@
                         foreignKeyName="fk_session_account"
                         references="account(id)" />
             </column>
+        </createTable>
+        <createTable tableName="profile">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="first_name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="last_name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="zipcode" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="city" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="phone" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="deleted_at" type="datetime" />
+            <column name="account_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_profile_account"
+                        references="account(id)" />
+            </column>
+        </createTable>
+        <createTable tableName="club">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="slug" type="varchar(255)">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="public" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+            <column name="deleted_at" type="datetime" />
+            <column name="creator_account_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_club_creator_account"
+                        references="account(id)" />
+            </column>
+        </createTable>
+        <createTable tableName="club_profile">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="description" type="text" />
+            <column name="address" type="varchar(255)" />
+            <column name="zipcode" type="varchar(255)" />
+            <column name="city" type="varchar(255)" />
+            <column name="phone" type="varchar(255)" />
+            <column name="deleted_at" type="datetime" />
+            <column name="club_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_club_profile_club"
+                        references="club(id)" />
+            </column>
+        </createTable>
+        <createTable tableName="club_account">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="club_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_club_account_club_id"
+                        references="club(id)" />
+            </column>
+            <column name="account_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_club_account_account_id"
+                        references="account(id)" />
+            </column>
+        </createTable>
+        <addUniqueConstraint
+                tableName="club_account"
+                columnNames="account_id, club_id"
+        />
+        <createTable tableName="plane">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="license_number" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="club_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_plane_club_id"
+                        references="club(id)" />
+            </column>
+        </createTable>
+        <createTable tableName="club_activity">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="type" type="enum('jump', 'misc')">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="access" type="enum('open', 'invite', 'pilot-only', 'user-only')">
+                <constraints nullable="false" />
+            </column>
+            <column name="visible" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+            <column name="start_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="end_date" type="datetime">
+                <constraints nullable="true" />
+            </column>
+            <column name="created_at" type="datetime" defaultValue="now()" />
+            <column name="deleted_at" type="datetime" />
+            <column name="club_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_club_activity_club_id"
+                        references="club(id)" />
+            </column>
+        </createTable>
+        <createTable tableName="club_activity_participation">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="account_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_club_activity_participation_account_id"
+                        references="account(id)" />
+            </column>
+            <column name="club_activity_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_club_activity_participation_activity_id"
+                        references="club_activity(id)" />
+            </column>
+            <column name="created_at" type="datetime" defaultValue="now()" />
+            <column name="deleted_at" type="datetime" />
+        </createTable>
+        <addUniqueConstraint
+                tableName="club_activity_participation"
+                columnNames="account_id, club_activity_id"
+        />
+        <createTable tableName="club_pilot_activity_participation">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="account_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_club_pilot_activity_participation_account_id"
+                        references="account(id)" />
+            </column>
+            <column name="club_activity_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_club_pilot_activity_participation_activity_id"
+                        references="club_activity(id)" />
+            </column>
+            <column name="plane_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_club_pilot_activity_participation_plane_id"
+                        references="plane(id)" />
+            </column>
+            <column name="created_at" type="datetime" defaultValue="now()" />
+            <column name="deleted_at" type="datetime" />
+        </createTable>
+        <addUniqueConstraint
+                tableName="club_pilot_activity_participation"
+                columnNames="account_id, club_activity_id"
+        />
+        <createTable tableName="jump">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="jump_height" type="int" />
+            <column name="jump_time" type="datetime" />
+            <column name="account_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_jump_account_id"
+                        references="account(id)" />
+            </column>
+            <column name="club_activity_id" type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="fk_jump_club_activity_id"
+                        references="club_activity(id)" />
+            </column>
+            <column name="created_at" type="datetime" defaultValue="now()" />
+            <column name="deleted_at" type="datetime" />
         </createTable>
     </changeSet>
 </databaseChangeLog>

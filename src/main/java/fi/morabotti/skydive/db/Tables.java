@@ -5,6 +5,15 @@ package fi.morabotti.skydive.db;
 
 
 import fi.morabotti.skydive.db.tables.Account;
+import fi.morabotti.skydive.db.tables.Club;
+import fi.morabotti.skydive.db.tables.ClubAccount;
+import fi.morabotti.skydive.db.tables.ClubActivity;
+import fi.morabotti.skydive.db.tables.ClubActivityParticipation;
+import fi.morabotti.skydive.db.tables.ClubPilotActivityParticipation;
+import fi.morabotti.skydive.db.tables.ClubProfile;
+import fi.morabotti.skydive.db.tables.Jump;
+import fi.morabotti.skydive.db.tables.Plane;
+import fi.morabotti.skydive.db.tables.Profile;
 import fi.morabotti.skydive.db.tables.Session;
 
 import javax.annotation.Generated;
@@ -27,6 +36,51 @@ public class Tables {
      * The table <code>account</code>.
      */
     public static final Account ACCOUNT = fi.morabotti.skydive.db.tables.Account.ACCOUNT;
+
+    /**
+     * The table <code>club</code>.
+     */
+    public static final Club CLUB = fi.morabotti.skydive.db.tables.Club.CLUB;
+
+    /**
+     * The table <code>club_account</code>.
+     */
+    public static final ClubAccount CLUB_ACCOUNT = fi.morabotti.skydive.db.tables.ClubAccount.CLUB_ACCOUNT;
+
+    /**
+     * The table <code>club_activity</code>.
+     */
+    public static final ClubActivity CLUB_ACTIVITY = fi.morabotti.skydive.db.tables.ClubActivity.CLUB_ACTIVITY;
+
+    /**
+     * The table <code>club_activity_participation</code>.
+     */
+    public static final ClubActivityParticipation CLUB_ACTIVITY_PARTICIPATION = fi.morabotti.skydive.db.tables.ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION;
+
+    /**
+     * The table <code>club_pilot_activity_participation</code>.
+     */
+    public static final ClubPilotActivityParticipation CLUB_PILOT_ACTIVITY_PARTICIPATION = fi.morabotti.skydive.db.tables.ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION;
+
+    /**
+     * The table <code>club_profile</code>.
+     */
+    public static final ClubProfile CLUB_PROFILE = fi.morabotti.skydive.db.tables.ClubProfile.CLUB_PROFILE;
+
+    /**
+     * The table <code>jump</code>.
+     */
+    public static final Jump JUMP = fi.morabotti.skydive.db.tables.Jump.JUMP;
+
+    /**
+     * The table <code>plane</code>.
+     */
+    public static final Plane PLANE = fi.morabotti.skydive.db.tables.Plane.PLANE;
+
+    /**
+     * The table <code>profile</code>.
+     */
+    public static final Profile PROFILE = fi.morabotti.skydive.db.tables.Profile.PROFILE;
 
     /**
      * The table <code>session</code>.
