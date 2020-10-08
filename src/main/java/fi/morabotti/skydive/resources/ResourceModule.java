@@ -12,7 +12,12 @@ import java.util.stream.Stream;
 public class ResourceModule {
     @Provides
     @Singleton
-    static Set<Object> provideResources() {
-        return Stream.of().collect(Collectors.toSet());
+    static Set<Object> provideResources(
+            AuthenticationResource authenticationResource
+    ) {
+        return Stream.of(
+                authenticationResource
+        )
+                .collect(Collectors.toSet());
     }
 }
