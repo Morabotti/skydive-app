@@ -8,10 +8,13 @@ import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 @Path("/auth")
@@ -39,5 +42,13 @@ public class AuthenticationResource {
         catch (Exception e) {
             throw new NotAuthorizedException("Could not authorize user");
         }
+    }
+
+    @GET
+    @Path("/me")
+    public TokenResponse getMe(
+            @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization
+    ) {
+        return accountController.authenticateWithToken(authorization);
     }
 }

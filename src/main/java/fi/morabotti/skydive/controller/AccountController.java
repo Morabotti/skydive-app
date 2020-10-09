@@ -91,6 +91,30 @@ public class AccountController {
     }
 
     /**
+     * Performs authentication with session token.
+     * @param tokenString Session token as string
+     * @return Optional TokenResponse
+     * */
+    public TokenResponse authenticateWithToken(String tokenString) {
+        UUID token = UUID.fromString(tokenString);
+
+        Optional<Session> optionalSession = getSessionByToken(token);
+
+        if (!optionalSession.isPresent()) {
+            throw new AuthenticationException("Token is expired or invalid.");
+        }
+
+        Session session = updateSession(optionalSession.get());
+
+        persistOldestSession();
+
+        return TokenResponse.builder()
+                .setToken(session.getToken())
+                .setUser(AccountView.of(session.getAccount()))
+                .build();
+    }
+
+    /**
      * Fetches session either from cache or from persistent storage.
      * @param token provided token to search for
      * @return Optional session. Present if fount from cache or persistent storage.
