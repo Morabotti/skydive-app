@@ -10,6 +10,9 @@ import fi.morabotti.skydive.db.tables.records.AccountRecord;
 import javax.annotation.Nullable;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static fi.morabotti.skydive.db.tables.Account.ACCOUNT;
 
@@ -19,6 +22,8 @@ public abstract class Account implements UserPrincipal {
     public abstract Long getId();
 
     public abstract String getUsername();
+
+    public abstract List<Profile> getProfiles();
 
     @JsonIgnore
     public abstract byte[] getPasswordHash();
@@ -46,6 +51,11 @@ public abstract class Account implements UserPrincipal {
         return getDeletedAt() != null;
     }
 
+    @JsonIgnore
+    public Optional<Profile> getProfile() {
+        return getProfiles().stream().findFirst();
+    }
+
     public abstract Builder toBuilder();
 
     public static Builder builder() {
@@ -53,6 +63,9 @@ public abstract class Account implements UserPrincipal {
     }
 
     public static class Builder extends EasyValue_Account.Builder {
+        public Builder defaults(Builder builder) {
+            return builder.setProfiles(Collections.emptyList());
+        }
     }
 
     public static final AccountRecordMapper<AccountRecord> mapper

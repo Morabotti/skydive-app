@@ -3,8 +3,10 @@ package fi.morabotti.skydive.dao;
 import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.skydive.config.Configuration;
+import fi.morabotti.skydive.db.Keys;
 import fi.morabotti.skydive.db.enums.AccountRole;
 import fi.morabotti.skydive.model.Account;
+import fi.morabotti.skydive.model.Profile;
 import fi.morabotti.skydive.security.Password;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -12,9 +14,11 @@ import org.jooq.impl.DSL;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Optional;
 
 import static fi.morabotti.skydive.db.tables.Account.ACCOUNT;
+import static fi.morabotti.skydive.db.tables.Profile.PROFILE;
 
 @Singleton
 public class AccountDao {
@@ -34,9 +38,11 @@ public class AccountDao {
         return DSL.using(jooqConfiguration)
                 .select()
                 .from(ACCOUNT)
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
                 .where(ACCOUNT.ID.eq(accountId))
-                .fetchOptional()
-                .map(Account.mapper::map);
+                .fetch()
+                .stream()
+                .collect(Account.mapper.collectingWithProfiles(Profile.mapper));
     }
 
     public Optional<Account> findAccountByUsername(String username) {
@@ -80,7 +86,7 @@ public class AccountDao {
                     context.update(ACCOUNT)
                             .set(
                                     ACCOUNT.DELETED_AT,
-                                    new Timestamp(System.currentTimeMillis())
+                                    Timestamp.from(Instant.now())
                             ).where(ACCOUNT.ID.eq(id))
                             .and(ACCOUNT.ROLE.notEqual(AccountRole.admin))
                             .execute();
