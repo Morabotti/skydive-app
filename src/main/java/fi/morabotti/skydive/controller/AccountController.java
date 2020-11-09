@@ -6,13 +6,11 @@ import fi.morabotti.skydive.domain.AccountDomain;
 import fi.morabotti.skydive.exception.AuthenticationException;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Session;
-import fi.morabotti.skydive.security.Password;
 import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.TokenResponse;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;

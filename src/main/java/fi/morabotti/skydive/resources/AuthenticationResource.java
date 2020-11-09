@@ -1,7 +1,6 @@
 package fi.morabotti.skydive.resources;
 
 import fi.morabotti.skydive.controller.AccountController;
-import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.view.TokenResponse;
 import fi.morabotti.skydive.view.auth.LoginRequest;
 
