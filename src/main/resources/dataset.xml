@@ -1,3 +1,13 @@
 <!DOCTYPE dataset SYSTEM "dataset.dtd">
 <dataset>
+    <account id="1"
+             username="admin@admin.fi"
+             password_hash="d2SbMYyWc4pcvqiA801GPkfr4mDY/CzO2jLA331dqI4="
+             password_salt="GQNT/fHlu64jHHd5HI538Q=="
+             role="admin" />
+    <session
+            id="1"
+            token="523ad083-cbb0-46e5-7892-7b58b217345a"
+            valid_until="[now+1d]"
+            account_id="1" />
 </dataset>

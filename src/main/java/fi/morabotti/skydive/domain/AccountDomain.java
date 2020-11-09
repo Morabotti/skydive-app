@@ -1,5 +1,6 @@
 package fi.morabotti.skydive.domain;
 
+import fi.morabotti.skydive.db.enums.AccountRole;
 import fi.morabotti.skydive.exception.PasswordException;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Session;
@@ -38,6 +39,16 @@ public class AccountDomain {
                 .build();
     }
 
+    public Account createAccount(String username, Password password) {
+        return Account.builder()
+                .setId(0L)
+                .setDeletedAt(null)
+                .setUsername(username)
+                .setPasswordHash(password.getHash())
+                .setPasswordSalt(password.getSalt())
+                .setAccountRole(AccountRole.admin)
+                .build();
+    }
 
     public boolean validatePassword(Account account, String passwordString) {
         try {

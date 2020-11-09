@@ -1,5 +1,6 @@
 package fi.morabotti.skydive;
 
+import fi.jubic.easyschedule.InMemoryScheduler;
 import fi.jubic.snoozy.AuthenticatedApplication;
 import fi.jubic.snoozy.MethodAccess;
 import fi.jubic.snoozy.Snoozy;
@@ -8,6 +9,7 @@ import fi.jubic.snoozy.auth.Authentication;
 import fi.jubic.snoozy.filters.UrlRewrite;
 import fi.jubic.snoozy.undertow.UndertowServer;
 import fi.morabotti.skydive.config.Configuration;
+import fi.morabotti.skydive.dao.SessionDao;
 import fi.morabotti.skydive.exception.mapper.ApplicationExceptionMapper;
 import fi.morabotti.skydive.exception.mapper.JsonMappingExceptionMapper;
 import fi.morabotti.skydive.model.Account;
@@ -29,6 +31,9 @@ public class Application implements AuthenticatedApplication<Account> {
 
     @Inject
     Authentication<Account> authentication;
+
+    @Inject
+    SessionDao sessionDao;
 
     @Inject
     Application() {
@@ -77,6 +82,10 @@ public class Application implements AuthenticatedApplication<Account> {
     public static void main(String[] args) {
         Application app = DaggerAppComponent.create().getApplication();
         Configuration configuration = app.getConfiguration();
+
+        new InMemoryScheduler(1)
+                .registerTask("0 * * * * ?", app.sessionDao::deleteExpired)
+                .start();
 
         new UndertowServer().start(app, configuration);
     }

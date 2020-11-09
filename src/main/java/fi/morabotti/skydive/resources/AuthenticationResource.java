@@ -1,6 +1,7 @@
 package fi.morabotti.skydive.resources;
 
 import fi.morabotti.skydive.controller.AccountController;
+import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.view.TokenResponse;
 import fi.morabotti.skydive.view.auth.LoginRequest;
 
@@ -42,6 +43,14 @@ public class AuthenticationResource {
         catch (Exception e) {
             throw new NotAuthorizedException("Could not authorize user");
         }
+    }
+
+    @POST
+    @Path("/logout")
+    public Boolean logout(
+            @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization
+    ) {
+        return accountController.logout(authorization);
     }
 
     @GET

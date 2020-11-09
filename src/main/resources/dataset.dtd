@@ -1,21 +1,143 @@
 <!ELEMENT dataset (
-    account*,
-    session*)>
+        account*,
+        session*,
+        club*,
+        club_account*,
+        club_activity*,
+        club_activity_intrest*,
+        club_activity_invite*,
+        club_activity_participation*,
+        club_pilot_activity_participation*,
+        club_profile*,
+        plane*,
+        jump*,
+        profile*
+)>
 
 <!ELEMENT account EMPTY>
 <!ATTLIST account
-    id CDATA #REQUIRED
-    username CDATA #IMPLIED
-    password_hash CDATA #REQUIRED
-    password_salt CDATA #REQUIRED
-    role CDATA #REQUIRED
-    deleted_at CDATA #IMPLIED
+        id CDATA #REQUIRED
+        username CDATA #IMPLIED
+        password_hash CDATA #REQUIRED
+        password_salt CDATA #REQUIRED
+        role CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
 >
 
 <!ELEMENT session EMPTY>
 <!ATTLIST session
-    id CDATA #REQUIRED
-    token CDATA #REQUIRED
-    valid_until CDATA #REQUIRED
-    account_id CDATA #REQUIRED
+        id CDATA #REQUIRED
+        token CDATA #REQUIRED
+        valid_until CDATA #REQUIRED
+        account_id CDATA #REQUIRED
+>
+
+<!ELEMENT club_account EMPTY>
+<!ATTLIST club_account
+        id CDATA #REQUIRED
+        club_id CDATA #REQUIRED
+        account_id CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT club EMPTY>
+<!ATTLIST club
+        id CDATA #REQUIRED
+        name CDATA #REQUIRED
+        slug CDATA #REQUIRED
+        public CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+        creator_account_id CDATA #REQUIRED
+>
+
+<!ELEMENT club_profile EMPTY>
+<!ATTLIST club_profile
+        id CDATA #REQUIRED
+        club_id CDATA #REQUIRED
+        description CDATA #IMPLIED
+        zipcode CDATA #IMPLIED
+        city CDATA #IMPLIED
+        phone CDATA #IMPLIED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT plane EMPTY>
+<!ATTLIST plane
+        id CDATA #REQUIRED
+        license_number CDATA #REQUIRED
+        club_id CDATA #REQUIRED
+>
+
+<!ELEMENT club_activity EMPTY>
+<!ATTLIST club_activity
+        id CDATA #REQUIRED
+        type CDATA #REQUIRED
+        description CDATA #REQUIRED
+        access CDATA #REQUIRED
+        visible CDATA #REQUIRED
+        start_date CDATA #REQUIRED
+        end_date CDATA #IMPLIED
+        created_at CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+        club_id CDATA #REQUIRED
+>
+
+<!ELEMENT club_activity_invite EMPTY>
+<!ATTLIST club_activity_invite
+        id CDATA #REQUIRED
+        access_key CDATA #REQUIRED
+        active_start_date CDATA #IMPLIED
+        active_end_date CDATA #IMPLIED
+        club_activity_id CDATA #REQUIRED
+>
+
+<!ELEMENT club_pilot_activity_participation EMPTY>
+<!ATTLIST club_pilot_activity_participation
+        id CDATA #REQUIRED
+        club_activity_id CDATA #REQUIRED
+        account_id CDATA #REQUIRED
+        plane_id CDATA #REQUIRED
+        created_at CDATA #IMPLIED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT club_activity_intrest EMPTY>
+<!ATTLIST club_activity_intrest
+        id CDATA #REQUIRED
+        account_id CDATA #REQUIRED
+        club_activity_id CDATA #REQUIRED
+        created_at CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT club_activity_participation EMPTY>
+<!ATTLIST club_activity_participation
+        id CDATA #REQUIRED
+        account_id CDATA #REQUIRED
+        club_activity_id CDATA #REQUIRED
+        created_at CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT jump EMPTY>
+<!ATTLIST jump
+        id CDATA #REQUIRED
+        jump_height CDATA #IMPLIED
+        jump_time CDATA #IMPLIED
+        account_id CDATA #REQUIRED
+        club_activity_id CDATA #REQUIRED
+        created_at CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+>
+
+<!ELEMENT profile EMPTY>
+<!ATTLIST profile
+        id CDATA #REQUIRED
+        first_name CDATA #REQUIRED
+        last_name CDATA #REQUIRED
+        zipcode CDATA #REQUIRED
+        city CDATA #REQUIRED
+        phone CDATA #REQUIRED
+        deleted_at CDATA #IMPLIED
+        account_id CDATA #REQUIRED
 >

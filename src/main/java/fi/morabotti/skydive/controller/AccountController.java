@@ -6,11 +6,13 @@ import fi.morabotti.skydive.domain.AccountDomain;
 import fi.morabotti.skydive.exception.AuthenticationException;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Session;
+import fi.morabotti.skydive.security.Password;
 import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.TokenResponse;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -88,6 +90,25 @@ public class AccountController {
         }
 
         throw new AuthenticationException("Authentication failed.");
+    }
+
+    /**
+     * Performs logout.
+     * @param tokenString Session token as string
+     * @return boolean Boolean whether logout is successful
+     * */
+    public Boolean logout(String tokenString) {
+        UUID token = UUID.fromString(tokenString);
+
+        Optional<Session> optionalSession = getSessionByToken(token);
+
+        if (!optionalSession.isPresent()) {
+            return false;
+        }
+
+        sessionCache.remove(optionalSession.get());
+        sessionDao.deleteByToken(tokenString);
+        return true;
     }
 
     /**
