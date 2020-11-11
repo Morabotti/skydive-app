@@ -13,10 +13,12 @@ public class ResourceModule {
     @Provides
     @Singleton
     static Set<Object> provideResources(
-            AuthenticationResource authenticationResource
+            AuthenticationResource authenticationResource,
+            ClubResource clubResource
     ) {
         return Stream.of(
-                authenticationResource
+                authenticationResource,
+                clubResource
         )
                 .collect(Collectors.toSet());
     }

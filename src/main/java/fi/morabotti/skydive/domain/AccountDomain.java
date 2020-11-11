@@ -48,7 +48,7 @@ public class AccountDomain {
                 .setUsername(username)
                 .setPasswordHash(password.getHash())
                 .setPasswordSalt(password.getSalt())
-                .setAccountRole(AccountRole.admin)
+                .setAccountRole(AccountRole.user)
                 .build();
     }
 
