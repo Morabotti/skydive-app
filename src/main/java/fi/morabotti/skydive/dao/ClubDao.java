@@ -3,7 +3,9 @@ package fi.morabotti.skydive.dao;
 import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.skydive.config.Configuration;
+import fi.morabotti.skydive.db.Keys;
 import fi.morabotti.skydive.model.Club;
+import fi.morabotti.skydive.model.ClubProfile;
 import org.jooq.DSLContext;
 
 import javax.inject.Inject;
@@ -13,6 +15,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 import static fi.morabotti.skydive.db.tables.Club.CLUB;
+import static fi.morabotti.skydive.db.tables.ClubProfile.CLUB_PROFILE;
 
 @Singleton
 public class ClubDao {
@@ -31,12 +34,16 @@ public class ClubDao {
     public Transactional<Optional<Club>, DSLContext> getById(Long id) {
         return Transactional.of(
                 context -> context
-                        .select(CLUB.asterisk())
+                        .select(
+                                CLUB.asterisk(),
+                                CLUB_PROFILE.asterisk()
+                        )
                         .from(CLUB)
+                        .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
                         .where(CLUB.ID.eq(id))
                         .and(CLUB.DELETED_AT.isNull())
                         .fetchOptional()
-                        .flatMap(Club.mapper::mapOptional),
+                        .map(Club.mapper.withClubProfile(ClubProfile.mapper)::map),
                 transactionProvider
         );
     }

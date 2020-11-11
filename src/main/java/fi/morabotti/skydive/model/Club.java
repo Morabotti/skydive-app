@@ -25,6 +25,9 @@ public abstract class Club {
     public abstract Boolean getIsPublic();
 
     @Nullable
+    public abstract ClubProfile getClubProfile();
+
+    @Nullable
     public abstract Instant getDeletedAt();
 
     @Nullable

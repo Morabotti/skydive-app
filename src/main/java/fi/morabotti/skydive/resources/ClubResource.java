@@ -1,5 +1,6 @@
 package fi.morabotti.skydive.resources;
 
+import fi.morabotti.skydive.controller.ClubController;
 import fi.morabotti.skydive.model.Club;
 import fi.morabotti.skydive.model.ClubActivity;
 import fi.morabotti.skydive.view.AccountView;
@@ -24,10 +25,13 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ClubResource {
+    private final ClubController clubController;
 
     @Inject
-    public ClubResource() {
-
+    public ClubResource(
+            ClubController clubController
+    ) {
+        this.clubController = clubController;
     }
 
     @GET
