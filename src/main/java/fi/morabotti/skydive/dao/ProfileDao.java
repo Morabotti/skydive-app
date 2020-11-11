@@ -52,7 +52,7 @@ public class ProfileDao {
                         )
                         .returning()
                         .fetchOne()
-                        .get(PROFILE.ID),
+                        .get(PROFILE.ACCOUNT_ID),
                 transactionProvider
         );
     }

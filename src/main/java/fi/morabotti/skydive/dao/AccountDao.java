@@ -59,9 +59,11 @@ public class AccountDao {
                 context -> context
                         .select()
                         .from(ACCOUNT)
+                        .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
                         .where(ACCOUNT.ID.eq(id))
-                        .fetchOptional()
-                        .map(Account.mapper::map),
+                        .fetch()
+                        .stream()
+                        .collect(Account.mapper.collectingWithProfiles(Profile.mapper)),
                 transactionProvider
         );
     }

@@ -69,7 +69,7 @@ export interface RegisterUser {
   zipCode: string,
   phone: string,
   password: string,
-  email: string
+  username: string
 }
 
 export interface RegisterUserForm extends RegisterUser {

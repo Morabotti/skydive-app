@@ -3,8 +3,10 @@ package fi.morabotti.skydive.domain;
 import fi.morabotti.skydive.db.enums.AccountRole;
 import fi.morabotti.skydive.exception.PasswordException;
 import fi.morabotti.skydive.model.Account;
+import fi.morabotti.skydive.model.Profile;
 import fi.morabotti.skydive.model.Session;
 import fi.morabotti.skydive.security.Password;
+import fi.morabotti.skydive.view.auth.RegisterRequest;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -47,6 +49,20 @@ public class AccountDomain {
                 .setPasswordHash(password.getHash())
                 .setPasswordSalt(password.getSalt())
                 .setAccountRole(AccountRole.admin)
+                .build();
+    }
+
+    public Profile createProfile(Account account, RegisterRequest registerRequest) {
+        return Profile.builder()
+                .setId(0L)
+                .setAccount(account)
+                .setAddress(registerRequest.getAddress())
+                .setCity(registerRequest.getCity())
+                .setFirstName(registerRequest.getFirstName())
+                .setLastName(registerRequest.getLastName())
+                .setPhone(registerRequest.getPhone())
+                .setZipCode(registerRequest.getZipCode())
+                .setDeletedAt(null)
                 .build();
     }
 

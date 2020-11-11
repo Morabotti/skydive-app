@@ -85,7 +85,7 @@ const defaultForm: RegisterUserForm = ({
   phone: '',
   password: '',
   rePassword: '',
-  email: '',
+  username: '',
   showPassword: true
 })
 
@@ -111,7 +111,7 @@ const RegisterView = () => {
         password: form.password,
         phone: form.phone,
         zipCode: form.zipCode,
-        email: form.email
+        username: form.username
       }
 
       await userRegister(register)
@@ -219,7 +219,7 @@ const RegisterView = () => {
                       fullWidth
                       component={TextField}
                       label='Email address'
-                      name='email'
+                      name='username'
                       type='email'
                       required
                       disabled={isSubmitting}

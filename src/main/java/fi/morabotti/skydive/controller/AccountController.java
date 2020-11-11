@@ -1,13 +1,16 @@
 package fi.morabotti.skydive.controller;
 
 import fi.morabotti.skydive.dao.AccountDao;
+import fi.morabotti.skydive.dao.ProfileDao;
 import fi.morabotti.skydive.dao.SessionDao;
 import fi.morabotti.skydive.domain.AccountDomain;
 import fi.morabotti.skydive.exception.AuthenticationException;
+import fi.morabotti.skydive.exception.NotFoundException;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Session;
 import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.TokenResponse;
+import fi.morabotti.skydive.view.auth.RegisterRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,6 +26,7 @@ public class AccountController {
 
     private final AccountDao accountDao;
     private final SessionDao sessionDao;
+    private final ProfileDao profileDao;
 
     private static final Integer CACHE_SIZE = 50;
     private static final Integer TOKEN_LIFETIME_HOURS = 1;
@@ -33,11 +37,13 @@ public class AccountController {
     public AccountController(
             AccountDomain accountDomain,
             AccountDao accountDao,
-            SessionDao sessionDao
+            SessionDao sessionDao,
+            ProfileDao profileDao
     ) {
         this.accountDomain = accountDomain;
         this.accountDao = accountDao;
         this.sessionDao = sessionDao;
+        this.profileDao = profileDao;
 
         this.sessionCache = new LinkedBlockingQueue<>();
     }
@@ -88,6 +94,32 @@ public class AccountController {
         }
 
         throw new AuthenticationException("Authentication failed.");
+    }
+
+    /**
+     * Creates new normal user.
+     * @param registerRequest RegisterRequest used for information of account
+     * @return Account that is created
+     * @throws NotFoundException if account is not found
+     * */
+    public Account createUser(RegisterRequest registerRequest) {
+        return accountDao.create(
+                accountDomain.createAccount(
+                        registerRequest.getUsername(),
+                        accountDomain.generatePassword(
+                                registerRequest.getPassword()
+                        )
+                )
+        )
+                .flatMap(account -> profileDao.create(
+                        accountDomain.createProfile(
+                                account,
+                                registerRequest
+                        )
+                ))
+                .flatMap(accountDao::getById)
+                .get()
+                .orElseThrow(NotFoundException::new);
     }
 
     /**

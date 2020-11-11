@@ -1,8 +1,10 @@
 package fi.morabotti.skydive.resources;
 
 import fi.morabotti.skydive.controller.AccountController;
+import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.TokenResponse;
 import fi.morabotti.skydive.view.auth.LoginRequest;
+import fi.morabotti.skydive.view.auth.RegisterRequest;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
@@ -50,6 +52,16 @@ public class AuthenticationResource {
             @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization
     ) {
         return accountController.logout(authorization);
+    }
+
+    @POST
+    @Path("/register")
+    public AccountView registerUser(
+            RegisterRequest registerRequest
+    ) {
+        return AccountView.of(
+                accountController.createUser(registerRequest)
+        );
     }
 
     @GET

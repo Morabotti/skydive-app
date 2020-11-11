@@ -4,13 +4,21 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.jubic.easyvalue.EasyValue;
 import fi.morabotti.skydive.db.enums.AccountRole;
 import fi.morabotti.skydive.model.Account;
+import fi.morabotti.skydive.model.Profile;
+
+import javax.annotation.Nullable;
 
 @EasyValue
 @JsonDeserialize(builder = AccountView.Builder.class)
 public abstract class AccountView {
+    public abstract Long getId();
+
     public abstract String getUsername();
 
     public abstract AccountRole getRole();
+
+    @Nullable
+    public abstract Profile getProfile();
 
     public abstract Builder toBuilder();
 
@@ -23,8 +31,10 @@ public abstract class AccountView {
 
     public static AccountView of(Account account) {
         return AccountView.builder()
+                .setId(account.getId())
                 .setUsername(account.getUsername())
                 .setRole(account.getAccountRole())
+                .setProfile(account.getProfile().orElse(null))
                 .build();
     }
 }

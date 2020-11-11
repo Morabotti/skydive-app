@@ -38,7 +38,7 @@ export const userRegisterSchema = Yup.object().concat(baseUserSchema).shape({
   rePassword: Yup.string()
     .required('Enter given password again')
     .oneOf([Yup.ref('password')], 'Given password does not match with original one'),
-  email: Yup.string()
+  username: Yup.string()
     .email('Given email is not valid')
     .max(255, 'Given email is too long')
     .required('Enter a email')
