@@ -5,6 +5,7 @@ import fi.morabotti.skydive.model.ClubActivity;
 import fi.morabotti.skydive.view.AccountView;
 
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -23,6 +24,11 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ClubResource {
+
+    @Inject
+    public ClubResource() {
+
+    }
 
     @GET
     public List getClubs() {
