@@ -35,7 +35,7 @@ const palette: PaletteOptions = {
   divider: 'rgba(0, 0, 0, 0.12)',
   background: {
     paper: white,
-    default: white
+    default: '#eaeff1'
   },
   action: {
     active: 'rgba(0, 0, 0, 0.54)',

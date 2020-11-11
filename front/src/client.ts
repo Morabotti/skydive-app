@@ -1,5 +1,5 @@
 import { LocalStorageKeys } from '@enums'
-import { AuthUser, LoginRequest } from '@types'
+import { AuthUser, LoginRequest, RegisterUser } from '@types'
 
 const addAuthToken = () => ({
   'Authorization': localStorage.getItem(LocalStorageKeys.TOKEN) || ''
@@ -56,6 +56,16 @@ export const revokeSession = (): Promise<Response> => fetch(
     headers: {
       'Content-Type': 'application/json', ...addAuthToken()
     }
+  }
+)
+  .then(checkResponse)
+
+export const userRegister = (newUser: RegisterUser): Promise<Response> => fetch(
+  `/api/auth/register`,
+  {
+    method: 'POST',
+    body: JSON.stringify(newUser),
+    headers: { 'Content-Type': 'application/json' }
   }
 )
   .then(checkResponse)

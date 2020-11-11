@@ -60,3 +60,19 @@ export interface PortalRoute {
   icon: ElementType<SvgIconProps>,
   subRoutes?: PortalSubRoute[]
 }
+
+export interface RegisterUser {
+  firstName: string,
+  lastName: string,
+  address: string,
+  city: string,
+  zipCode: string,
+  phone: string,
+  password: string,
+  email: string
+}
+
+export interface RegisterUserForm extends RegisterUser {
+  rePassword: string,
+  showPassword: boolean
+}

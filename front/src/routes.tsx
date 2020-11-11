@@ -9,7 +9,8 @@ import {
   Home
 } from 'mdi-material-ui'
 
-const LoginView = lazy(() => import('@components/login/LoginView'))
+const LoginView = lazy(() => import('@components/auth/LoginView'))
+const RegisterView = lazy(() => import('@components/auth/RegisterView'))
 const OverviewView = lazy(() => import('@components/overview/OverviewView'))
 const UserListView = lazy(() => import('@components/users/user-list/UserListView'))
 const GlobalConfigurationView = lazy(() => import('@components/configuration/global-configuration/GlobalConfigurationView'))
@@ -19,6 +20,11 @@ export const routesTree: Route[] = [{
   type: RouteType.PUBLIC,
   component: LoginView,
   path: '/login'
+}, {
+  access: [],
+  type: RouteType.PUBLIC,
+  component: RegisterView,
+  path: '/register'
 }, {
   access: [AuthRoles.ADMIN],
   type: RouteType.AUTHED_ROUTED,
