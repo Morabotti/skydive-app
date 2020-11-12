@@ -9,6 +9,9 @@ import fi.morabotti.skydive.db.tables.records.ClubRecord;
 import javax.annotation.Nullable;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static fi.morabotti.skydive.db.tables.Club.CLUB;
 
@@ -24,8 +27,7 @@ public abstract class Club {
 
     public abstract Boolean getIsPublic();
 
-    @Nullable
-    public abstract ClubProfile getClubProfile();
+    public abstract List<ClubProfile> getClubProfiles();
 
     @Nullable
     public abstract Instant getDeletedAt();
@@ -34,6 +36,14 @@ public abstract class Club {
     @JsonIgnore
     public abstract Account getCreatorAccount();
 
+    @JsonIgnore
+    public abstract List<ClubAccount> getClubMembers();
+
+    @JsonIgnore
+    public Optional<ClubProfile> getClubProfile() {
+        return getClubProfiles().stream().findFirst();
+    }
+
     public abstract Builder toBuilder();
 
     public static Builder builder() {
@@ -41,6 +51,11 @@ public abstract class Club {
     }
 
     public static class Builder extends EasyValue_Club.Builder {
+        public Builder defaults(Builder builder) {
+            return builder
+                    .setClubMembers(Collections.emptyList())
+                    .setClubProfiles(Collections.emptyList());
+        }
     }
 
     public static final ClubRecordMapper<ClubRecord> mapper
@@ -48,7 +63,7 @@ public abstract class Club {
             .setIdAccessor(CLUB.ID)
             .setNameAccessor(CLUB.NAME)
             .setSlugAccessor(CLUB.SLUG)
-            .setIsPublicAccessor(CLUB.PUBLIC)
+            .setIsPublicAccessor(CLUB.IS_PUBLIC)
             .setDeletedAtAccessor(
                     CLUB.DELETED_AT,
                     Timestamp::from,

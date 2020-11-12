@@ -1,9 +1,11 @@
 package fi.morabotti.skydive.resources;
 
 import fi.morabotti.skydive.controller.ClubController;
+import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Club;
 import fi.morabotti.skydive.model.ClubActivity;
 import fi.morabotti.skydive.view.AccountView;
+import fi.morabotti.skydive.view.club.ClubCreationRequest;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -16,6 +18,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.List;
@@ -41,124 +44,119 @@ public class ClubResource {
 
     @POST
     @RolesAllowed({"admin"})
-    public Club createNewClub() {
-        return Club.builder().build();
+    public Club createNewClub(
+            @Context Account account,
+            ClubCreationRequest creationRequest
+    ) {
+        return clubController.createClub(creationRequest, account);
     }
 
     @GET
-    @Path("{clubId}")
+    @Path("{club-slug}")
     public Club getClubById(
-            @PathParam("clubId") Long clubId
+            @PathParam("club-slug") String slug
     ) {
         return Club.builder().build();
     }
 
     @PUT
-    @Path("{clubId}")
-    @RolesAllowed({"admin", "club"})
+    @Path("{club-slug}")
     public Club updateClub(
-            @PathParam("clubId") Long clubId
+            @PathParam("club-slug") String slug
     ) {
         return Club.builder().build();
     }
 
     @DELETE
-    @Path("{clubId}")
-    @RolesAllowed({"admin", "club"})
+    @Path("{club-slug}")
     public Club deleteClub(
-            @PathParam("clubId") Long clubId
+            @PathParam("club-slug") String slug
     ) {
         return Club.builder().build();
     }
 
     @GET
-    @Path("/{clubId}/activity")
+    @Path("/{club-slug}/activity")
     public List<ClubActivity> getClubActivities(
-            @PathParam("clubId") Long clubId
+            @PathParam("club-slug") String slug
     ) {
         return Collections.emptyList();
     }
 
     @GET
-    @Path("/{clubId}/activity/{activityId}")
+    @Path("/{club-slug}/activity/{activityId}")
     public ClubActivity getClubActivityById(
-            @PathParam("clubId") Long clubId,
+            @PathParam("club-slug") String slug,
             @PathParam("activityId") Long activityId
     ) {
         return ClubActivity.builder().build();
     }
 
     @POST
-    @Path("/{clubId}/activity")
-    @RolesAllowed({"admin", "club"})
+    @Path("/{club-slug}/activity")
     public ClubActivity createClubActivity(
-            @PathParam("clubId") Long clubId
+            @PathParam("club-slug") String slug
     ) {
         return ClubActivity.builder().build();
     }
 
     @PUT
-    @Path("/{clubId}/activity/{activityId}")
-    @RolesAllowed({"admin", "club"})
+    @Path("/{club-slug}/activity/{activityId}")
     public ClubActivity updateClubActivity(
-            @PathParam("clubId") Long clubId,
+            @PathParam("club-slug") String slug,
             @PathParam("activityId") Long activityId
     ) {
         return ClubActivity.builder().build();
     }
 
     @DELETE
-    @Path("/{clubId}/activity/{activityId}")
-    @RolesAllowed({"admin", "club"})
+    @Path("/{club-slug}/activity/{activityId}")
     public ClubActivity deleteClubActivity(
-            @PathParam("clubId") Long clubId,
+            @PathParam("club-slug") String slug,
             @PathParam("activityId") Long activityId
     ) {
         return ClubActivity.builder().build();
     }
 
     @GET
-    @Path("/{clubId}/member")
+    @Path("/{club-slug}/member")
     public List<AccountView> getClubMembersById(
-            @PathParam("clubId") Long clubId
+            @PathParam("club-slug") String slug
     ) {
         return Collections.emptyList();
     }
 
     @GET
-    @Path("/{clubId}/member/{memberId}")
+    @Path("/{club-slug}/member/{memberId}")
     public AccountView getClubMemberInformation(
-            @PathParam("clubId") Long clubId,
+            @PathParam("club-slug") String slug,
             @PathParam("memberId") Long memberId
     ) {
         return AccountView.builder().build();
     }
 
     @DELETE
-    @Path("/{clubId}/member/{memberId}")
-    @RolesAllowed({"admin", "club"})
+    @Path("/{club-slug}/member/{memberId}")
     public AccountView deleteMemberFromClub(
-            @PathParam("clubId") Long clubId,
+            @PathParam("club-slug") String slug,
             @PathParam("memberId") Long memberId
     ) {
         return AccountView.builder().build();
     }
 
     @POST
-    @Path("/{clubId}/accept/{memberId}")
-    @RolesAllowed({"admin", "club"})
+    @Path("/{club-slug}/accept/{memberId}")
     public AccountView addUserToClub(
-            @PathParam("clubId") Long clubId,
+            @PathParam("club-slug") String slug,
             @PathParam("memberId") Long memberId
     ) {
         return AccountView.builder().build();
     }
 
     @POST
-    @Path("/{clubId}/decline/{memberId}")
-    @RolesAllowed({"admin", "club"})
+    @Path("/{club-slug}/decline/{memberId}")
     public AccountView declineUserFromClub(
-            @PathParam("clubId") Long clubId,
+            @PathParam("club-slug") String slug,
             @PathParam("memberId") Long memberId
     ) {
         return AccountView.builder().build();

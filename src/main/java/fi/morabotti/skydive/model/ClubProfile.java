@@ -18,19 +18,14 @@ public abstract class ClubProfile {
     @EasyId
     public abstract Long getId();
 
-    @Nullable
     public abstract String getDescription();
 
-    @Nullable
     public abstract String getAddress();
 
-    @Nullable
     public abstract String getZipCode();
 
-    @Nullable
     public abstract String getCity();
 
-    @Nullable
     public abstract String getPhone();
 
     @Nullable

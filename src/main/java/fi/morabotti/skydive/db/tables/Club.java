@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Club extends TableImpl<ClubRecord> {
 
-    private static final long serialVersionUID = 183058970;
+    private static final long serialVersionUID = 2145848469;
 
     /**
      * The reference instance of <code>club</code>
@@ -73,9 +73,9 @@ public class Club extends TableImpl<ClubRecord> {
     public final TableField<ClubRecord, String> SLUG = createField("slug", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
-     * The column <code>club.public</code>.
+     * The column <code>club.is_public</code>.
      */
-    public final TableField<ClubRecord, Boolean> PUBLIC = createField("public", org.jooq.impl.SQLDataType.BIT.nullable(false).defaultValue(org.jooq.impl.DSL.inline("b'0'", org.jooq.impl.SQLDataType.BIT)), this, "");
+    public final TableField<ClubRecord, Boolean> IS_PUBLIC = createField("is_public", org.jooq.impl.SQLDataType.BIT.nullable(false).defaultValue(org.jooq.impl.DSL.inline("b'0'", org.jooq.impl.SQLDataType.BIT)), this, "");
 
     /**
      * The column <code>club.deleted_at</code>.

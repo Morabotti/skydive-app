@@ -7,8 +7,10 @@ package fi.morabotti.skydive.db.tables;
 import fi.morabotti.skydive.db.DefaultSchema;
 import fi.morabotti.skydive.db.Indexes;
 import fi.morabotti.skydive.db.Keys;
+import fi.morabotti.skydive.db.enums.ClubAccountRole;
 import fi.morabotti.skydive.db.tables.records.ClubAccountRecord;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ClubAccount extends TableImpl<ClubAccountRecord> {
 
-    private static final long serialVersionUID = 1851777674;
+    private static final long serialVersionUID = 1970881238;
 
     /**
      * The reference instance of <code>club_account</code>
@@ -60,6 +62,16 @@ public class ClubAccount extends TableImpl<ClubAccountRecord> {
      * The column <code>club_account.id</code>.
      */
     public final TableField<ClubAccountRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+
+    /**
+     * The column <code>club_account.role</code>.
+     */
+    public final TableField<ClubAccountRecord, ClubAccountRole> ROLE = createField("role", org.jooq.impl.SQLDataType.VARCHAR(5).nullable(false).asEnumDataType(fi.morabotti.skydive.db.enums.ClubAccountRole.class), this, "");
+
+    /**
+     * The column <code>club_account.created_at</code>.
+     */
+    public final TableField<ClubAccountRecord, Timestamp> CREATED_AT = createField("created_at", org.jooq.impl.SQLDataType.TIMESTAMP.defaultValue(org.jooq.impl.DSL.field("CURRENT_TIMESTAMP", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
      * The column <code>club_account.club_id</code>.

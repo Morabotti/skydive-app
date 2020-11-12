@@ -17,14 +17,14 @@ public class ClubDomain {
 
     public Club createClub(
             ClubCreationRequest creationRequest,
-            Account creatorAccount
+            Account account
     ) {
         return Club.builder()
                 .setId(0L)
                 .setIsPublic(creationRequest.getIsPublic())
                 .setName(creationRequest.getName())
                 .setSlug(creationRequest.getSlug())
-                .setCreatorAccount(creatorAccount)
+                .setCreatorAccount(account)
                 .setDeletedAt(null)
                 .build();
     }

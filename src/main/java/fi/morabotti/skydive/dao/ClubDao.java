@@ -7,6 +7,7 @@ import fi.morabotti.skydive.db.Keys;
 import fi.morabotti.skydive.model.Club;
 import fi.morabotti.skydive.model.ClubProfile;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,6 +32,16 @@ public class ClubDao {
         this.transactionProvider = transactionProvider;
     }
 
+    public Optional<Club> checkClubBySlug(String clubSlug) {
+        return DSL.using(jooqConfiguration)
+                .select()
+                .from(CLUB)
+                .where(CLUB.SLUG.eq(clubSlug))
+                .and(CLUB.DELETED_AT.isNull())
+                .fetchOptional()
+                .map(Club.mapper::map);
+    }
+
     public Transactional<Optional<Club>, DSLContext> getById(Long id) {
         return Transactional.of(
                 context -> context
@@ -42,13 +53,32 @@ public class ClubDao {
                         .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
                         .where(CLUB.ID.eq(id))
                         .and(CLUB.DELETED_AT.isNull())
-                        .fetchOptional()
-                        .map(Club.mapper.withClubProfile(ClubProfile.mapper)::map),
+                        .fetch()
+                        .stream()
+                        .collect(Club.mapper.collectingWithClubProfiles(ClubProfile.mapper)),
                 transactionProvider
         );
     }
 
-    public Transactional<Long, DSLContext> create(Club club) {
+    public Transactional<Optional<Club>, DSLContext> getClubBySlug(String slug) {
+        return Transactional.of(
+                context -> context
+                        .select(
+                                CLUB.asterisk(),
+                                CLUB_PROFILE.asterisk()
+                        )
+                        .from(CLUB)
+                        .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
+                        .where(CLUB.SLUG.eq(slug))
+                        .and(CLUB.DELETED_AT.isNull())
+                        .fetch()
+                        .stream()
+                        .collect(Club.mapper.collectingWithClubProfiles(ClubProfile.mapper)),
+                transactionProvider
+        );
+    }
+
+    public Transactional<Club, DSLContext> create(Club club) {
         return Transactional.of(
                 context -> context.insertInto(CLUB)
                         .set(
@@ -59,7 +89,7 @@ public class ClubDao {
                         )
                         .returning()
                         .fetchOne()
-                        .get(CLUB.ID),
+                        .map(Club.mapper::map),
                 transactionProvider
         );
     }

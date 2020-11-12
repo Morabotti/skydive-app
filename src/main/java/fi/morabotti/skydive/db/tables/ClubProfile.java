@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ClubProfile extends TableImpl<ClubProfileRecord> {
 
-    private static final long serialVersionUID = 1355053938;
+    private static final long serialVersionUID = 1398993203;
 
     /**
      * The reference instance of <code>club_profile</code>
@@ -65,27 +65,27 @@ public class ClubProfile extends TableImpl<ClubProfileRecord> {
     /**
      * The column <code>club_profile.description</code>.
      */
-    public final TableField<ClubProfileRecord, String> DESCRIPTION = createField("description", org.jooq.impl.SQLDataType.CLOB, this, "");
+    public final TableField<ClubProfileRecord, String> DESCRIPTION = createField("description", org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
 
     /**
      * The column <code>club_profile.address</code>.
      */
-    public final TableField<ClubProfileRecord, String> ADDRESS = createField("address", org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
+    public final TableField<ClubProfileRecord, String> ADDRESS = createField("address", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false).defaultValue(org.jooq.impl.DSL.inline("", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>club_profile.zipcode</code>.
      */
-    public final TableField<ClubProfileRecord, String> ZIPCODE = createField("zipcode", org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
+    public final TableField<ClubProfileRecord, String> ZIPCODE = createField("zipcode", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false).defaultValue(org.jooq.impl.DSL.inline("", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>club_profile.city</code>.
      */
-    public final TableField<ClubProfileRecord, String> CITY = createField("city", org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
+    public final TableField<ClubProfileRecord, String> CITY = createField("city", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false).defaultValue(org.jooq.impl.DSL.inline("", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>club_profile.phone</code>.
      */
-    public final TableField<ClubProfileRecord, String> PHONE = createField("phone", org.jooq.impl.SQLDataType.VARCHAR(255), this, "");
+    public final TableField<ClubProfileRecord, String> PHONE = createField("phone", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false).defaultValue(org.jooq.impl.DSL.inline("", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
 
     /**
      * The column <code>club_profile.deleted_at</code>.

@@ -52,7 +52,7 @@ public class ClubProfileDao {
                         )
                         .returning()
                         .fetchOne()
-                        .get(CLUB_PROFILE.ID),
+                        .get(CLUB_PROFILE.CLUB_ID),
                 transactionProvider
         );
     }

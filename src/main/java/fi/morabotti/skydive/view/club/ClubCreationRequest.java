@@ -19,8 +19,6 @@ public abstract class ClubCreationRequest {
 
     public abstract String getCity();
 
-    public abstract Long getCreatorId();
-
     public abstract String getZipCode();
 
     public abstract String getPhone();

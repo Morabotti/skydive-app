@@ -5,7 +5,6 @@ import fi.morabotti.skydive.dao.ProfileDao;
 import fi.morabotti.skydive.dao.SessionDao;
 import fi.morabotti.skydive.domain.AccountDomain;
 import fi.morabotti.skydive.exception.AuthenticationException;
-import fi.morabotti.skydive.exception.NotFoundException;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Session;
 import fi.morabotti.skydive.view.AccountView;
@@ -14,6 +13,7 @@ import fi.morabotti.skydive.view.auth.RegisterRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.BadRequestException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -100,7 +100,7 @@ public class AccountController {
      * Creates new normal user.
      * @param registerRequest RegisterRequest used for information of account
      * @return Account that is created
-     * @throws NotFoundException if account is not found
+     * @throws BadRequestException if account is not created
      * */
     public Account createUser(RegisterRequest registerRequest) {
         return accountDao.create(
@@ -119,7 +119,7 @@ public class AccountController {
                 ))
                 .flatMap(accountDao::getById)
                 .get()
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(BadRequestException::new);
     }
 
     /**

@@ -18,7 +18,7 @@
             <column name="password_salt" type="binary(16)">
                 <constraints nullable="false" />
             </column>
-            <column name="role" type="enum('admin', 'club', 'pilot', 'user')">
+            <column name="role" type="enum('admin', 'user')">
                 <constraints nullable="false" />
             </column>
             <column name="deleted_at" type="datetime" />
@@ -80,7 +80,7 @@
             <column name="slug" type="varchar(255)">
                 <constraints nullable="false" unique="true" />
             </column>
-            <column name="public" type="boolean" defaultValueBoolean="false">
+            <column name="is_public" type="boolean" defaultValueBoolean="false">
                 <constraints nullable="false" />
             </column>
             <column name="deleted_at" type="datetime" />
@@ -95,11 +95,21 @@
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" unique="true" />
             </column>
-            <column name="description" type="text" />
-            <column name="address" type="varchar(255)" />
-            <column name="zipcode" type="varchar(255)" />
-            <column name="city" type="varchar(255)" />
-            <column name="phone" type="varchar(255)" />
+            <column name="description" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="address" type="varchar(255)" defaultValue="">
+                <constraints nullable="false" />
+            </column>
+            <column name="zipcode" type="varchar(255)" defaultValue="">
+                <constraints nullable="false" />
+            </column>
+            <column name="city" type="varchar(255)" defaultValue="">
+                <constraints nullable="false" />
+            </column>
+            <column name="phone" type="varchar(255)" defaultValue="">
+                <constraints nullable="false" />
+            </column>
             <column name="deleted_at" type="datetime" />
             <column name="club_id" type="bigint">
                 <constraints
@@ -112,6 +122,10 @@
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" unique="true" />
             </column>
+            <column name="role" type="enum('club', 'pilot', 'user')">
+                <constraints nullable="false" />
+            </column>
+            <column name="created_at" type="datetime" defaultValue="now()" />
             <column name="club_id" type="bigint">
                 <constraints
                         nullable="false"

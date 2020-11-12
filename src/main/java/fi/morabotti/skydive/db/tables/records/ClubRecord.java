@@ -29,7 +29,7 @@ import org.jooq.impl.TableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ClubRecord extends TableRecordImpl<ClubRecord> implements Record6<Long, String, String, Boolean, Timestamp, Long> {
 
-    private static final long serialVersionUID = 914826070;
+    private static final long serialVersionUID = 903160987;
 
     /**
      * Setter for <code>club.id</code>.
@@ -74,16 +74,16 @@ public class ClubRecord extends TableRecordImpl<ClubRecord> implements Record6<L
     }
 
     /**
-     * Setter for <code>club.public</code>.
+     * Setter for <code>club.is_public</code>.
      */
-    public void setPublic(Boolean value) {
+    public void setIsPublic(Boolean value) {
         set(3, value);
     }
 
     /**
-     * Getter for <code>club.public</code>.
+     * Getter for <code>club.is_public</code>.
      */
-    public Boolean getPublic() {
+    public Boolean getIsPublic() {
         return (Boolean) get(3);
     }
 
@@ -164,7 +164,7 @@ public class ClubRecord extends TableRecordImpl<ClubRecord> implements Record6<L
      */
     @Override
     public Field<Boolean> field4() {
-        return Club.CLUB.PUBLIC;
+        return Club.CLUB.IS_PUBLIC;
     }
 
     /**
@@ -212,7 +212,7 @@ public class ClubRecord extends TableRecordImpl<ClubRecord> implements Record6<L
      */
     @Override
     public Boolean component4() {
-        return getPublic();
+        return getIsPublic();
     }
 
     /**
@@ -260,7 +260,7 @@ public class ClubRecord extends TableRecordImpl<ClubRecord> implements Record6<L
      */
     @Override
     public Boolean value4() {
-        return getPublic();
+        return getIsPublic();
     }
 
     /**
@@ -311,7 +311,7 @@ public class ClubRecord extends TableRecordImpl<ClubRecord> implements Record6<L
      */
     @Override
     public ClubRecord value4(Boolean value) {
-        setPublic(value);
+        setIsPublic(value);
         return this;
     }
 
@@ -361,13 +361,13 @@ public class ClubRecord extends TableRecordImpl<ClubRecord> implements Record6<L
     /**
      * Create a detached, initialised ClubRecord
      */
-    public ClubRecord(Long id, String name, String slug, Boolean public_, Timestamp deletedAt, Long creatorAccountId) {
+    public ClubRecord(Long id, String name, String slug, Boolean isPublic, Timestamp deletedAt, Long creatorAccountId) {
         super(Club.CLUB);
 
         set(0, id);
         set(1, name);
         set(2, slug);
-        set(3, public_);
+        set(3, isPublic);
         set(4, deletedAt);
         set(5, creatorAccountId);
     }

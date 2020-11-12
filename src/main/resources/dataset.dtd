@@ -35,9 +35,10 @@
 <!ELEMENT club_account EMPTY>
 <!ATTLIST club_account
         id CDATA #REQUIRED
+        role CDATA #REQUIRED
+        created_at CDATA #REQUIRED
         club_id CDATA #REQUIRED
         account_id CDATA #REQUIRED
-        deleted_at CDATA #IMPLIED
 >
 
 <!ELEMENT club EMPTY>
