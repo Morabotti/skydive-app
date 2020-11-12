@@ -4,27 +4,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.jubic.easymapper.annotations.EasyId;
 import fi.jubic.easyvalue.EasyValue;
-import fi.morabotti.skydive.db.enums.ClubActivityAccess;
-import fi.morabotti.skydive.db.enums.ClubActivityType;
-import fi.morabotti.skydive.db.tables.records.ClubActivityRecord;
+import fi.morabotti.skydive.db.enums.ActivityAccess;
+import fi.morabotti.skydive.db.enums.ActivityType;
+import fi.morabotti.skydive.db.tables.records.ActivityRecord;
 
 import javax.annotation.Nullable;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-import static fi.morabotti.skydive.db.tables.ClubActivity.CLUB_ACTIVITY;
+import static fi.morabotti.skydive.db.tables.Activity.ACTIVITY;
 
 @EasyValue
-@JsonDeserialize(builder = ClubActivity.Builder.class)
-public abstract class ClubActivity {
+@JsonDeserialize(builder = Activity.Builder.class)
+public abstract class Activity {
     @EasyId
     public abstract Long getId();
 
     public abstract String getDescription();
 
-    public abstract ClubActivityType getType();
+    public abstract ActivityType getType();
 
-    public abstract ClubActivityAccess getAccess();
+    public abstract ActivityAccess getAccess();
 
     public abstract Boolean getVisible();
 
@@ -48,36 +48,36 @@ public abstract class ClubActivity {
         return new Builder();
     }
 
-    public static class Builder extends EasyValue_ClubActivity.Builder {
+    public static class Builder extends EasyValue_Activity.Builder {
     }
 
-    public static final ClubActivityRecordMapper<ClubActivityRecord> mapper
-            = ClubActivityRecordMapper.builder(CLUB_ACTIVITY)
-            .setIdAccessor(CLUB_ACTIVITY.ID)
-            .setDescriptionAccessor(CLUB_ACTIVITY.DESCRIPTION)
-            .setTypeAccessor(CLUB_ACTIVITY.TYPE)
-            .setAccessAccessor(CLUB_ACTIVITY.ACCESS)
-            .setVisibleAccessor(CLUB_ACTIVITY.VISIBLE)
+    public static final ActivityRecordMapper<ActivityRecord> mapper
+            = ActivityRecordMapper.builder(ACTIVITY)
+            .setIdAccessor(ACTIVITY.ID)
+            .setDescriptionAccessor(ACTIVITY.DESCRIPTION)
+            .setTypeAccessor(ACTIVITY.TYPE)
+            .setAccessAccessor(ACTIVITY.ACCESS)
+            .setVisibleAccessor(ACTIVITY.VISIBLE)
             .setStartDateAccessor(
-                    CLUB_ACTIVITY.START_DATE,
+                    ACTIVITY.START_DATE,
                     Timestamp::from,
                     Timestamp::toInstant
             )
             .setEndDateAccessor(
-                    CLUB_ACTIVITY.END_DATE,
+                    ACTIVITY.END_DATE,
                     Timestamp::from,
                     Timestamp::toInstant
             )
             .setCreatedAtAccessor(
-                    CLUB_ACTIVITY.CREATED_AT,
+                    ACTIVITY.CREATED_AT,
                     Timestamp::from,
                     Timestamp::toInstant
             )
             .setDeletedAtAccessor(
-                    CLUB_ACTIVITY.DELETED_AT,
+                    ACTIVITY.DELETED_AT,
                     Timestamp::from,
                     Timestamp::toInstant
             )
-            .setClubAccessor(CLUB_ACTIVITY.CLUB_ID, Club::getId)
+            .setClubAccessor(ACTIVITY.CLUB_ID, Club::getId)
             .build();
 }

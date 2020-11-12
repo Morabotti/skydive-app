@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ClubPilotActivityParticipation extends TableImpl<ClubPilotActivityParticipationRecord> {
 
-    private static final long serialVersionUID = 447189312;
+    private static final long serialVersionUID = -357929365;
 
     /**
      * The reference instance of <code>club_pilot_activity_participation</code>
@@ -68,9 +68,9 @@ public class ClubPilotActivityParticipation extends TableImpl<ClubPilotActivityP
     public final TableField<ClubPilotActivityParticipationRecord, Long> ACCOUNT_ID = createField("account_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
-     * The column <code>club_pilot_activity_participation.club_activity_id</code>.
+     * The column <code>club_pilot_activity_participation.activity_id</code>.
      */
-    public final TableField<ClubPilotActivityParticipationRecord, Long> CLUB_ACTIVITY_ID = createField("club_activity_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<ClubPilotActivityParticipationRecord, Long> ACTIVITY_ID = createField("activity_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>club_pilot_activity_participation.plane_id</code>.
@@ -164,8 +164,8 @@ public class ClubPilotActivityParticipation extends TableImpl<ClubPilotActivityP
         return new Account(this, Keys.FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID);
     }
 
-    public ClubActivity clubActivity() {
-        return new ClubActivity(this, Keys.FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACTIVITY_ID);
+    public Activity activity() {
+        return new Activity(this, Keys.FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACTIVITY_ID);
     }
 
     public Plane plane() {

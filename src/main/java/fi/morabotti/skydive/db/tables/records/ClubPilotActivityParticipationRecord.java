@@ -29,7 +29,7 @@ import org.jooq.impl.TableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ClubPilotActivityParticipationRecord extends TableRecordImpl<ClubPilotActivityParticipationRecord> implements Record6<Long, Long, Long, Long, Timestamp, Timestamp> {
 
-    private static final long serialVersionUID = -1792846679;
+    private static final long serialVersionUID = -124505172;
 
     /**
      * Setter for <code>club_pilot_activity_participation.id</code>.
@@ -60,16 +60,16 @@ public class ClubPilotActivityParticipationRecord extends TableRecordImpl<ClubPi
     }
 
     /**
-     * Setter for <code>club_pilot_activity_participation.club_activity_id</code>.
+     * Setter for <code>club_pilot_activity_participation.activity_id</code>.
      */
-    public void setClubActivityId(Long value) {
+    public void setActivityId(Long value) {
         set(2, value);
     }
 
     /**
-     * Getter for <code>club_pilot_activity_participation.club_activity_id</code>.
+     * Getter for <code>club_pilot_activity_participation.activity_id</code>.
      */
-    public Long getClubActivityId() {
+    public Long getActivityId() {
         return (Long) get(2);
     }
 
@@ -156,7 +156,7 @@ public class ClubPilotActivityParticipationRecord extends TableRecordImpl<ClubPi
      */
     @Override
     public Field<Long> field3() {
-        return ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.CLUB_ACTIVITY_ID;
+        return ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.ACTIVITY_ID;
     }
 
     /**
@@ -204,7 +204,7 @@ public class ClubPilotActivityParticipationRecord extends TableRecordImpl<ClubPi
      */
     @Override
     public Long component3() {
-        return getClubActivityId();
+        return getActivityId();
     }
 
     /**
@@ -252,7 +252,7 @@ public class ClubPilotActivityParticipationRecord extends TableRecordImpl<ClubPi
      */
     @Override
     public Long value3() {
-        return getClubActivityId();
+        return getActivityId();
     }
 
     /**
@@ -302,7 +302,7 @@ public class ClubPilotActivityParticipationRecord extends TableRecordImpl<ClubPi
      */
     @Override
     public ClubPilotActivityParticipationRecord value3(Long value) {
-        setClubActivityId(value);
+        setActivityId(value);
         return this;
     }
 
@@ -361,12 +361,12 @@ public class ClubPilotActivityParticipationRecord extends TableRecordImpl<ClubPi
     /**
      * Create a detached, initialised ClubPilotActivityParticipationRecord
      */
-    public ClubPilotActivityParticipationRecord(Long id, Long accountId, Long clubActivityId, Long planeId, Timestamp createdAt, Timestamp deletedAt) {
+    public ClubPilotActivityParticipationRecord(Long id, Long accountId, Long activityId, Long planeId, Timestamp createdAt, Timestamp deletedAt) {
         super(ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION);
 
         set(0, id);
         set(1, accountId);
-        set(2, clubActivityId);
+        set(2, activityId);
         set(3, planeId);
         set(4, createdAt);
         set(5, deletedAt);

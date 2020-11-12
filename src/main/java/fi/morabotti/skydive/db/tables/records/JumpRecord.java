@@ -29,7 +29,7 @@ import org.jooq.impl.TableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JumpRecord extends TableRecordImpl<JumpRecord> implements Record7<Long, Integer, Timestamp, Long, Long, Timestamp, Timestamp> {
 
-    private static final long serialVersionUID = -32336471;
+    private static final long serialVersionUID = -1288457360;
 
     /**
      * Setter for <code>jump.id</code>.
@@ -88,16 +88,16 @@ public class JumpRecord extends TableRecordImpl<JumpRecord> implements Record7<L
     }
 
     /**
-     * Setter for <code>jump.club_activity_id</code>.
+     * Setter for <code>jump.activity_id</code>.
      */
-    public void setClubActivityId(Long value) {
+    public void setActivityId(Long value) {
         set(4, value);
     }
 
     /**
-     * Getter for <code>jump.club_activity_id</code>.
+     * Getter for <code>jump.activity_id</code>.
      */
-    public Long getClubActivityId() {
+    public Long getActivityId() {
         return (Long) get(4);
     }
 
@@ -186,7 +186,7 @@ public class JumpRecord extends TableRecordImpl<JumpRecord> implements Record7<L
      */
     @Override
     public Field<Long> field5() {
-        return Jump.JUMP.CLUB_ACTIVITY_ID;
+        return Jump.JUMP.ACTIVITY_ID;
     }
 
     /**
@@ -242,7 +242,7 @@ public class JumpRecord extends TableRecordImpl<JumpRecord> implements Record7<L
      */
     @Override
     public Long component5() {
-        return getClubActivityId();
+        return getActivityId();
     }
 
     /**
@@ -298,7 +298,7 @@ public class JumpRecord extends TableRecordImpl<JumpRecord> implements Record7<L
      */
     @Override
     public Long value5() {
-        return getClubActivityId();
+        return getActivityId();
     }
 
     /**
@@ -358,7 +358,7 @@ public class JumpRecord extends TableRecordImpl<JumpRecord> implements Record7<L
      */
     @Override
     public JumpRecord value5(Long value) {
-        setClubActivityId(value);
+        setActivityId(value);
         return this;
     }
 
@@ -409,14 +409,14 @@ public class JumpRecord extends TableRecordImpl<JumpRecord> implements Record7<L
     /**
      * Create a detached, initialised JumpRecord
      */
-    public JumpRecord(Long id, Integer jumpHeight, Timestamp jumpTime, Long accountId, Long clubActivityId, Timestamp createdAt, Timestamp deletedAt) {
+    public JumpRecord(Long id, Integer jumpHeight, Timestamp jumpTime, Long accountId, Long activityId, Timestamp createdAt, Timestamp deletedAt) {
         super(Jump.JUMP);
 
         set(0, id);
         set(1, jumpHeight);
         set(2, jumpTime);
         set(3, accountId);
-        set(4, clubActivityId);
+        set(4, activityId);
         set(5, createdAt);
         set(6, deletedAt);
     }

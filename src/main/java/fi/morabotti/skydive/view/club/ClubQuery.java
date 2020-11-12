@@ -2,6 +2,7 @@ package fi.morabotti.skydive.view.club;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.QueryParam;
+import java.util.Optional;
 
 public class ClubQuery {
     @QueryParam("clubId")
@@ -54,18 +55,15 @@ public class ClubQuery {
         );
     }
 
-    @Nullable
-    public Long getClubId() {
-        return this.clubId;
+    public Optional<Long> getClubId() {
+        return Optional.ofNullable(this.clubId);
     }
 
-    @Nullable
-    public Long getAccountId() {
-        return this.accountId;
+    public Optional<Long> getAccountId() {
+        return Optional.ofNullable(this.accountId);
     }
 
-    @Nullable
-    public Boolean getIsPublic() {
-        return this.isPublic;
+    public Optional<Boolean> getIsPublic() {
+        return Optional.ofNullable(this.isPublic);
     }
 }

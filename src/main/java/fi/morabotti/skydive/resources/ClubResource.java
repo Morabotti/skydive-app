@@ -2,8 +2,8 @@ package fi.morabotti.skydive.resources;
 
 import fi.morabotti.skydive.controller.ClubController;
 import fi.morabotti.skydive.model.Account;
+import fi.morabotti.skydive.model.Activity;
 import fi.morabotti.skydive.model.Club;
-import fi.morabotti.skydive.model.ClubActivity;
 import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.club.ClubCreationRequest;
 
@@ -77,45 +77,10 @@ public class ClubResource {
 
     @GET
     @Path("/{club-slug}/activity")
-    public List<ClubActivity> getClubActivities(
+    public List<Activity> getClubActivities(
             @PathParam("club-slug") String slug
     ) {
         return Collections.emptyList();
-    }
-
-    @GET
-    @Path("/{club-slug}/activity/{activityId}")
-    public ClubActivity getClubActivityById(
-            @PathParam("club-slug") String slug,
-            @PathParam("activityId") Long activityId
-    ) {
-        return ClubActivity.builder().build();
-    }
-
-    @POST
-    @Path("/{club-slug}/activity")
-    public ClubActivity createClubActivity(
-            @PathParam("club-slug") String slug
-    ) {
-        return ClubActivity.builder().build();
-    }
-
-    @PUT
-    @Path("/{club-slug}/activity/{activityId}")
-    public ClubActivity updateClubActivity(
-            @PathParam("club-slug") String slug,
-            @PathParam("activityId") Long activityId
-    ) {
-        return ClubActivity.builder().build();
-    }
-
-    @DELETE
-    @Path("/{club-slug}/activity/{activityId}")
-    public ClubActivity deleteClubActivity(
-            @PathParam("club-slug") String slug,
-            @PathParam("activityId") Long activityId
-    ) {
-        return ClubActivity.builder().build();
     }
 
     @GET

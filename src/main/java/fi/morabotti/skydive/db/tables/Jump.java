@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Jump extends TableImpl<JumpRecord> {
 
-    private static final long serialVersionUID = 1985668066;
+    private static final long serialVersionUID = -491994978;
 
     /**
      * The reference instance of <code>jump</code>
@@ -78,9 +78,9 @@ public class Jump extends TableImpl<JumpRecord> {
     public final TableField<JumpRecord, Long> ACCOUNT_ID = createField("account_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
-     * The column <code>jump.club_activity_id</code>.
+     * The column <code>jump.activity_id</code>.
      */
-    public final TableField<JumpRecord, Long> CLUB_ACTIVITY_ID = createField("club_activity_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JumpRecord, Long> ACTIVITY_ID = createField("activity_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>jump.created_at</code>.
@@ -138,7 +138,7 @@ public class Jump extends TableImpl<JumpRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.JUMP_FK_JUMP_ACCOUNT_ID, Indexes.JUMP_FK_JUMP_CLUB_ACTIVITY_ID, Indexes.JUMP_ID);
+        return Arrays.<Index>asList(Indexes.JUMP_FK_JUMP_ACCOUNT_ID, Indexes.JUMP_FK_JUMP_ACTIVITY_ID, Indexes.JUMP_ID);
     }
 
     /**
@@ -162,15 +162,15 @@ public class Jump extends TableImpl<JumpRecord> {
      */
     @Override
     public List<ForeignKey<JumpRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JumpRecord, ?>>asList(Keys.FK_JUMP_ACCOUNT_ID, Keys.FK_JUMP_CLUB_ACTIVITY_ID);
+        return Arrays.<ForeignKey<JumpRecord, ?>>asList(Keys.FK_JUMP_ACCOUNT_ID, Keys.FK_JUMP_ACTIVITY_ID);
     }
 
     public Account account() {
         return new Account(this, Keys.FK_JUMP_ACCOUNT_ID);
     }
 
-    public ClubActivity clubActivity() {
-        return new ClubActivity(this, Keys.FK_JUMP_CLUB_ACTIVITY_ID);
+    public Activity activity() {
+        return new Activity(this, Keys.FK_JUMP_ACTIVITY_ID);
     }
 
     /**

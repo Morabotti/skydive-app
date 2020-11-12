@@ -157,8 +157,11 @@
                         references="club(id)" />
             </column>
         </createTable>
-        <createTable tableName="club_activity">
+        <createTable tableName="activity">
             <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="token" type="varchar(36)">
                 <constraints nullable="false" unique="true" />
             </column>
             <column name="type" type="enum('jump', 'misc')">
@@ -184,32 +187,32 @@
             <column name="club_id" type="bigint">
                 <constraints
                         nullable="false"
-                        foreignKeyName="fk_club_activity_club_id"
+                        foreignKeyName="fk_activity_club_id"
                         references="club(id)" />
             </column>
         </createTable>
-        <createTable tableName="club_activity_participation">
+        <createTable tableName="activity_participation">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" unique="true" />
             </column>
             <column name="account_id" type="bigint">
                 <constraints
                         nullable="false"
-                        foreignKeyName="fk_club_activity_participation_account_id"
+                        foreignKeyName="fk_activity_participation_account_id"
                         references="account(id)" />
             </column>
-            <column name="club_activity_id" type="bigint">
+            <column name="activity_id" type="bigint">
                 <constraints
                         nullable="false"
-                        foreignKeyName="fk_club_activity_participation_activity_id"
-                        references="club_activity(id)" />
+                        foreignKeyName="fk_activity_participation_activity_id"
+                        references="activity(id)" />
             </column>
             <column name="created_at" type="datetime" defaultValue="now()" />
             <column name="deleted_at" type="datetime" />
         </createTable>
         <addUniqueConstraint
-                tableName="club_activity_participation"
-                columnNames="account_id, club_activity_id"
+                tableName="activity_participation"
+                columnNames="account_id, activity_id"
         />
         <createTable tableName="club_pilot_activity_participation">
             <column name="id" autoIncrement="true" type="bigint">
@@ -221,11 +224,11 @@
                         foreignKeyName="fk_club_pilot_activity_participation_account_id"
                         references="account(id)" />
             </column>
-            <column name="club_activity_id" type="bigint">
+            <column name="activity_id" type="bigint">
                 <constraints
                         nullable="false"
                         foreignKeyName="fk_club_pilot_activity_participation_activity_id"
-                        references="club_activity(id)" />
+                        references="activity(id)" />
             </column>
             <column name="plane_id" type="bigint">
                 <constraints
@@ -238,7 +241,7 @@
         </createTable>
         <addUniqueConstraint
                 tableName="club_pilot_activity_participation"
-                columnNames="account_id, club_activity_id"
+                columnNames="account_id, activity_id"
         />
         <createTable tableName="jump">
             <column name="id" autoIncrement="true" type="bigint">
@@ -252,11 +255,11 @@
                         foreignKeyName="fk_jump_account_id"
                         references="account(id)" />
             </column>
-            <column name="club_activity_id" type="bigint">
+            <column name="activity_id" type="bigint">
                 <constraints
                         nullable="false"
-                        foreignKeyName="fk_jump_club_activity_id"
-                        references="club_activity(id)" />
+                        foreignKeyName="fk_jump_activity_id"
+                        references="activity(id)" />
             </column>
             <column name="created_at" type="datetime" defaultValue="now()" />
             <column name="deleted_at" type="datetime" />

@@ -5,10 +5,10 @@ package fi.morabotti.skydive.db;
 
 
 import fi.morabotti.skydive.db.tables.Account;
+import fi.morabotti.skydive.db.tables.Activity;
+import fi.morabotti.skydive.db.tables.ActivityParticipation;
 import fi.morabotti.skydive.db.tables.Club;
 import fi.morabotti.skydive.db.tables.ClubAccount;
-import fi.morabotti.skydive.db.tables.ClubActivity;
-import fi.morabotti.skydive.db.tables.ClubActivityParticipation;
 import fi.morabotti.skydive.db.tables.ClubPilotActivityParticipation;
 import fi.morabotti.skydive.db.tables.ClubProfile;
 import fi.morabotti.skydive.db.tables.Jump;
@@ -16,9 +16,9 @@ import fi.morabotti.skydive.db.tables.Plane;
 import fi.morabotti.skydive.db.tables.Profile;
 import fi.morabotti.skydive.db.tables.Session;
 import fi.morabotti.skydive.db.tables.records.AccountRecord;
+import fi.morabotti.skydive.db.tables.records.ActivityParticipationRecord;
+import fi.morabotti.skydive.db.tables.records.ActivityRecord;
 import fi.morabotti.skydive.db.tables.records.ClubAccountRecord;
-import fi.morabotti.skydive.db.tables.records.ClubActivityParticipationRecord;
-import fi.morabotti.skydive.db.tables.records.ClubActivityRecord;
 import fi.morabotti.skydive.db.tables.records.ClubPilotActivityParticipationRecord;
 import fi.morabotti.skydive.db.tables.records.ClubProfileRecord;
 import fi.morabotti.skydive.db.tables.records.ClubRecord;
@@ -54,10 +54,10 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final Identity<AccountRecord, Long> IDENTITY_ACCOUNT = Identities0.IDENTITY_ACCOUNT;
+    public static final Identity<ActivityRecord, Long> IDENTITY_ACTIVITY = Identities0.IDENTITY_ACTIVITY;
+    public static final Identity<ActivityParticipationRecord, Long> IDENTITY_ACTIVITY_PARTICIPATION = Identities0.IDENTITY_ACTIVITY_PARTICIPATION;
     public static final Identity<ClubRecord, Long> IDENTITY_CLUB = Identities0.IDENTITY_CLUB;
     public static final Identity<ClubAccountRecord, Long> IDENTITY_CLUB_ACCOUNT = Identities0.IDENTITY_CLUB_ACCOUNT;
-    public static final Identity<ClubActivityRecord, Long> IDENTITY_CLUB_ACTIVITY = Identities0.IDENTITY_CLUB_ACTIVITY;
-    public static final Identity<ClubActivityParticipationRecord, Long> IDENTITY_CLUB_ACTIVITY_PARTICIPATION = Identities0.IDENTITY_CLUB_ACTIVITY_PARTICIPATION;
     public static final Identity<ClubPilotActivityParticipationRecord, Long> IDENTITY_CLUB_PILOT_ACTIVITY_PARTICIPATION = Identities0.IDENTITY_CLUB_PILOT_ACTIVITY_PARTICIPATION;
     public static final Identity<ClubProfileRecord, Long> IDENTITY_CLUB_PROFILE = Identities0.IDENTITY_CLUB_PROFILE;
     public static final Identity<JumpRecord, Long> IDENTITY_JUMP = Identities0.IDENTITY_JUMP;
@@ -71,13 +71,14 @@ public class Keys {
 
     public static final UniqueKey<AccountRecord> KEY_ACCOUNT_ID = UniqueKeys0.KEY_ACCOUNT_ID;
     public static final UniqueKey<AccountRecord> KEY_ACCOUNT_USERNAME = UniqueKeys0.KEY_ACCOUNT_USERNAME;
+    public static final UniqueKey<ActivityRecord> KEY_ACTIVITY_ID = UniqueKeys0.KEY_ACTIVITY_ID;
+    public static final UniqueKey<ActivityRecord> KEY_ACTIVITY_TOKEN = UniqueKeys0.KEY_ACTIVITY_TOKEN;
+    public static final UniqueKey<ActivityParticipationRecord> KEY_ACTIVITY_PARTICIPATION_ID = UniqueKeys0.KEY_ACTIVITY_PARTICIPATION_ID;
+    public static final UniqueKey<ActivityParticipationRecord> KEY_ACTIVITY_PARTICIPATION_ACCOUNT_ID = UniqueKeys0.KEY_ACTIVITY_PARTICIPATION_ACCOUNT_ID;
     public static final UniqueKey<ClubRecord> KEY_CLUB_ID = UniqueKeys0.KEY_CLUB_ID;
     public static final UniqueKey<ClubRecord> KEY_CLUB_SLUG = UniqueKeys0.KEY_CLUB_SLUG;
     public static final UniqueKey<ClubAccountRecord> KEY_CLUB_ACCOUNT_ID = UniqueKeys0.KEY_CLUB_ACCOUNT_ID;
     public static final UniqueKey<ClubAccountRecord> KEY_CLUB_ACCOUNT_ACCOUNT_ID = UniqueKeys0.KEY_CLUB_ACCOUNT_ACCOUNT_ID;
-    public static final UniqueKey<ClubActivityRecord> KEY_CLUB_ACTIVITY_ID = UniqueKeys0.KEY_CLUB_ACTIVITY_ID;
-    public static final UniqueKey<ClubActivityParticipationRecord> KEY_CLUB_ACTIVITY_PARTICIPATION_ID = UniqueKeys0.KEY_CLUB_ACTIVITY_PARTICIPATION_ID;
-    public static final UniqueKey<ClubActivityParticipationRecord> KEY_CLUB_ACTIVITY_PARTICIPATION_ACCOUNT_ID = UniqueKeys0.KEY_CLUB_ACTIVITY_PARTICIPATION_ACCOUNT_ID;
     public static final UniqueKey<ClubPilotActivityParticipationRecord> KEY_CLUB_PILOT_ACTIVITY_PARTICIPATION_ID = UniqueKeys0.KEY_CLUB_PILOT_ACTIVITY_PARTICIPATION_ID;
     public static final UniqueKey<ClubPilotActivityParticipationRecord> KEY_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID = UniqueKeys0.KEY_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID;
     public static final UniqueKey<ClubProfileRecord> KEY_CLUB_PROFILE_ID = UniqueKeys0.KEY_CLUB_PROFILE_ID;
@@ -91,18 +92,18 @@ public class Keys {
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final ForeignKey<ActivityRecord, ClubRecord> FK_ACTIVITY_CLUB_ID = ForeignKeys0.FK_ACTIVITY_CLUB_ID;
+    public static final ForeignKey<ActivityParticipationRecord, AccountRecord> FK_ACTIVITY_PARTICIPATION_ACCOUNT_ID = ForeignKeys0.FK_ACTIVITY_PARTICIPATION_ACCOUNT_ID;
+    public static final ForeignKey<ActivityParticipationRecord, ActivityRecord> FK_ACTIVITY_PARTICIPATION_ACTIVITY_ID = ForeignKeys0.FK_ACTIVITY_PARTICIPATION_ACTIVITY_ID;
     public static final ForeignKey<ClubRecord, AccountRecord> FK_CLUB_CREATOR_ACCOUNT = ForeignKeys0.FK_CLUB_CREATOR_ACCOUNT;
     public static final ForeignKey<ClubAccountRecord, ClubRecord> FK_CLUB_ACCOUNT_CLUB_ID = ForeignKeys0.FK_CLUB_ACCOUNT_CLUB_ID;
     public static final ForeignKey<ClubAccountRecord, AccountRecord> FK_CLUB_ACCOUNT_ACCOUNT_ID = ForeignKeys0.FK_CLUB_ACCOUNT_ACCOUNT_ID;
-    public static final ForeignKey<ClubActivityRecord, ClubRecord> FK_CLUB_ACTIVITY_CLUB_ID = ForeignKeys0.FK_CLUB_ACTIVITY_CLUB_ID;
-    public static final ForeignKey<ClubActivityParticipationRecord, AccountRecord> FK_CLUB_ACTIVITY_PARTICIPATION_ACCOUNT_ID = ForeignKeys0.FK_CLUB_ACTIVITY_PARTICIPATION_ACCOUNT_ID;
-    public static final ForeignKey<ClubActivityParticipationRecord, ClubActivityRecord> FK_CLUB_ACTIVITY_PARTICIPATION_ACTIVITY_ID = ForeignKeys0.FK_CLUB_ACTIVITY_PARTICIPATION_ACTIVITY_ID;
     public static final ForeignKey<ClubPilotActivityParticipationRecord, AccountRecord> FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID = ForeignKeys0.FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID;
-    public static final ForeignKey<ClubPilotActivityParticipationRecord, ClubActivityRecord> FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACTIVITY_ID = ForeignKeys0.FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACTIVITY_ID;
+    public static final ForeignKey<ClubPilotActivityParticipationRecord, ActivityRecord> FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACTIVITY_ID = ForeignKeys0.FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACTIVITY_ID;
     public static final ForeignKey<ClubPilotActivityParticipationRecord, PlaneRecord> FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_PLANE_ID = ForeignKeys0.FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_PLANE_ID;
     public static final ForeignKey<ClubProfileRecord, ClubRecord> FK_CLUB_PROFILE_CLUB = ForeignKeys0.FK_CLUB_PROFILE_CLUB;
     public static final ForeignKey<JumpRecord, AccountRecord> FK_JUMP_ACCOUNT_ID = ForeignKeys0.FK_JUMP_ACCOUNT_ID;
-    public static final ForeignKey<JumpRecord, ClubActivityRecord> FK_JUMP_CLUB_ACTIVITY_ID = ForeignKeys0.FK_JUMP_CLUB_ACTIVITY_ID;
+    public static final ForeignKey<JumpRecord, ActivityRecord> FK_JUMP_ACTIVITY_ID = ForeignKeys0.FK_JUMP_ACTIVITY_ID;
     public static final ForeignKey<PlaneRecord, ClubRecord> FK_PLANE_CLUB_ID = ForeignKeys0.FK_PLANE_CLUB_ID;
     public static final ForeignKey<ProfileRecord, AccountRecord> FK_PROFILE_ACCOUNT = ForeignKeys0.FK_PROFILE_ACCOUNT;
     public static final ForeignKey<SessionRecord, AccountRecord> FK_SESSION_ACCOUNT = ForeignKeys0.FK_SESSION_ACCOUNT;
@@ -113,10 +114,10 @@ public class Keys {
 
     private static class Identities0 {
         public static Identity<AccountRecord, Long> IDENTITY_ACCOUNT = Internal.createIdentity(Account.ACCOUNT, Account.ACCOUNT.ID);
+        public static Identity<ActivityRecord, Long> IDENTITY_ACTIVITY = Internal.createIdentity(Activity.ACTIVITY, Activity.ACTIVITY.ID);
+        public static Identity<ActivityParticipationRecord, Long> IDENTITY_ACTIVITY_PARTICIPATION = Internal.createIdentity(ActivityParticipation.ACTIVITY_PARTICIPATION, ActivityParticipation.ACTIVITY_PARTICIPATION.ID);
         public static Identity<ClubRecord, Long> IDENTITY_CLUB = Internal.createIdentity(Club.CLUB, Club.CLUB.ID);
         public static Identity<ClubAccountRecord, Long> IDENTITY_CLUB_ACCOUNT = Internal.createIdentity(ClubAccount.CLUB_ACCOUNT, ClubAccount.CLUB_ACCOUNT.ID);
-        public static Identity<ClubActivityRecord, Long> IDENTITY_CLUB_ACTIVITY = Internal.createIdentity(ClubActivity.CLUB_ACTIVITY, ClubActivity.CLUB_ACTIVITY.ID);
-        public static Identity<ClubActivityParticipationRecord, Long> IDENTITY_CLUB_ACTIVITY_PARTICIPATION = Internal.createIdentity(ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION, ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION.ID);
         public static Identity<ClubPilotActivityParticipationRecord, Long> IDENTITY_CLUB_PILOT_ACTIVITY_PARTICIPATION = Internal.createIdentity(ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION, ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.ID);
         public static Identity<ClubProfileRecord, Long> IDENTITY_CLUB_PROFILE = Internal.createIdentity(ClubProfile.CLUB_PROFILE, ClubProfile.CLUB_PROFILE.ID);
         public static Identity<JumpRecord, Long> IDENTITY_JUMP = Internal.createIdentity(Jump.JUMP, Jump.JUMP.ID);
@@ -128,15 +129,16 @@ public class Keys {
     private static class UniqueKeys0 {
         public static final UniqueKey<AccountRecord> KEY_ACCOUNT_ID = Internal.createUniqueKey(Account.ACCOUNT, "KEY_account_id", Account.ACCOUNT.ID);
         public static final UniqueKey<AccountRecord> KEY_ACCOUNT_USERNAME = Internal.createUniqueKey(Account.ACCOUNT, "KEY_account_username", Account.ACCOUNT.USERNAME);
+        public static final UniqueKey<ActivityRecord> KEY_ACTIVITY_ID = Internal.createUniqueKey(Activity.ACTIVITY, "KEY_activity_id", Activity.ACTIVITY.ID);
+        public static final UniqueKey<ActivityRecord> KEY_ACTIVITY_TOKEN = Internal.createUniqueKey(Activity.ACTIVITY, "KEY_activity_token", Activity.ACTIVITY.TOKEN);
+        public static final UniqueKey<ActivityParticipationRecord> KEY_ACTIVITY_PARTICIPATION_ID = Internal.createUniqueKey(ActivityParticipation.ACTIVITY_PARTICIPATION, "KEY_activity_participation_id", ActivityParticipation.ACTIVITY_PARTICIPATION.ID);
+        public static final UniqueKey<ActivityParticipationRecord> KEY_ACTIVITY_PARTICIPATION_ACCOUNT_ID = Internal.createUniqueKey(ActivityParticipation.ACTIVITY_PARTICIPATION, "KEY_activity_participation_account_id", ActivityParticipation.ACTIVITY_PARTICIPATION.ACCOUNT_ID, ActivityParticipation.ACTIVITY_PARTICIPATION.ACTIVITY_ID);
         public static final UniqueKey<ClubRecord> KEY_CLUB_ID = Internal.createUniqueKey(Club.CLUB, "KEY_club_id", Club.CLUB.ID);
         public static final UniqueKey<ClubRecord> KEY_CLUB_SLUG = Internal.createUniqueKey(Club.CLUB, "KEY_club_slug", Club.CLUB.SLUG);
         public static final UniqueKey<ClubAccountRecord> KEY_CLUB_ACCOUNT_ID = Internal.createUniqueKey(ClubAccount.CLUB_ACCOUNT, "KEY_club_account_id", ClubAccount.CLUB_ACCOUNT.ID);
         public static final UniqueKey<ClubAccountRecord> KEY_CLUB_ACCOUNT_ACCOUNT_ID = Internal.createUniqueKey(ClubAccount.CLUB_ACCOUNT, "KEY_club_account_account_id", ClubAccount.CLUB_ACCOUNT.ACCOUNT_ID, ClubAccount.CLUB_ACCOUNT.CLUB_ID);
-        public static final UniqueKey<ClubActivityRecord> KEY_CLUB_ACTIVITY_ID = Internal.createUniqueKey(ClubActivity.CLUB_ACTIVITY, "KEY_club_activity_id", ClubActivity.CLUB_ACTIVITY.ID);
-        public static final UniqueKey<ClubActivityParticipationRecord> KEY_CLUB_ACTIVITY_PARTICIPATION_ID = Internal.createUniqueKey(ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION, "KEY_club_activity_participation_id", ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION.ID);
-        public static final UniqueKey<ClubActivityParticipationRecord> KEY_CLUB_ACTIVITY_PARTICIPATION_ACCOUNT_ID = Internal.createUniqueKey(ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION, "KEY_club_activity_participation_account_id", ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION.ACCOUNT_ID, ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION.CLUB_ACTIVITY_ID);
         public static final UniqueKey<ClubPilotActivityParticipationRecord> KEY_CLUB_PILOT_ACTIVITY_PARTICIPATION_ID = Internal.createUniqueKey(ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION, "KEY_club_pilot_activity_participation_id", ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.ID);
-        public static final UniqueKey<ClubPilotActivityParticipationRecord> KEY_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID = Internal.createUniqueKey(ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION, "KEY_club_pilot_activity_participation_account_id", ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.ACCOUNT_ID, ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.CLUB_ACTIVITY_ID);
+        public static final UniqueKey<ClubPilotActivityParticipationRecord> KEY_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID = Internal.createUniqueKey(ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION, "KEY_club_pilot_activity_participation_account_id", ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.ACCOUNT_ID, ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.ACTIVITY_ID);
         public static final UniqueKey<ClubProfileRecord> KEY_CLUB_PROFILE_ID = Internal.createUniqueKey(ClubProfile.CLUB_PROFILE, "KEY_club_profile_id", ClubProfile.CLUB_PROFILE.ID);
         public static final UniqueKey<JumpRecord> KEY_JUMP_ID = Internal.createUniqueKey(Jump.JUMP, "KEY_jump_id", Jump.JUMP.ID);
         public static final UniqueKey<PlaneRecord> KEY_PLANE_ID = Internal.createUniqueKey(Plane.PLANE, "KEY_plane_id", Plane.PLANE.ID);
@@ -146,18 +148,18 @@ public class Keys {
     }
 
     private static class ForeignKeys0 {
+        public static final ForeignKey<ActivityRecord, ClubRecord> FK_ACTIVITY_CLUB_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_CLUB_ID, Activity.ACTIVITY, "fk_activity_club_id", Activity.ACTIVITY.CLUB_ID);
+        public static final ForeignKey<ActivityParticipationRecord, AccountRecord> FK_ACTIVITY_PARTICIPATION_ACCOUNT_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACCOUNT_ID, ActivityParticipation.ACTIVITY_PARTICIPATION, "fk_activity_participation_account_id", ActivityParticipation.ACTIVITY_PARTICIPATION.ACCOUNT_ID);
+        public static final ForeignKey<ActivityParticipationRecord, ActivityRecord> FK_ACTIVITY_PARTICIPATION_ACTIVITY_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACTIVITY_ID, ActivityParticipation.ACTIVITY_PARTICIPATION, "fk_activity_participation_activity_id", ActivityParticipation.ACTIVITY_PARTICIPATION.ACTIVITY_ID);
         public static final ForeignKey<ClubRecord, AccountRecord> FK_CLUB_CREATOR_ACCOUNT = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACCOUNT_ID, Club.CLUB, "fk_club_creator_account", Club.CLUB.CREATOR_ACCOUNT_ID);
         public static final ForeignKey<ClubAccountRecord, ClubRecord> FK_CLUB_ACCOUNT_CLUB_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_CLUB_ID, ClubAccount.CLUB_ACCOUNT, "fk_club_account_club_id", ClubAccount.CLUB_ACCOUNT.CLUB_ID);
         public static final ForeignKey<ClubAccountRecord, AccountRecord> FK_CLUB_ACCOUNT_ACCOUNT_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACCOUNT_ID, ClubAccount.CLUB_ACCOUNT, "fk_club_account_account_id", ClubAccount.CLUB_ACCOUNT.ACCOUNT_ID);
-        public static final ForeignKey<ClubActivityRecord, ClubRecord> FK_CLUB_ACTIVITY_CLUB_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_CLUB_ID, ClubActivity.CLUB_ACTIVITY, "fk_club_activity_club_id", ClubActivity.CLUB_ACTIVITY.CLUB_ID);
-        public static final ForeignKey<ClubActivityParticipationRecord, AccountRecord> FK_CLUB_ACTIVITY_PARTICIPATION_ACCOUNT_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACCOUNT_ID, ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION, "fk_club_activity_participation_account_id", ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION.ACCOUNT_ID);
-        public static final ForeignKey<ClubActivityParticipationRecord, ClubActivityRecord> FK_CLUB_ACTIVITY_PARTICIPATION_ACTIVITY_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_CLUB_ACTIVITY_ID, ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION, "fk_club_activity_participation_activity_id", ClubActivityParticipation.CLUB_ACTIVITY_PARTICIPATION.CLUB_ACTIVITY_ID);
         public static final ForeignKey<ClubPilotActivityParticipationRecord, AccountRecord> FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACCOUNT_ID, ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION, "fk_club_pilot_activity_participation_account_id", ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.ACCOUNT_ID);
-        public static final ForeignKey<ClubPilotActivityParticipationRecord, ClubActivityRecord> FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACTIVITY_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_CLUB_ACTIVITY_ID, ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION, "fk_club_pilot_activity_participation_activity_id", ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.CLUB_ACTIVITY_ID);
+        public static final ForeignKey<ClubPilotActivityParticipationRecord, ActivityRecord> FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_ACTIVITY_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACTIVITY_ID, ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION, "fk_club_pilot_activity_participation_activity_id", ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.ACTIVITY_ID);
         public static final ForeignKey<ClubPilotActivityParticipationRecord, PlaneRecord> FK_CLUB_PILOT_ACTIVITY_PARTICIPATION_PLANE_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_PLANE_ID, ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION, "fk_club_pilot_activity_participation_plane_id", ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION.PLANE_ID);
         public static final ForeignKey<ClubProfileRecord, ClubRecord> FK_CLUB_PROFILE_CLUB = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_CLUB_ID, ClubProfile.CLUB_PROFILE, "fk_club_profile_club", ClubProfile.CLUB_PROFILE.CLUB_ID);
         public static final ForeignKey<JumpRecord, AccountRecord> FK_JUMP_ACCOUNT_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACCOUNT_ID, Jump.JUMP, "fk_jump_account_id", Jump.JUMP.ACCOUNT_ID);
-        public static final ForeignKey<JumpRecord, ClubActivityRecord> FK_JUMP_CLUB_ACTIVITY_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_CLUB_ACTIVITY_ID, Jump.JUMP, "fk_jump_club_activity_id", Jump.JUMP.CLUB_ACTIVITY_ID);
+        public static final ForeignKey<JumpRecord, ActivityRecord> FK_JUMP_ACTIVITY_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACTIVITY_ID, Jump.JUMP, "fk_jump_activity_id", Jump.JUMP.ACTIVITY_ID);
         public static final ForeignKey<PlaneRecord, ClubRecord> FK_PLANE_CLUB_ID = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_CLUB_ID, Plane.PLANE, "fk_plane_club_id", Plane.PLANE.CLUB_ID);
         public static final ForeignKey<ProfileRecord, AccountRecord> FK_PROFILE_ACCOUNT = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACCOUNT_ID, Profile.PROFILE, "fk_profile_account", Profile.PROFILE.ACCOUNT_ID);
         public static final ForeignKey<SessionRecord, AccountRecord> FK_SESSION_ACCOUNT = Internal.createForeignKey(fi.morabotti.skydive.db.Keys.KEY_ACCOUNT_ID, Session.SESSION, "fk_session_account", Session.SESSION.ACCOUNT_ID);
