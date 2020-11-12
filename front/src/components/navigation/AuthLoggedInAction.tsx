@@ -92,14 +92,12 @@ const getFirstLetters = (name: string) => {
 
 interface Props {
   auth: AuthUser,
-  revokeAuth: () => void,
-  onSettings: () => void
+  revokeAuth: () => void
 }
 
 export const AuthLoggedInAction = ({
   auth,
-  revokeAuth,
-  onSettings
+  revokeAuth
 }: Props) => {
   const classes = useStyles()
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
@@ -157,7 +155,7 @@ export const AuthLoggedInAction = ({
                         variant='outlined'
                         color='default'
                         fullWidth
-                        onClick={onSettings}
+                        onClick={() => {}}
                       >Settings</Button>
                     </div>
                   </Hidden>

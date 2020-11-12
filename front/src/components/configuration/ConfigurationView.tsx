@@ -1,7 +1,7 @@
 import React from 'react'
 import { DashboardContainer } from '@components/common'
 
-const OverviewView = () => {
+const GlobalConfigurationView = () => {
   return (
     <DashboardContainer>
       <div>
@@ -11,4 +11,4 @@ const OverviewView = () => {
   )
 }
 
-export default OverviewView
+export default GlobalConfigurationView

@@ -5,15 +5,13 @@ import lazy from 'react-lazy-with-preload'
 
 import {
   Speedometer,
-  Account,
   Home
 } from 'mdi-material-ui'
 
 const LoginView = lazy(() => import('@components/auth/LoginView'))
 const RegisterView = lazy(() => import('@components/auth/RegisterView'))
 const OverviewView = lazy(() => import('@components/overview/OverviewView'))
-const UserListView = lazy(() => import('@components/users/user-list/UserListView'))
-const GlobalConfigurationView = lazy(() => import('@components/configuration/global-configuration/GlobalConfigurationView'))
+const ConfigurationView = lazy(() => import('@components/configuration/ConfigurationView'))
 
 export const routesTree: Route[] = [{
   access: [],
@@ -26,26 +24,19 @@ export const routesTree: Route[] = [{
   component: RegisterView,
   path: '/register'
 }, {
-  access: [AuthRoles.ADMIN],
+  access: [AuthRoles.ADMIN, AuthRoles.USER],
   type: RouteType.AUTHED_ROUTED,
   component: OverviewView,
   path: '/dashboard',
   icon: Home,
   name: 'Dashboard overview'
 }, {
-  access: [AuthRoles.ADMIN],
+  access: [AuthRoles.ADMIN, AuthRoles.USER],
   type: RouteType.AUTHED_ROUTED,
   path: '/dashboard/configuration',
   icon: Speedometer,
-  component: GlobalConfigurationView,
+  component: ConfigurationView,
   name: 'Configuration'
-}, {
-  access: [AuthRoles.ADMIN],
-  type: RouteType.AUTHED_ROUTED,
-  path: '/portal/users',
-  icon: Account,
-  name: 'Users',
-  component: UserListView
 }]
 
 export const publicRoutes = routesTree
@@ -55,7 +46,7 @@ export const publicRoutes = routesTree
     path: i.path
   }))
 
-export const portalRoutes: RouterRoute[] = routesTree
+export const dashboardRoutes: RouterRoute[] = routesTree
   .filter(i => i.type !== RouteType.PUBLIC)
   .map(i => i.navigation ? i.navigation.map(x => ({
     path: x.path,

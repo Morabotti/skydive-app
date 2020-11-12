@@ -76,7 +76,7 @@ export const PrimaryLoader = memo(({
   return (
     <div className={classes.wrap}>
       <div>
-        <T variant='h2'>GHM Dashboard</T>
+        <T variant='h2'>SKYDIVE APP</T>
         <div className={classes.center}>
           <div className={classes.loader}>
             <div />

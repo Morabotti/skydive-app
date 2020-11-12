@@ -1,7 +1,7 @@
 import React, { FC, Suspense, lazy } from 'react'
 import { hot } from 'react-hot-loader'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
-import { publicRoutes, portalRoutes } from '@routes'
+import { publicRoutes, dashboardRoutes } from '@routes'
 import { AuthProvider, DashboardProvider } from '@hooks'
 
 import {
@@ -29,7 +29,11 @@ const Application: FC = () => (
                     <DashboardProvider>
                       <AuthNavigation>
                         <Suspense fallback={<PageSuspense />}>
-                          {portalRoutes.map(({ path, access, component: Component }) => (
+                          {dashboardRoutes.map(({
+                            path,
+                            access,
+                            component: Component
+                          }) => (
                             <Route exact key={path} path={path}>
                               <ViewLoader access={access}>
                                 <Component />

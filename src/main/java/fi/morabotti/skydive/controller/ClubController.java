@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import java.util.Optional;
 
 @Singleton
 public class ClubController {
@@ -48,12 +47,12 @@ public class ClubController {
             ClubCreationRequest creationRequest,
             Account creatorAccount
     ) {
-        Club newClub = clubDomain.createClub(
-                creationRequest,
-                creatorAccount
-        );
-
-        return clubDao.create(newClub)
+        return clubDao.create(
+                clubDomain.createClub(
+                        creationRequest,
+                        creatorAccount
+                )
+        )
                 .flatMap(club -> clubProfileDao.create(
                         clubDomain.createClubProfile(
                                 club,
@@ -91,16 +90,13 @@ public class ClubController {
     }
 
     private Club getClubMembership(String clubSlug, Long accountId) {
-        Optional<Club> club = clubDao.checkClubBySlug(clubSlug);
+        Club club = clubDao.checkClubBySlug(clubSlug)
+                .orElseThrow(NotFoundException::new);
 
-        if (!club.isPresent()) {
-            throw new NotFoundException("Club slug is not valid.");
-        }
-
-        if (clubAccountDao.checkIfMember(clubSlug, accountId)) {
+        if (clubAccountDao.checkIfMember(club.getId(), accountId)) {
             throw new BadRequestException("Account is already a member.");
         }
 
-        return club.get();
+        return club;
     }
 }

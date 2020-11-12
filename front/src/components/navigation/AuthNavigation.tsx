@@ -5,7 +5,6 @@ import { customPalette } from '@theme'
 
 import { AuthNavigationHeader } from '@components/navigation'
 
-const drawerWidth = 256
 const useStyles = makeStyles(theme => createStyles({
   '@global': {
     body: {
@@ -15,17 +14,6 @@ const useStyles = makeStyles(theme => createStyles({
   root: {
     display: 'flex',
     minHeight: '100vh'
-  },
-  drawer: {
-    [theme.breakpoints.up('sm')]: {
-      width: drawerWidth,
-      flexShrink: 0
-    }
-  },
-  minimized: {
-    [theme.breakpoints.up('sm')]: {
-      width: '68px'
-    }
   },
   application: {
     flex: 1,
@@ -52,11 +40,7 @@ const AuthNavigation = memo(({ children }: Props) => {
   const { auth, revokeAuth } = useAuth()
 
   const {
-    currentRoute,
-    toggleExpanded,
-    toggleSettingsDialog,
-    onRoutePreload,
-    onNavigation
+    currentRoute
   } = useAuthNavigation()
 
   if (auth === null) {
@@ -69,11 +53,7 @@ const AuthNavigation = memo(({ children }: Props) => {
         <AuthNavigationHeader
           auth={auth}
           currentRoute={currentRoute}
-          onDrawerToggle={toggleExpanded}
-          onNavigate={onNavigation}
-          onRoutePreload={onRoutePreload}
           onRevokeAuth={revokeAuth}
-          onSettings={toggleSettingsDialog(true)}
         />
         <main className={classes.main}>
           {children}

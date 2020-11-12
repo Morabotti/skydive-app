@@ -3,7 +3,6 @@ package fi.morabotti.skydive.dao;
 import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.skydive.config.Configuration;
-import fi.morabotti.skydive.db.Keys;
 import fi.morabotti.skydive.db.enums.ClubAccountRole;
 import fi.morabotti.skydive.model.ClubAccount;
 import org.jooq.DSLContext;
@@ -13,7 +12,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Optional;
 
-import static fi.morabotti.skydive.db.tables.Club.CLUB;
 import static fi.morabotti.skydive.db.tables.ClubAccount.CLUB_ACCOUNT;
 
 @Singleton
@@ -30,12 +28,11 @@ public class ClubAccountDao {
         this.transactionProvider = transactionProvider;
     }
 
-    public Boolean checkIfMember(String clubSlug, Long accountId) {
+    public Boolean checkIfMember(Long clubId, Long accountId) {
         return DSL.using(jooqConfiguration)
                 .select()
                 .from(CLUB_ACCOUNT)
-                .join(CLUB).onKey(Keys.FK_CLUB_ACCOUNT_CLUB_ID)
-                .where(CLUB.SLUG.eq(clubSlug))
+                .where(CLUB_ACCOUNT.CLUB_ID.eq(clubId))
                 .and(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId))
                 .fetchOptional()
                 .isPresent();

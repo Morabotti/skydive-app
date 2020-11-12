@@ -13,7 +13,18 @@ export interface LoginRequest {
 
 export interface User {
   username: string,
-  role: AuthRoles
+  role: AuthRoles,
+  profile: null | UserProfile
+}
+
+export interface UserProfile {
+  id: number,
+  firstName: string,
+  lastName: string,
+  address: string,
+  zipCode: string,
+  phone: string,
+  deletedAt: null | string
 }
 
 export interface AuthUser {

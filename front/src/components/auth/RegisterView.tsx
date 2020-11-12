@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react'
 import { useApplicationNavigation } from '@hooks'
 import { userRegisterSchema } from '@utils/validation'
 import { TextField } from 'formik-material-ui'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import { RegisterUserForm, RegisterUser } from '@types'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
 import { Alert } from '@material-ui/lab'
@@ -91,9 +91,10 @@ const defaultForm: RegisterUserForm = ({
 
 const RegisterView = () => {
   const classes = useStyles()
-  const { push } = useHistory()
+  const { replace } = useHistory()
   const { onNavigation } = useApplicationNavigation()
   const [error, setError] = useState<null | string>(null)
+  const { search } = useLocation()
 
   const handleSubmit = useCallback(async (
     form: RegisterUserForm,
@@ -115,13 +116,45 @@ const RegisterView = () => {
       }
 
       await userRegister(register)
-      push('/register/success')
+      replace('/register?successful')
     }
     catch (e) {
       setError(e)
       setSubmitting(false)
     }
-  }, [push, setError])
+  }, [replace, setError])
+
+  if (search === '?successful') {
+    return (
+      <Container className={classes.container} maxWidth='sm'>
+        <div className={classes.center}>
+          <Paper elevation={2} className={classes.paper}>
+            <T
+              variant='h5'
+              component='h3'
+              align='center'
+              className={classes.primaryTitle}
+            >Successfully registered into service</T>
+            <T
+              variant='body1'
+              align='center'
+              className={classes.primaryTitle}
+            >You have successfully registered into this service</T>
+            <Actions align='center'>
+              <Button
+                onClick={onNavigation('/login')}
+                color='primary'
+                disableElevation
+                variant='outlined'
+              >
+                Login
+              </Button>
+            </Actions>
+          </Paper>
+        </div>
+      </Container>
+    )
+  }
 
   return (
     <Container className={classes.container} maxWidth='sm'>

@@ -6,8 +6,6 @@ export enum RouteType {
 
 export enum AuthRoles {
   ADMIN = 'admin',
-  CLUB = 'club',
-  PILOT = 'pilot',
   USER = 'user'
 }
 

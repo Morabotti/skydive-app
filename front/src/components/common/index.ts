@@ -1,5 +1,4 @@
 export { DashboardContainer } from './DashboardContainer'
-export { DashboardSection } from './DashboardSection'
 export { SnackbarContainer } from './SnackbarContainer'
 export { Actions } from './Actions'
 export { ConfirmationDialog } from './ConfirmationDialog'
