@@ -1,6 +1,5 @@
 package fi.morabotti.skydive.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.jubic.easymapper.annotations.EasyId;
 import fi.jubic.easyvalue.EasyValue;
@@ -22,12 +21,15 @@ public abstract class ClubAccount {
     public abstract ClubAccountRole getRole();
 
     @Nullable
+    public abstract Boolean getAccepted();
+
+    @Nullable
     public abstract Account getAccount();
 
     @Nullable
     public abstract Instant getCreatedAt();
 
-    @JsonIgnore
+    @Nullable
     public abstract Club getClub();
 
     public abstract Builder toBuilder();
@@ -42,6 +44,7 @@ public abstract class ClubAccount {
     public static final ClubAccountRecordMapper<ClubAccountRecord> mapper
             = ClubAccountRecordMapper.builder(CLUB_ACCOUNT)
             .setIdAccessor(CLUB_ACCOUNT.ID)
+            .setAcceptedAccessor(CLUB_ACCOUNT.ACCEPTED)
             .setAccountAccessor(CLUB_ACCOUNT.ACCOUNT_ID, Account::getId)
             .setClubAccessor(CLUB_ACCOUNT.CLUB_ID, Club::getId)
             .setRoleAccessor(CLUB_ACCOUNT.ROLE)

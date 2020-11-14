@@ -59,9 +59,7 @@ public class AuthenticationResource {
     public AccountView registerUser(
             RegisterRequest registerRequest
     ) {
-        return AccountView.of(
-                accountController.createUser(registerRequest)
-        );
+        return accountController.createUser(registerRequest);
     }
 
     @GET

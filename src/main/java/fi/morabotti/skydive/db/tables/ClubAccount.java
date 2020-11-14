@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ClubAccount extends TableImpl<ClubAccountRecord> {
 
-    private static final long serialVersionUID = 1970881238;
+    private static final long serialVersionUID = -1014645281;
 
     /**
      * The reference instance of <code>club_account</code>
@@ -67,6 +67,11 @@ public class ClubAccount extends TableImpl<ClubAccountRecord> {
      * The column <code>club_account.role</code>.
      */
     public final TableField<ClubAccountRecord, ClubAccountRole> ROLE = createField("role", org.jooq.impl.SQLDataType.VARCHAR(5).nullable(false).asEnumDataType(fi.morabotti.skydive.db.enums.ClubAccountRole.class), this, "");
+
+    /**
+     * The column <code>club_account.accepted</code>.
+     */
+    public final TableField<ClubAccountRecord, Boolean> ACCEPTED = createField("accepted", org.jooq.impl.SQLDataType.BIT.nullable(false).defaultValue(org.jooq.impl.DSL.inline("b'0'", org.jooq.impl.SQLDataType.BIT)), this, "");
 
     /**
      * The column <code>club_account.created_at</code>.

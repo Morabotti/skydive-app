@@ -37,9 +37,6 @@ public abstract class Club {
     public abstract Account getCreatorAccount();
 
     @JsonIgnore
-    public abstract List<ClubAccount> getClubMembers();
-
-    @JsonIgnore
     public Optional<ClubProfile> getClubProfile() {
         return getClubProfiles().stream().findFirst();
     }
@@ -53,7 +50,6 @@ public abstract class Club {
     public static class Builder extends EasyValue_Club.Builder {
         public Builder defaults(Builder builder) {
             return builder
-                    .setClubMembers(Collections.emptyList())
                     .setClubProfiles(Collections.emptyList());
         }
     }

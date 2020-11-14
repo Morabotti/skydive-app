@@ -3,16 +3,23 @@ package fi.morabotti.skydive.dao;
 import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.skydive.config.Configuration;
+import fi.morabotti.skydive.db.Keys;
 import fi.morabotti.skydive.db.enums.ClubAccountRole;
 import fi.morabotti.skydive.model.ClubAccount;
+import fi.morabotti.skydive.view.PaginationQuery;
+import fi.morabotti.skydive.view.club.ClubAccountQuery;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
 import java.util.Optional;
 
+import static fi.morabotti.skydive.db.tables.Account.ACCOUNT;
 import static fi.morabotti.skydive.db.tables.ClubAccount.CLUB_ACCOUNT;
+import static fi.morabotti.skydive.db.tables.Profile.PROFILE;
 
 @Singleton
 public class ClubAccountDao {
@@ -28,6 +35,35 @@ public class ClubAccountDao {
         this.transactionProvider = transactionProvider;
     }
 
+    public Long fetchClubMembers(ClubAccountQuery clubQuery) {
+        return DSL.using(jooqConfiguration)
+                .selectCount()
+                .from(CLUB_ACCOUNT)
+                .where(getConditions(clubQuery))
+                .fetchOne(0, Long.class);
+    }
+
+    public List<ClubAccount> fetchClubMembers(
+            PaginationQuery paginationQuery,
+            ClubAccountQuery clubAccountQuery
+    ) {
+        return DSL.using(jooqConfiguration)
+                .select(
+                        CLUB_ACCOUNT.asterisk(),
+                        ACCOUNT.asterisk(),
+                        PROFILE.asterisk()
+                )
+                .from(CLUB_ACCOUNT)
+                .join(ACCOUNT).onKey(Keys.FK_CLUB_ACCOUNT_ACCOUNT_ID)
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+                .where(getConditions(clubAccountQuery))
+                .limit(paginationQuery.getLimit().orElse(20))
+                .offset(paginationQuery.getOffset().orElse(0))
+                .fetch()
+                .stream()
+                .collect(ClubAccount.mapper);
+    }
+
     public Boolean checkIfMember(Long clubId, Long accountId) {
         return DSL.using(jooqConfiguration)
                 .select()
@@ -41,8 +77,14 @@ public class ClubAccountDao {
     public Transactional<Optional<ClubAccount>, DSLContext> getById(Long id) {
         return Transactional.of(
                 context -> context
-                        .select(CLUB_ACCOUNT.asterisk())
+                        .select(
+                                CLUB_ACCOUNT.asterisk(),
+                                ACCOUNT.asterisk(),
+                                PROFILE.asterisk()
+                        )
                         .from(CLUB_ACCOUNT)
+                        .join(ACCOUNT).onKey(Keys.FK_CLUB_ACCOUNT_ACCOUNT_ID)
+                        .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
                         .where(CLUB_ACCOUNT.ID.eq(id))
                         .fetchOptional()
                         .map(ClubAccount.mapper::map),
@@ -50,19 +92,88 @@ public class ClubAccountDao {
         );
     }
 
+    public Transactional<List<ClubAccount>, DSLContext> getClubAccounts(Long clubId) {
+        return Transactional.of(
+                context -> context
+                        .select(CLUB_ACCOUNT.asterisk())
+                        .from(CLUB_ACCOUNT)
+                        .where(CLUB_ACCOUNT.CLUB_ID.eq(clubId))
+                        .fetch()
+                        .stream()
+                        .collect(ClubAccount.mapper),
+                transactionProvider
+        );
+    }
+
     public Transactional<Long, DSLContext> create(
             Long clubId,
             Long accountId,
-            ClubAccountRole role
+            ClubAccountRole role,
+            Boolean accepted
     ) {
         return Transactional.of(
                 context -> context.insertInto(CLUB_ACCOUNT)
                         .set(CLUB_ACCOUNT.ACCOUNT_ID, accountId)
                         .set(CLUB_ACCOUNT.CLUB_ID, clubId)
                         .set(CLUB_ACCOUNT.ROLE, role)
+                        .set(CLUB_ACCOUNT.ACCEPTED, accepted)
                         .returning()
                         .fetchOne()
                         .get(CLUB_ACCOUNT.ID),
+                transactionProvider
+        );
+    }
+
+    public Transactional<Long, DSLContext> updateStatus(
+            Long clubId,
+            Long accountId,
+            Boolean accepted
+    ) {
+        return Transactional.of(
+                context -> context.update(CLUB_ACCOUNT)
+                        .set(CLUB_ACCOUNT.ACCEPTED, accepted)
+                        .where(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId))
+                        .and(CLUB_ACCOUNT.CLUB_ID.eq(clubId))
+                        .returning()
+                        .fetchOne()
+                        .get(CLUB_ACCOUNT.ID),
+                transactionProvider
+        );
+    }
+
+    public Transactional<Void, DSLContext> deleteByAccount(Long accountId) {
+        return Transactional.of(
+                context -> {
+                    context.delete(CLUB_ACCOUNT)
+                            .where(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId))
+                            .execute();
+                    return null;
+                },
+                transactionProvider
+        );
+    }
+
+    public Transactional<Void, DSLContext> deleteByClub(Long clubId) {
+        return Transactional.of(
+                context -> {
+                    context.delete(CLUB_ACCOUNT)
+                            .where(CLUB_ACCOUNT.CLUB_ID.eq(clubId))
+                            .execute();
+                    return null;
+                },
+                transactionProvider
+        );
+    }
+
+    public Transactional<Void, DSLContext> delete(Long clubId, Long accountId) {
+        return Transactional.of(
+                context -> {
+                    context.delete(CLUB_ACCOUNT)
+                            .where(CLUB_ACCOUNT.CLUB_ID.eq(clubId))
+                            .and(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId))
+                            .execute();
+                    return null;
+                },
                 transactionProvider
         );
     }
@@ -77,5 +188,26 @@ public class ClubAccountDao {
                 },
                 transactionProvider
         );
+    }
+
+    private Condition getConditions(ClubAccountQuery accountQuery) {
+        return Optional.of(CLUB_ACCOUNT.CREATED_AT.isNotNull())
+                .map(condition -> accountQuery.getClubId()
+                        .map(clubId -> condition.and(CLUB_ACCOUNT.CLUB_ID.eq(clubId)))
+                        .orElse(condition)
+                )
+                .map(condition -> accountQuery.getAccountId()
+                        .map(accountId -> condition.and(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId)))
+                        .orElse(condition)
+                )
+                .map(condition -> accountQuery.getAccepted()
+                        .map(accepted -> condition.and(CLUB_ACCOUNT.ACCEPTED.eq(accepted)))
+                        .orElse(condition)
+                )
+                .map(condition -> accountQuery.getRole()
+                        .map(role -> condition.and(CLUB_ACCOUNT.ROLE.eq(role)))
+                        .orElse(condition)
+                )
+                .get();
     }
 }

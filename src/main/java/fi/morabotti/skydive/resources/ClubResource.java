@@ -3,13 +3,18 @@ package fi.morabotti.skydive.resources;
 import fi.morabotti.skydive.controller.ClubController;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Activity;
-import fi.morabotti.skydive.model.Club;
 import fi.morabotti.skydive.view.AccountView;
+import fi.morabotti.skydive.view.PaginationQuery;
+import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.club.ClubCreationRequest;
+import fi.morabotti.skydive.view.club.ClubMemberRequest;
+import fi.morabotti.skydive.view.club.ClubQuery;
+import fi.morabotti.skydive.view.club.ClubView;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -38,13 +43,17 @@ public class ClubResource {
     }
 
     @GET
-    public List getClubs() {
-        return Collections.emptyList();
+    public PaginationResponse<ClubView> getClubs(
+            @BeanParam PaginationQuery paginationQuery,
+            @BeanParam ClubQuery clubQuery,
+            @Context Account account
+    ) {
+        return clubController.getClubs(paginationQuery, clubQuery, account);
     }
 
     @POST
     @RolesAllowed({"admin"})
-    public Club createNewClub(
+    public ClubView createNewClub(
             @Context Account account,
             ClubCreationRequest creationRequest
     ) {
@@ -52,78 +61,97 @@ public class ClubResource {
     }
 
     @GET
-    @Path("{club-slug}")
-    public Club getClubById(
-            @PathParam("club-slug") String slug
+    @Path("{clubSlug}")
+    public ClubView getClubById(
+            @PathParam("clubSlug") String slug
     ) {
-        return Club.builder().build();
+        return clubController.getClub(slug);
     }
 
     @PUT
-    @Path("{club-slug}")
-    public Club updateClub(
-            @PathParam("club-slug") String slug
+    @Path("{clubSlug}")
+    public Void updateClub(
+            @PathParam("clubSlug") String slug
     ) {
-        return Club.builder().build();
+        return null;
     }
 
     @DELETE
-    @Path("{club-slug}")
-    public Club deleteClub(
-            @PathParam("club-slug") String slug
+    @Path("{clubSlug}")
+    public Void deleteClub(
+            @PathParam("clubSlug") String slug
     ) {
-        return Club.builder().build();
+        return clubController.deleteClub(slug);
     }
 
     @GET
-    @Path("/{club-slug}/activity")
+    @Path("/{clubSlug}/activity")
     public List<Activity> getClubActivities(
-            @PathParam("club-slug") String slug
+            @PathParam("clubSlug") String slug
     ) {
         return Collections.emptyList();
     }
 
     @GET
-    @Path("/{club-slug}/member")
-    public List<AccountView> getClubMembersById(
-            @PathParam("club-slug") String slug
+    @Path("/{clubSlug}/member")
+    public PaginationResponse<AccountView> getClubMembers(
+            @PathParam("clubSlug") String slug,
+            @BeanParam PaginationQuery paginationQuery
     ) {
-        return Collections.emptyList();
+        return clubController.getMembers(
+                paginationQuery,
+                slug
+        );
     }
 
     @GET
-    @Path("/{club-slug}/member/{memberId}")
+    @Path("/{clubSlug}/member/{accountId}")
     public AccountView getClubMemberInformation(
-            @PathParam("club-slug") String slug,
-            @PathParam("memberId") Long memberId
+            @PathParam("clubSlug") String slug,
+            @PathParam("accountId") Long accountId
     ) {
         return AccountView.builder().build();
     }
+
+    @GET
+    @Path("/{clubSlug}/member/request")
+    public AccountView requestClubJoin(
+            @PathParam("clubSlug") String slug,
+            @Context Account account,
+            ClubMemberRequest clubMemberRequest
+    ) {
+        return clubController.requestMemberToClub(slug, account, clubMemberRequest);
+    }
+
+    // TODO: Add check whether Account is actually owner of this club.
 
     @DELETE
-    @Path("/{club-slug}/member/{memberId}")
-    public AccountView deleteMemberFromClub(
-            @PathParam("club-slug") String slug,
-            @PathParam("memberId") Long memberId
+    @Path("/{clubSlug}/member/{accountId}")
+    public Void deleteMemberFromClub(
+            @PathParam("clubSlug") String slug,
+            @PathParam("accountId") Long accountId,
+            @Context Account account
     ) {
-        return AccountView.builder().build();
+        return clubController.removeMemberFromClub(slug, accountId);
     }
 
     @POST
-    @Path("/{club-slug}/accept/{memberId}")
+    @Path("/{clubSlug}/accept/{accountId}")
     public AccountView addUserToClub(
-            @PathParam("club-slug") String slug,
-            @PathParam("memberId") Long memberId
+            @PathParam("clubSlug") String slug,
+            @PathParam("accountId") Long accountId,
+            @Context Account account
     ) {
-        return AccountView.builder().build();
+        return clubController.acceptMemberToClub(slug, accountId);
     }
 
     @POST
-    @Path("/{club-slug}/decline/{memberId}")
-    public AccountView declineUserFromClub(
-            @PathParam("club-slug") String slug,
-            @PathParam("memberId") Long memberId
+    @Path("/{clubSlug}/decline/{accountId}")
+    public Void declineUserFromClub(
+            @PathParam("clubSlug") String slug,
+            @PathParam("accountId") Long accountId,
+            @Context Account account
     ) {
-        return AccountView.builder().build();
+        return clubController.removeMemberFromClub(slug, accountId);
     }
 }

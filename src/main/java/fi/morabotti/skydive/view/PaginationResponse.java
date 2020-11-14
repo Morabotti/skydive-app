@@ -20,4 +20,14 @@ public abstract class PaginationResponse<T> {
 
     public static class Builder<T> extends EasyValue_PaginationResponse.Builder<T> {
     }
+
+    public static <T> PaginationResponse<T> create(
+            List<T> result,
+            Long length
+    ) {
+        return PaginationResponse.<T>builder()
+                .setResult(result)
+                .setLength(length)
+                .build();
+    }
 }

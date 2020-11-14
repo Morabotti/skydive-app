@@ -66,6 +66,18 @@ public class PlaneDao {
         );
     }
 
+    public Transactional<Void, DSLContext> deleteByClub(Long clubId) {
+        return Transactional.of(
+                context -> {
+                    context.delete(PLANE)
+                            .where(PLANE.CLUB_ID.eq(clubId))
+                            .execute();
+                    return null;
+                },
+                transactionProvider
+        );
+    }
+
     public Transactional<Optional<Plane>, DSLContext> update(Plane plane) {
         return Transactional.of(
                 context -> context.update(PLANE)

@@ -20,6 +20,9 @@ public abstract class Plane {
     public abstract String getLicenseNumber();
 
     @Nullable
+    public abstract Integer getSeats();
+
+    @Nullable
     public abstract Instant getDeletedAt();
 
     @Nullable
@@ -39,6 +42,7 @@ public abstract class Plane {
             = PlaneRecordMapper.builder(PLANE)
             .setIdAccessor(PLANE.ID)
             .setLicenseNumberAccessor(PLANE.LICENSE_NUMBER)
+            .setSeatsAccessor(PLANE.SEATS)
             .setClubAccessor(PLANE.CLUB_ID, Club::getId)
             .build();
 }

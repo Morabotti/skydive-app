@@ -102,24 +102,26 @@ public class AccountController {
      * @return Account that is created
      * @throws BadRequestException if account is not created
      * */
-    public Account createUser(RegisterRequest registerRequest) {
-        return accountDao.create(
-                accountDomain.createAccount(
-                        registerRequest.getUsername(),
-                        accountDomain.generatePassword(
-                                registerRequest.getPassword()
+    public AccountView createUser(RegisterRequest registerRequest) {
+        return AccountView.of(
+                accountDao.create(
+                        accountDomain.createAccount(
+                                registerRequest.getUsername(),
+                                accountDomain.generatePassword(
+                                        registerRequest.getPassword()
+                                )
                         )
                 )
-        )
-                .flatMap(account -> profileDao.create(
-                        accountDomain.createProfile(
-                                account,
-                                registerRequest
-                        )
-                ))
-                .flatMap(accountDao::getById)
-                .get()
-                .orElseThrow(BadRequestException::new);
+                        .flatMap(account -> profileDao.create(
+                                accountDomain.createProfile(
+                                        account,
+                                        registerRequest
+                                )
+                        ))
+                        .flatMap(accountDao::getById)
+                        .get()
+                        .orElseThrow(BadRequestException::new)
+        );
     }
 
     /**

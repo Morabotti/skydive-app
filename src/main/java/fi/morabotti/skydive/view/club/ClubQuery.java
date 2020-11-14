@@ -5,13 +5,9 @@ import javax.ws.rs.QueryParam;
 import java.util.Optional;
 
 public class ClubQuery {
-    @QueryParam("clubId")
+    @QueryParam("city")
     @Nullable
-    private Long clubId;
-
-    @QueryParam("accountId")
-    @Nullable
-    private Long accountId;
+    private String city;
 
     @QueryParam("isPublic")
     @Nullable
@@ -22,45 +18,29 @@ public class ClubQuery {
     }
 
     public ClubQuery(
-            @Nullable Long clubId,
-            @Nullable Long accountId,
+            @Nullable String city,
             @Nullable Boolean isPublic
     ) {
-        this.clubId = clubId;
-        this.accountId = accountId;
+        this.city = city;
         this.isPublic = isPublic;
     }
 
-    public ClubQuery withClubId(Long id) {
+    public ClubQuery withCity(String city) {
         return new ClubQuery(
-                id,
-                this.accountId,
-                this.isPublic
-        );
-    }
-
-    public ClubQuery withAccountId(Long id) {
-        return new ClubQuery(
-                this.clubId,
-                id,
+                city,
                 this.isPublic
         );
     }
 
     public ClubQuery withIsPublic(Boolean isPublic) {
         return new ClubQuery(
-                this.clubId,
-                this.accountId,
+                this.city,
                 isPublic
         );
     }
 
-    public Optional<Long> getClubId() {
-        return Optional.ofNullable(this.clubId);
-    }
-
-    public Optional<Long> getAccountId() {
-        return Optional.ofNullable(this.accountId);
+    public Optional<String> getCity() {
+        return Optional.ofNullable(this.city);
     }
 
     public Optional<Boolean> getIsPublic() {

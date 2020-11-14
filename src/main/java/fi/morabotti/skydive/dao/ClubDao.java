@@ -6,6 +6,9 @@ import fi.morabotti.skydive.config.Configuration;
 import fi.morabotti.skydive.db.Keys;
 import fi.morabotti.skydive.model.Club;
 import fi.morabotti.skydive.model.ClubProfile;
+import fi.morabotti.skydive.view.PaginationQuery;
+import fi.morabotti.skydive.view.club.ClubQuery;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
@@ -13,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import static fi.morabotti.skydive.db.tables.Club.CLUB;
@@ -30,6 +34,34 @@ public class ClubDao {
     ) {
         this.jooqConfiguration = configuration.getJooqConfiguration().getConfiguration();
         this.transactionProvider = transactionProvider;
+    }
+
+    public Long fetchClubLength(ClubQuery clubQuery, Boolean isPrivate) {
+        return DSL.using(jooqConfiguration)
+                .selectCount()
+                .from(CLUB)
+                .where(getConditions(clubQuery, isPrivate))
+                .fetchOne(0, Long.class);
+    }
+
+    public List<Club> fetchClubs(
+            PaginationQuery paginationQuery,
+            ClubQuery clubQuery,
+            Boolean isPrivate
+    ) {
+        return DSL.using(jooqConfiguration)
+                .select(
+                        CLUB.asterisk(),
+                        CLUB_PROFILE.asterisk()
+                )
+                .from(CLUB)
+                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
+                .where(getConditions(clubQuery, isPrivate))
+                .limit(paginationQuery.getLimit().orElse(20))
+                .offset(paginationQuery.getOffset().orElse(0))
+                .fetch()
+                .stream()
+                .collect(Club.mapper.collectingManyWithClubProfiles(ClubProfile.mapper));
     }
 
     public Optional<Club> checkClubBySlug(String clubSlug) {
@@ -121,4 +153,24 @@ public class ClubDao {
         ).flatMap(ignored -> getById(club.getId()));
     }
 
+
+    private Condition getConditions(
+            ClubQuery clubQuery,
+            Boolean isPrivate
+    ) {
+        if (isPrivate) {
+            return Optional.of(CLUB.DELETED_AT.isNull())
+                    .map(condition -> clubQuery.getCity()
+                            .map(city -> condition.and(CLUB_PROFILE.CITY.eq(city)))
+                            .orElse(condition)
+                    )
+                    .map(condition -> clubQuery.getIsPublic()
+                            .map(isPublic -> condition.and(CLUB.IS_PUBLIC.eq(isPublic)))
+                            .orElse(condition)
+                    )
+                    .get();
+        }
+
+        return CLUB.DELETED_AT.isNull().and(CLUB.IS_PUBLIC.eq(true));
+    }
 }

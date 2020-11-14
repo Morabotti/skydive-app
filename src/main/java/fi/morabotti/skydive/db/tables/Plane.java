@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Plane extends TableImpl<PlaneRecord> {
 
-    private static final long serialVersionUID = -372770795;
+    private static final long serialVersionUID = -1738593671;
 
     /**
      * The reference instance of <code>plane</code>
@@ -65,6 +65,11 @@ public class Plane extends TableImpl<PlaneRecord> {
      * The column <code>plane.license_number</code>.
      */
     public final TableField<PlaneRecord, String> LICENSE_NUMBER = createField("license_number", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
+
+    /**
+     * The column <code>plane.seats</code>.
+     */
+    public final TableField<PlaneRecord, Integer> SEATS = createField("seats", org.jooq.impl.SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>plane.club_id</code>.
