@@ -79,10 +79,33 @@ public class ClubController {
     }
 
     /**
+     * Fetches club member.
+     * @param slug String slug for club
+     * @param accountId Long target account id
+     * @return AccountView of account if member
+     * @throws NotFoundException if club not found
+     * */
+    public AccountView getMember(
+            String slug,
+            Long accountId
+    ) {
+        Club club = getClubMembership(slug, accountId, true);
+
+        return AccountView.of(
+                clubAccountDao.findAccount(
+                        ClubAccountQuery.of(club.getId(), accountId)
+                )
+                        .get()
+                        .orElseThrow(NotFoundException::new)
+        );
+    }
+
+    /**
      * Fetches clubs member.
      * @param paginationQuery PaginationQuery used to paginate response
      * @param slug String identifies wanted club
      * @return PaginationResponse of AccountView
+     * @throws NotFoundException if club not found
      * */
     public PaginationResponse<AccountView> getMembers(
             PaginationQuery paginationQuery,
@@ -97,11 +120,11 @@ public class ClubController {
         return PaginationResponse.create(
                 clubAccountDao.fetchClubMembers(
                         paginationQuery,
-                        new ClubAccountQuery().withClubId(club.getId())
+                        query
                 ).stream()
                         .map(AccountView::of)
                         .collect(Collectors.toList()),
-                clubAccountDao.fetchClubMembers(query)
+                clubAccountDao.fetchClubMembersLength(query)
         );
     }
 
@@ -109,6 +132,7 @@ public class ClubController {
      * Fetches club by slug.
      * @param slug String identifies wanted club
      * @return ClubView
+     * @throws NotFoundException if club not found
      * */
     public ClubView getClub(String slug) {
         return ClubView.of(
@@ -121,6 +145,7 @@ public class ClubController {
      * Fetches club by slug.
      * @param id Long identifies wanted club
      * @return ClubView
+     * @throws NotFoundException if club not found
      * */
     public ClubView getClub(Long id) {
         return ClubView.of(
@@ -229,13 +254,12 @@ public class ClubController {
         }
 
         return AccountView.of(
-                clubDao.getClubBySlug(slug)
-                        .flatMap(c -> clubAccountDao.create(
-                                club.getId(),
-                                account.getId(),
-                                memberRequest.getRole(),
-                                false
-                        ))
+                clubAccountDao.create(
+                        club.getId(),
+                        account.getId(),
+                        memberRequest.getRole(),
+                        false
+                )
                         .flatMap(clubAccountDao::getById)
                         .get()
                         .orElseThrow(BadRequestException::new)
@@ -256,15 +280,16 @@ public class ClubController {
         Club club = getClubMembership(slug, accountId, true);
 
         return AccountView.of(
-                clubDao.getClubBySlug(slug)
-                        .flatMap(c -> clubAccountDao.updateStatus(
-                                club.getId(),
-                                accountId,
-                                true
-                        ))
-                        .flatMap(clubAccountDao::getById)
+                clubAccountDao.updateStatus(
+                        club.getId(),
+                        accountId,
+                        true
+                )
+                        .flatMap(ignored -> clubAccountDao.findAccount(
+                                ClubAccountQuery.of(club.getId(), accountId))
+                        )
                         .get()
-                        .orElseThrow(BadRequestException::new)
+                        .orElseThrow(NotFoundException::new)
         );
     }
 
@@ -278,12 +303,10 @@ public class ClubController {
     public Void removeMemberFromClub(String slug, Long accountId) {
         Club club = getClubMembership(slug, accountId, true);
 
-        return clubDao.getClubBySlug(slug)
-                .flatMap(c -> clubAccountDao.delete(
-                        club.getId(),
-                        accountId
-                    )
-                ).get();
+        return clubAccountDao.delete(
+                club.getId(),
+                accountId
+        ).get();
     }
 
     private Club getClubMembership(String clubSlug, Long accountId, Boolean shouldBeMember) {

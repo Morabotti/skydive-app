@@ -59,6 +59,7 @@
         zipcode CDATA #IMPLIED
         city CDATA #IMPLIED
         phone CDATA #IMPLIED
+        address CDATA #IMPLIED
         deleted_at CDATA #IMPLIED
 >
 
@@ -139,6 +140,7 @@
         zipcode CDATA #REQUIRED
         city CDATA #REQUIRED
         phone CDATA #REQUIRED
+        address CDATA #REQUIRED
         deleted_at CDATA #IMPLIED
         account_id CDATA #REQUIRED
 >

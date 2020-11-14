@@ -5,7 +5,9 @@ import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.skydive.config.Configuration;
 import fi.morabotti.skydive.db.Keys;
 import fi.morabotti.skydive.db.enums.ClubAccountRole;
+import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.ClubAccount;
+import fi.morabotti.skydive.model.Profile;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.club.ClubAccountQuery;
 import org.jooq.Condition;
@@ -35,7 +37,7 @@ public class ClubAccountDao {
         this.transactionProvider = transactionProvider;
     }
 
-    public Long fetchClubMembers(ClubAccountQuery clubQuery) {
+    public Long fetchClubMembersLength(ClubAccountQuery clubQuery) {
         return DSL.using(jooqConfiguration)
                 .selectCount()
                 .from(CLUB_ACCOUNT)
@@ -61,7 +63,12 @@ public class ClubAccountDao {
                 .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
                 .stream()
-                .collect(ClubAccount.mapper);
+                .collect(ClubAccount.mapper.collectingManyWithAccount(
+                                Account.mapper.collectingWithProfiles(
+                                        Profile.mapper
+                                )
+                        )
+                );
     }
 
     public Boolean checkIfMember(Long clubId, Long accountId) {
@@ -86,21 +93,40 @@ public class ClubAccountDao {
                         .join(ACCOUNT).onKey(Keys.FK_CLUB_ACCOUNT_ACCOUNT_ID)
                         .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
                         .where(CLUB_ACCOUNT.ID.eq(id))
-                        .fetchOptional()
-                        .map(ClubAccount.mapper::map),
+                        .fetch()
+                        .stream()
+                        .collect(ClubAccount.mapper.collectingWithAccount(
+                                        Account.mapper.collectingWithProfiles(
+                                                Profile.mapper
+                                        )
+                                )
+                        ),
                 transactionProvider
         );
     }
 
-    public Transactional<List<ClubAccount>, DSLContext> getClubAccounts(Long clubId) {
+    public Transactional<Optional<ClubAccount>, DSLContext> findAccount(
+            ClubAccountQuery clubAccountQuery
+    ) {
         return Transactional.of(
                 context -> context
-                        .select(CLUB_ACCOUNT.asterisk())
+                        .select(
+                                CLUB_ACCOUNT.asterisk(),
+                                ACCOUNT.asterisk(),
+                                PROFILE.asterisk()
+                        )
                         .from(CLUB_ACCOUNT)
-                        .where(CLUB_ACCOUNT.CLUB_ID.eq(clubId))
+                        .join(ACCOUNT).onKey(Keys.FK_CLUB_ACCOUNT_ACCOUNT_ID)
+                        .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+                        .where(getConditions(clubAccountQuery))
                         .fetch()
                         .stream()
-                        .collect(ClubAccount.mapper),
+                        .collect(ClubAccount.mapper.collectingWithAccount(
+                                        Account.mapper.collectingWithProfiles(
+                                                Profile.mapper
+                                        )
+                                )
+                        ),
                 transactionProvider
         );
     }
@@ -124,19 +150,20 @@ public class ClubAccountDao {
         );
     }
 
-    public Transactional<Long, DSLContext> updateStatus(
+    public Transactional<Void, DSLContext> updateStatus(
             Long clubId,
             Long accountId,
             Boolean accepted
     ) {
         return Transactional.of(
-                context -> context.update(CLUB_ACCOUNT)
-                        .set(CLUB_ACCOUNT.ACCEPTED, accepted)
-                        .where(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId))
-                        .and(CLUB_ACCOUNT.CLUB_ID.eq(clubId))
-                        .returning()
-                        .fetchOne()
-                        .get(CLUB_ACCOUNT.ID),
+                context -> {
+                    context.update(CLUB_ACCOUNT)
+                            .set(CLUB_ACCOUNT.ACCEPTED, accepted)
+                            .where(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId))
+                            .and(CLUB_ACCOUNT.CLUB_ID.eq(clubId))
+                            .execute();
+                    return null;
+                },
                 transactionProvider
         );
     }

@@ -39,7 +39,7 @@ public class ClubAccountQuery {
         this.accepted = accepted;
     }
 
-    public ClubAccountQuery withClubId(Long accountId) {
+    public ClubAccountQuery withClubId(Long clubId) {
         return new ClubAccountQuery(
                 clubId,
                 this.accountId,
@@ -89,5 +89,11 @@ public class ClubAccountQuery {
 
     public Optional<Boolean> getAccepted() {
         return Optional.ofNullable(this.accepted);
+    }
+
+    public static ClubAccountQuery of(Long clubId, Long accountId) {
+        return new ClubAccountQuery()
+                .withClubId(clubId)
+                .withAccountId(accountId);
     }
 }

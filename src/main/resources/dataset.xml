@@ -1,13 +1,32 @@
 <!DOCTYPE dataset SYSTEM "dataset.dtd">
 <dataset>
     <account id="1"
-             username="admin@admin.fi"
+             username="admin@skydive.fi"
              password_hash="d2SbMYyWc4pcvqiA801GPkfr4mDY/CzO2jLA331dqI4="
              password_salt="GQNT/fHlu64jHHd5HI538Q=="
              role="admin" />
+    <account id="2"
+             username="user@skydive.fi"
+             password_hash="d2SbMYyWc4pcvqiA801GPkfr4mDY/CzO2jLA331dqI4="
+             password_salt="GQNT/fHlu64jHHd5HI538Q=="
+             role="user" />
     <session
             id="1"
             token="523ad083-cbb0-46e5-7892-7b58b217345a"
             valid_until="[now+1d]"
+            account_id="1" />
+    <session
+            id="2"
+            token="123ad023-cbb0-46e5-7722-7b58d217377d"
+            valid_until="[now+1d]"
+            account_id="2" />
+    <profile
+            id="1"
+            first_name="Admin"
+            last_name="User"
+            zipcode="123456"
+            city="TestCity"
+            address="Street 1"
+            phone="123456789"
             account_id="1" />
 </dataset>

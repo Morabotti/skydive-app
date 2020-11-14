@@ -25,6 +25,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class ClubResource {
 
     @GET
     @Path("{clubSlug}")
-    public ClubView getClubById(
+    public ClubView getClubBySlug(
             @PathParam("clubSlug") String slug
     ) {
         return clubController.getClub(slug);
@@ -70,18 +71,19 @@ public class ClubResource {
 
     @PUT
     @Path("{clubSlug}")
-    public Void updateClub(
+    public Response updateClub(
             @PathParam("clubSlug") String slug
     ) {
-        return null;
+        return Response.ok().build();
     }
 
     @DELETE
     @Path("{clubSlug}")
-    public Void deleteClub(
+    public Response deleteClub(
             @PathParam("clubSlug") String slug
     ) {
-        return clubController.deleteClub(slug);
+        clubController.deleteClub(slug);
+        return Response.ok().build();
     }
 
     @GET
@@ -110,10 +112,10 @@ public class ClubResource {
             @PathParam("clubSlug") String slug,
             @PathParam("accountId") Long accountId
     ) {
-        return AccountView.builder().build();
+        return clubController.getMember(slug, accountId);
     }
 
-    @GET
+    @POST
     @Path("/{clubSlug}/member/request")
     public AccountView requestClubJoin(
             @PathParam("clubSlug") String slug,
@@ -127,17 +129,18 @@ public class ClubResource {
 
     @DELETE
     @Path("/{clubSlug}/member/{accountId}")
-    public Void deleteMemberFromClub(
+    public Response deleteMemberFromClub(
             @PathParam("clubSlug") String slug,
             @PathParam("accountId") Long accountId,
             @Context Account account
     ) {
-        return clubController.removeMemberFromClub(slug, accountId);
+        clubController.removeMemberFromClub(slug, accountId);
+        return Response.ok().build();
     }
 
     @POST
     @Path("/{clubSlug}/accept/{accountId}")
-    public AccountView addUserToClub(
+    public AccountView acceptUserToClub(
             @PathParam("clubSlug") String slug,
             @PathParam("accountId") Long accountId,
             @Context Account account
@@ -147,11 +150,12 @@ public class ClubResource {
 
     @POST
     @Path("/{clubSlug}/decline/{accountId}")
-    public Void declineUserFromClub(
+    public Response declineUserFromClub(
             @PathParam("clubSlug") String slug,
             @PathParam("accountId") Long accountId,
             @Context Account account
     ) {
-        return clubController.removeMemberFromClub(slug, accountId);
+        clubController.removeMemberFromClub(slug, accountId);
+        return Response.ok().build();
     }
 }

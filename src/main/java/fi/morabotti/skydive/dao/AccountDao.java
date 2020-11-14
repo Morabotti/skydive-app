@@ -47,11 +47,16 @@ public class AccountDao {
 
     public Optional<Account> findAccountByUsername(String username) {
         return DSL.using(jooqConfiguration)
-                .select()
+                .select(
+                        ACCOUNT.asterisk(),
+                        PROFILE.asterisk()
+                )
                 .from(ACCOUNT)
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
                 .where(ACCOUNT.USERNAME.eq(username))
-                .fetchOptional()
-                .map(Account.mapper::map);
+                .fetch()
+                .stream()
+                .collect(Account.mapper.collectingWithProfiles(Profile.mapper));
     }
 
     public Transactional<Optional<Account>, DSLContext> getById(Long id) {
