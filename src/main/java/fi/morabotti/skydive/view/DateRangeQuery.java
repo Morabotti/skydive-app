@@ -3,9 +3,11 @@ package fi.morabotti.skydive.view;
 import javax.annotation.Nullable;
 import javax.ws.rs.QueryParam;
 import java.time.LocalDate;
+import java.util.Optional;
 
 public class DateRangeQuery {
     @QueryParam("from")
+    @Nullable
     private LocalDate from;
 
     @QueryParam("to")
@@ -17,18 +19,19 @@ public class DateRangeQuery {
     }
 
     public DateRangeQuery(
-            @QueryParam("from") LocalDate from,
-            @QueryParam("to") @Nullable LocalDate to
+            @Nullable LocalDate from,
+            @Nullable LocalDate to
     ) {
         this.from = from;
         this.to = to;
     }
 
-    public LocalDate getFrom() {
-        return from;
+
+    public Optional<LocalDate> getFrom() {
+        return Optional.ofNullable(this.from);
     }
 
-    public LocalDate getTo() {
-        return to == null || from.isAfter(to) ? from : to;
+    public Optional<LocalDate> getTo() {
+        return Optional.ofNullable(this.to);
     }
 }

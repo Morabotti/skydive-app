@@ -159,6 +159,9 @@
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" unique="true" />
             </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
             <column name="token" type="varchar(36)">
                 <constraints nullable="false" unique="true" />
             </column>
@@ -168,7 +171,7 @@
             <column name="description" type="text">
                 <constraints nullable="false" />
             </column>
-            <column name="access" type="enum('open', 'invite', 'pilot-only', 'user-only')">
+            <column name="access" type="enum('open', 'club-only', 'invite', 'pilot-only', 'user-only')">
                 <constraints nullable="false" />
             </column>
             <column name="visible" type="boolean" defaultValueBoolean="false">
@@ -215,7 +218,7 @@
                 tableName="activity_participation"
                 columnNames="account_id, activity_id"
         />
-        <createTable tableName="club_pilot_activity_participation">
+        <createTable tableName="pilot_activity_participation">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" unique="true" />
             </column>
@@ -225,26 +228,26 @@
             <column name="account_id" type="bigint">
                 <constraints
                         nullable="false"
-                        foreignKeyName="fk_club_pilot_activity_participation_account_id"
+                        foreignKeyName="fk_pilot_activity_participation_account_id"
                         references="account(id)" />
             </column>
             <column name="activity_id" type="bigint">
                 <constraints
                         nullable="false"
-                        foreignKeyName="fk_club_pilot_activity_participation_activity_id"
+                        foreignKeyName="fk_pilot_activity_participation_activity_id"
                         references="activity(id)" />
             </column>
             <column name="plane_id" type="bigint">
                 <constraints
                         nullable="false"
-                        foreignKeyName="fk_club_pilot_activity_participation_plane_id"
+                        foreignKeyName="fk_pilot_activity_participation_plane_id"
                         references="plane(id)" />
             </column>
             <column name="created_at" type="datetime" defaultValue="now()" />
             <column name="deleted_at" type="datetime" />
         </createTable>
         <addUniqueConstraint
-                tableName="club_pilot_activity_participation"
+                tableName="pilot_activity_participation"
                 columnNames="account_id, activity_id"
         />
         <createTable tableName="jump">

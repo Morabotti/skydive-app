@@ -26,6 +26,8 @@ public enum ActivityAccess implements EnumType {
 
     open("open"),
 
+    club_only("club-only"),
+
     invite("invite"),
 
     pilot_only("pilot-only"),

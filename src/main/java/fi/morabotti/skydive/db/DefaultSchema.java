@@ -9,9 +9,9 @@ import fi.morabotti.skydive.db.tables.Activity;
 import fi.morabotti.skydive.db.tables.ActivityParticipation;
 import fi.morabotti.skydive.db.tables.Club;
 import fi.morabotti.skydive.db.tables.ClubAccount;
-import fi.morabotti.skydive.db.tables.ClubPilotActivityParticipation;
 import fi.morabotti.skydive.db.tables.ClubProfile;
 import fi.morabotti.skydive.db.tables.Jump;
+import fi.morabotti.skydive.db.tables.PilotActivityParticipation;
 import fi.morabotti.skydive.db.tables.Plane;
 import fi.morabotti.skydive.db.tables.Profile;
 import fi.morabotti.skydive.db.tables.Session;
@@ -40,7 +40,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultSchema extends SchemaImpl {
 
-    private static final long serialVersionUID = -225873929;
+    private static final long serialVersionUID = 830493725;
 
     /**
      * The reference instance of <code></code>
@@ -73,11 +73,6 @@ public class DefaultSchema extends SchemaImpl {
     public final ClubAccount CLUB_ACCOUNT = fi.morabotti.skydive.db.tables.ClubAccount.CLUB_ACCOUNT;
 
     /**
-     * The table <code>club_pilot_activity_participation</code>.
-     */
-    public final ClubPilotActivityParticipation CLUB_PILOT_ACTIVITY_PARTICIPATION = fi.morabotti.skydive.db.tables.ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION;
-
-    /**
      * The table <code>club_profile</code>.
      */
     public final ClubProfile CLUB_PROFILE = fi.morabotti.skydive.db.tables.ClubProfile.CLUB_PROFILE;
@@ -86,6 +81,11 @@ public class DefaultSchema extends SchemaImpl {
      * The table <code>jump</code>.
      */
     public final Jump JUMP = fi.morabotti.skydive.db.tables.Jump.JUMP;
+
+    /**
+     * The table <code>pilot_activity_participation</code>.
+     */
+    public final PilotActivityParticipation PILOT_ACTIVITY_PARTICIPATION = fi.morabotti.skydive.db.tables.PilotActivityParticipation.PILOT_ACTIVITY_PARTICIPATION;
 
     /**
      * The table <code>plane</code>.
@@ -132,9 +132,9 @@ public class DefaultSchema extends SchemaImpl {
             ActivityParticipation.ACTIVITY_PARTICIPATION,
             Club.CLUB,
             ClubAccount.CLUB_ACCOUNT,
-            ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION,
             ClubProfile.CLUB_PROFILE,
             Jump.JUMP,
+            PilotActivityParticipation.PILOT_ACTIVITY_PARTICIPATION,
             Plane.PLANE,
             Profile.PROFILE,
             Session.SESSION);

@@ -158,7 +158,7 @@ public class ClubController {
      * Creates new club.
      * @param informationRequest ClubInformationRequest used for information of club
      * @return ClubView that is created
-     * @throws BadRequestException if club is not created
+     * @throws InternalServerErrorException if club is not created
      * */
     public ClubView createClub(
             ClubInformationRequest informationRequest
@@ -173,7 +173,7 @@ public class ClubController {
                         ))
                         .flatMap(clubDao::getById)
                         .get()
-                        .orElseThrow(BadRequestException::new)
+                        .orElseThrow(InternalServerErrorException::new)
         );
     }
 

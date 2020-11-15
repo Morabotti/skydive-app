@@ -10,6 +10,7 @@ import fi.morabotti.skydive.db.tables.records.ActivityRecord;
 import javax.annotation.Nullable;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.UUID;
 
 import static fi.morabotti.skydive.db.tables.Activity.ACTIVITY;
 
@@ -18,6 +19,8 @@ import static fi.morabotti.skydive.db.tables.Activity.ACTIVITY;
 public abstract class Activity {
     @EasyId
     public abstract Long getId();
+
+    public abstract String getTitle();
 
     public abstract String getDescription();
 
@@ -28,6 +31,8 @@ public abstract class Activity {
     public abstract Boolean getVisible();
 
     public abstract Instant getStartDate();
+
+    public abstract UUID getToken();
 
     @Nullable
     public abstract Instant getEndDate();
@@ -52,10 +57,16 @@ public abstract class Activity {
     public static final ActivityRecordMapper<ActivityRecord> mapper
             = ActivityRecordMapper.builder(ACTIVITY)
             .setIdAccessor(ACTIVITY.ID)
+            .setTitleAccessor(ACTIVITY.TITLE)
             .setDescriptionAccessor(ACTIVITY.DESCRIPTION)
             .setTypeAccessor(ACTIVITY.TYPE)
             .setAccessAccessor(ACTIVITY.ACCESS)
             .setVisibleAccessor(ACTIVITY.VISIBLE)
+            .setTokenAccessor(
+                    ACTIVITY.TOKEN,
+                    UUID::toString,
+                    UUID::fromString
+            )
             .setStartDateAccessor(
                     ACTIVITY.START_DATE,
                     Timestamp::from,

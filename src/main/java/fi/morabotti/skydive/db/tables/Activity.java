@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Activity extends TableImpl<ActivityRecord> {
 
-    private static final long serialVersionUID = -789779979;
+    private static final long serialVersionUID = -648340981;
 
     /**
      * The reference instance of <code>activity</code>
@@ -63,6 +63,11 @@ public class Activity extends TableImpl<ActivityRecord> {
      * The column <code>activity.id</code>.
      */
     public final TableField<ActivityRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+
+    /**
+     * The column <code>activity.title</code>.
+     */
+    public final TableField<ActivityRecord, String> TITLE = createField("title", org.jooq.impl.SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
      * The column <code>activity.token</code>.

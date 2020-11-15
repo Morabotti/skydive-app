@@ -9,9 +9,9 @@ import fi.morabotti.skydive.db.tables.Activity;
 import fi.morabotti.skydive.db.tables.ActivityParticipation;
 import fi.morabotti.skydive.db.tables.Club;
 import fi.morabotti.skydive.db.tables.ClubAccount;
-import fi.morabotti.skydive.db.tables.ClubPilotActivityParticipation;
 import fi.morabotti.skydive.db.tables.ClubProfile;
 import fi.morabotti.skydive.db.tables.Jump;
+import fi.morabotti.skydive.db.tables.PilotActivityParticipation;
 import fi.morabotti.skydive.db.tables.Plane;
 import fi.morabotti.skydive.db.tables.Profile;
 import fi.morabotti.skydive.db.tables.Session;
@@ -58,11 +58,6 @@ public class Tables {
     public static final ClubAccount CLUB_ACCOUNT = fi.morabotti.skydive.db.tables.ClubAccount.CLUB_ACCOUNT;
 
     /**
-     * The table <code>club_pilot_activity_participation</code>.
-     */
-    public static final ClubPilotActivityParticipation CLUB_PILOT_ACTIVITY_PARTICIPATION = fi.morabotti.skydive.db.tables.ClubPilotActivityParticipation.CLUB_PILOT_ACTIVITY_PARTICIPATION;
-
-    /**
      * The table <code>club_profile</code>.
      */
     public static final ClubProfile CLUB_PROFILE = fi.morabotti.skydive.db.tables.ClubProfile.CLUB_PROFILE;
@@ -71,6 +66,11 @@ public class Tables {
      * The table <code>jump</code>.
      */
     public static final Jump JUMP = fi.morabotti.skydive.db.tables.Jump.JUMP;
+
+    /**
+     * The table <code>pilot_activity_participation</code>.
+     */
+    public static final PilotActivityParticipation PILOT_ACTIVITY_PARTICIPATION = fi.morabotti.skydive.db.tables.PilotActivityParticipation.PILOT_ACTIVITY_PARTICIPATION;
 
     /**
      * The table <code>plane</code>.
