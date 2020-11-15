@@ -42,20 +42,20 @@ public class ActivityDao {
     }
 
     public Long fetchActivitiesLength(
-            ActivityQuery clubQuery,
+            ActivityQuery activityQuery,
             DateRangeQuery rangeQuery
     ) {
         return DSL.using(jooqConfiguration)
                 .selectCount()
-                .from(CLUB)
-                .where(getConditions(clubQuery, rangeQuery,true))
+                .from(ACTIVITY)
+                .where(getConditions(activityQuery, rangeQuery,true))
                 .fetchOne(0, Long.class);
     }
 
     public List<Activity> fetchActivities(
             PaginationQuery paginationQuery,
             DateRangeQuery rangeQuery,
-            ActivityQuery clubQuery
+            ActivityQuery activityQuery
     ) {
         return DSL.using(jooqConfiguration)
                 .select(
@@ -66,7 +66,7 @@ public class ActivityDao {
                 .from(ACTIVITY)
                 .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
                 .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
-                .where(getConditions(clubQuery, rangeQuery, true))
+                .where(getConditions(activityQuery, rangeQuery, true))
                 .limit(paginationQuery.getLimit().orElse(20))
                 .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()

@@ -1,6 +1,7 @@
 package fi.morabotti.skydive.controller;
 
 import fi.morabotti.skydive.dao.ActivityDao;
+import fi.morabotti.skydive.dao.ActivityParticipationDao;
 import fi.morabotti.skydive.dao.ClubAccountDao;
 import fi.morabotti.skydive.dao.ClubDao;
 import fi.morabotti.skydive.db.enums.AccountRole;
@@ -8,13 +9,16 @@ import fi.morabotti.skydive.db.enums.ClubAccountRole;
 import fi.morabotti.skydive.domain.ActivityDomain;
 import fi.morabotti.skydive.exception.NotFoundException;
 import fi.morabotti.skydive.model.Account;
+import fi.morabotti.skydive.model.Activity;
+import fi.morabotti.skydive.model.Club;
 import fi.morabotti.skydive.model.ClubAccount;
 import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
+import fi.morabotti.skydive.view.activity.ActivityInformationRequest;
+import fi.morabotti.skydive.view.activity.ActivityParticipationView;
 import fi.morabotti.skydive.view.activity.ActivityQuery;
 import fi.morabotti.skydive.view.activity.ActivityView;
-import fi.morabotti.skydive.view.activity.CreateActivityRequest;
 import fi.morabotti.skydive.view.club.ClubAccountQuery;
 
 import javax.inject.Inject;
@@ -32,18 +36,21 @@ public class ActivityController {
     private final ActivityDao activityDao;
     private final ClubAccountDao clubAccountDao;
     private final ClubDao clubDao;
+    private final ActivityParticipationDao participationDao;
 
     @Inject
     public ActivityController(
             ActivityDomain activityDomain,
             ActivityDao activityDao,
             ClubAccountDao clubAccountDao,
-            ClubDao clubDao
+            ClubDao clubDao,
+            ActivityParticipationDao participationDao
     ) {
         this.activityDomain = activityDomain;
         this.activityDao = activityDao;
         this.clubAccountDao = clubAccountDao;
         this.clubDao = clubDao;
+        this.participationDao = participationDao;
     }
 
     /**
@@ -70,6 +77,20 @@ public class ActivityController {
                         activityQuery,
                         dateRangeQuery
                 )
+        );
+    }
+
+    /**
+     * Fetches participants for certain activity.
+     * @param activityId Long id of the activity
+     * @return ActivityParticipationView
+     * */
+    public ActivityParticipationView getParticipants(
+            Long activityId
+    ) {
+        return ActivityParticipationView.create(
+                participationDao.getParticipants(activityId),
+                participationDao.getPilotParticipants(activityId)
         );
     }
 
@@ -101,22 +122,85 @@ public class ActivityController {
 
     /**
      * Creates new activity based on CreateActivityRequest.
-     * @param activityRequest CreateActivityRequest used to initialize activity
+     * @param informationRequest ActivityInformationRequest used to initialize activity
+     * @param account Account of user creating activity
      * @return ActivityView that is created
      * @throws InternalServerErrorException if club is not created
      * @throws NotAuthorizedException not user is not correct role in club
      * */
     public ActivityView createActivity(
-            CreateActivityRequest activityRequest,
+            ActivityInformationRequest informationRequest,
             Account account
     ) {
         if (!account.getAccountRole().equals(AccountRole.admin)) {
-            isAuthorized(activityRequest.getClub().getId(), account.getId());
+            isAuthorized(informationRequest.getClub().getId(), account.getId());
         }
 
         return ActivityView.of(
-                activityDao.create(activityDomain.createActivity(activityRequest))
+                activityDao.create(activityDomain.createActivity(informationRequest))
                         .flatMap(activityDao::getById)
+                        .get()
+                        .orElseThrow(InternalServerErrorException::new)
+        );
+    }
+
+    /**
+     * Deletes activity and all the related data.
+     * @param id Long used to identify activity in question
+     * @param account Account of user updating activity
+     * @return ActivityView that is updated
+     * @throws InternalServerErrorException if something went wrong
+     * @throws NotAuthorizedException not user is not correct role in club
+     * @throws NotFoundException if club not found by Id
+     * */
+    public Void deleteActivity(
+            Long id,
+            Account account
+    ) {
+        Activity activity = activityDao.getById(id).get()
+                .orElseThrow(NotFoundException::new);
+
+        if (!account.getAccountRole().equals(AccountRole.admin)) {
+            Club club = Optional.ofNullable(activity.getClub())
+                    .orElseThrow(InternalServerErrorException::new);
+
+            isAuthorized(club.getId(), account.getId());
+        }
+
+        return activityDao.delete(id)
+                .peekMap(ignored -> participationDao.deleteActivityParticipation(id))
+                .peekMap(ignored -> participationDao.deleteActivityPilotParticipation(id))
+                .get();
+    }
+
+    /**
+     * Creates new activity based on CreateActivityRequest.
+     * @param id Long used to identify activity in question
+     * @param informationRequest ActivityInformationRequest used to initialize activity
+     * @param account Account of user updating activity
+     * @return ActivityView that is updated
+     * @throws InternalServerErrorException if something went wrong :)
+     * @throws NotAuthorizedException not user is not correct role in club
+     * */
+    public ActivityView updateActivity(
+            Long id,
+            ActivityInformationRequest informationRequest,
+            Account account
+    ) {
+        if (!account.getAccountRole().equals(AccountRole.admin)) {
+            isAuthorized(informationRequest.getClub().getId(), account.getId());
+        }
+
+        return ActivityView.of(
+                activityDao.getById(id)
+                        .flatMap(activity ->
+                                activityDao.update(
+                                        activityDomain.updateActivity(
+                                                activity.orElseThrow(NotFoundException::new),
+                                                informationRequest
+                                        )
+                                )
+                        )
                         .get()
                         .orElseThrow(InternalServerErrorException::new)
         );

@@ -17,6 +17,8 @@ import java.util.UUID;
 public abstract class ActivityView {
     public abstract Long getId();
 
+    public abstract String getTitle();
+
     public abstract String getDescription();
 
     public abstract ActivityType getType();
@@ -52,6 +54,7 @@ public abstract class ActivityView {
     public static ActivityView of(Activity activity) {
         return ActivityView.builder()
                 .setId(activity.getId())
+                .setTitle(activity.getTitle())
                 .setDescription(activity.getDescription())
                 .setType(activity.getType())
                 .setAccess(activity.getAccess())

@@ -19,8 +19,10 @@ public abstract class ActivityParticipation {
 
     public abstract Boolean getActive();
 
+    @Nullable
     public abstract Account getAccount();
 
+    @Nullable
     public abstract Activity getActivity();
 
     public abstract Instant getCreatedAt();

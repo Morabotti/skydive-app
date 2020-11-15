@@ -3,9 +3,11 @@ package fi.morabotti.skydive.domain;
 import fi.morabotti.skydive.model.Club;
 import fi.morabotti.skydive.model.ClubProfile;
 import fi.morabotti.skydive.view.club.ClubInformationRequest;
+import fi.morabotti.skydive.view.club.ClubView;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Collections;
 
 @Singleton
 public class ClubDomain {
@@ -22,6 +24,19 @@ public class ClubDomain {
                 .setIsPublic(informationRequest.getIsPublic())
                 .setName(informationRequest.getName())
                 .setSlug(informationRequest.getSlug())
+                .build();
+    }
+
+    public Club viewToClub(
+            ClubView clubView
+    ) {
+        return Club.builder()
+                .setId(clubView.getId())
+                .setSlug(clubView.getSlug())
+                .setName(clubView.getName())
+                .setIsPublic(clubView.getIsPublic())
+                .setClubProfiles(Collections.emptyList())
+                .setDeletedAt(clubView.getDeletedAt())
                 .build();
     }
 
