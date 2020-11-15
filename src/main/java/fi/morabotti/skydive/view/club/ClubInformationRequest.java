@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.jubic.easyvalue.EasyValue;
 
 @EasyValue
-@JsonDeserialize(builder = ClubCreationRequest.Builder.class)
-public abstract class ClubCreationRequest {
+@JsonDeserialize(builder = ClubInformationRequest.Builder.class)
+public abstract class ClubInformationRequest {
     public abstract String getName();
 
     public abstract String getSlug();
@@ -29,7 +29,7 @@ public abstract class ClubCreationRequest {
         return new Builder();
     }
 
-    public static class Builder extends EasyValue_ClubCreationRequest.Builder {
+    public static class Builder extends EasyValue_ClubInformationRequest.Builder {
 
     }
 }

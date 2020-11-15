@@ -84,12 +84,6 @@
                 <constraints nullable="false" />
             </column>
             <column name="deleted_at" type="datetime" />
-            <column name="creator_account_id" type="bigint">
-                <constraints
-                        nullable="false"
-                        foreignKeyName="fk_club_creator_account"
-                        references="account(id)" />
-            </column>
         </createTable>
         <createTable tableName="club_profile">
             <column name="id" autoIncrement="true" type="bigint">
@@ -199,6 +193,9 @@
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" unique="true" />
             </column>
+            <column name="active" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
             <column name="account_id" type="bigint">
                 <constraints
                         nullable="false"
@@ -221,6 +218,9 @@
         <createTable tableName="club_pilot_activity_participation">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" unique="true" />
+            </column>
+            <column name="active" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false" />
             </column>
             <column name="account_id" type="bigint">
                 <constraints

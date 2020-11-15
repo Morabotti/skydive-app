@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Club extends TableImpl<ClubRecord> {
 
-    private static final long serialVersionUID = 2145848469;
+    private static final long serialVersionUID = 37964845;
 
     /**
      * The reference instance of <code>club</code>
@@ -81,11 +81,6 @@ public class Club extends TableImpl<ClubRecord> {
      * The column <code>club.deleted_at</code>.
      */
     public final TableField<ClubRecord, Timestamp> DELETED_AT = createField("deleted_at", org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
-
-    /**
-     * The column <code>club.creator_account_id</code>.
-     */
-    public final TableField<ClubRecord, Long> CREATOR_ACCOUNT_ID = createField("creator_account_id", org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * Create a <code>club</code> table reference
@@ -133,7 +128,7 @@ public class Club extends TableImpl<ClubRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.CLUB_FK_CLUB_CREATOR_ACCOUNT, Indexes.CLUB_ID, Indexes.CLUB_SLUG);
+        return Arrays.<Index>asList(Indexes.CLUB_ID, Indexes.CLUB_SLUG);
     }
 
     /**
@@ -150,18 +145,6 @@ public class Club extends TableImpl<ClubRecord> {
     @Override
     public List<UniqueKey<ClubRecord>> getKeys() {
         return Arrays.<UniqueKey<ClubRecord>>asList(Keys.KEY_CLUB_ID, Keys.KEY_CLUB_SLUG);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<ForeignKey<ClubRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<ClubRecord, ?>>asList(Keys.FK_CLUB_CREATOR_ACCOUNT);
-    }
-
-    public Account account() {
-        return new Account(this, Keys.FK_CLUB_CREATOR_ACCOUNT);
     }
 
     /**

@@ -48,7 +48,6 @@ public class Indexes {
     public static final Index ACTIVITY_PARTICIPATION_ACCOUNT_ID = Indexes0.ACTIVITY_PARTICIPATION_ACCOUNT_ID;
     public static final Index ACTIVITY_PARTICIPATION_FK_ACTIVITY_PARTICIPATION_ACTIVITY_ID = Indexes0.ACTIVITY_PARTICIPATION_FK_ACTIVITY_PARTICIPATION_ACTIVITY_ID;
     public static final Index ACTIVITY_PARTICIPATION_ID = Indexes0.ACTIVITY_PARTICIPATION_ID;
-    public static final Index CLUB_FK_CLUB_CREATOR_ACCOUNT = Indexes0.CLUB_FK_CLUB_CREATOR_ACCOUNT;
     public static final Index CLUB_ID = Indexes0.CLUB_ID;
     public static final Index CLUB_SLUG = Indexes0.CLUB_SLUG;
     public static final Index CLUB_ACCOUNT_ACCOUNT_ID = Indexes0.CLUB_ACCOUNT_ACCOUNT_ID;
@@ -84,7 +83,6 @@ public class Indexes {
         public static Index ACTIVITY_PARTICIPATION_ACCOUNT_ID = Internal.createIndex("account_id", ActivityParticipation.ACTIVITY_PARTICIPATION, new OrderField[] { ActivityParticipation.ACTIVITY_PARTICIPATION.ACCOUNT_ID, ActivityParticipation.ACTIVITY_PARTICIPATION.ACTIVITY_ID }, true);
         public static Index ACTIVITY_PARTICIPATION_FK_ACTIVITY_PARTICIPATION_ACTIVITY_ID = Internal.createIndex("fk_activity_participation_activity_id", ActivityParticipation.ACTIVITY_PARTICIPATION, new OrderField[] { ActivityParticipation.ACTIVITY_PARTICIPATION.ACTIVITY_ID }, false);
         public static Index ACTIVITY_PARTICIPATION_ID = Internal.createIndex("id", ActivityParticipation.ACTIVITY_PARTICIPATION, new OrderField[] { ActivityParticipation.ACTIVITY_PARTICIPATION.ID }, true);
-        public static Index CLUB_FK_CLUB_CREATOR_ACCOUNT = Internal.createIndex("fk_club_creator_account", Club.CLUB, new OrderField[] { Club.CLUB.CREATOR_ACCOUNT_ID }, false);
         public static Index CLUB_ID = Internal.createIndex("id", Club.CLUB, new OrderField[] { Club.CLUB.ID }, true);
         public static Index CLUB_SLUG = Internal.createIndex("slug", Club.CLUB, new OrderField[] { Club.CLUB.SLUG }, true);
         public static Index CLUB_ACCOUNT_ACCOUNT_ID = Internal.createIndex("account_id", ClubAccount.CLUB_ACCOUNT, new OrderField[] { ClubAccount.CLUB_ACCOUNT.ACCOUNT_ID, ClubAccount.CLUB_ACCOUNT.CLUB_ID }, true);

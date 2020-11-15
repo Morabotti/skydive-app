@@ -1,6 +1,5 @@
 package fi.morabotti.skydive.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.jubic.easymapper.annotations.EasyId;
 import fi.jubic.easyvalue.EasyValue;
@@ -39,7 +38,6 @@ public abstract class Activity {
     public abstract Instant getDeletedAt();
 
     @Nullable
-    @JsonIgnore
     public abstract Club getClub();
 
     public abstract Builder toBuilder();

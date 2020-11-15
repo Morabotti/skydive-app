@@ -6,7 +6,7 @@ import fi.morabotti.skydive.model.Activity;
 import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
-import fi.morabotti.skydive.view.club.ClubCreationRequest;
+import fi.morabotti.skydive.view.club.ClubInformationRequest;
 import fi.morabotti.skydive.view.club.ClubMemberRequest;
 import fi.morabotti.skydive.view.club.ClubQuery;
 import fi.morabotti.skydive.view.club.ClubView;
@@ -55,107 +55,128 @@ public class ClubResource {
     @POST
     @RolesAllowed({"admin"})
     public ClubView createNewClub(
-            @Context Account account,
-            ClubCreationRequest creationRequest
+            ClubInformationRequest informationRequest
     ) {
-        return clubController.createClub(creationRequest, account);
+        return clubController.createClub(informationRequest);
     }
 
     @GET
-    @Path("{clubSlug}")
-    public ClubView getClubBySlug(
-            @PathParam("clubSlug") String slug
+    @Path("{clubId}")
+    public ClubView getClubById(
+            @PathParam("clubId") Long clubId
     ) {
-        return clubController.getClub(slug);
+        return clubController.getClub(clubId);
+    }
+
+    @GET
+    @Path("/slug/{clubSlug}")
+    public ClubView getClubBySlug(
+            @PathParam("clubSlug") String clubSlug
+    ) {
+        return clubController.getClub(clubSlug);
     }
 
     @PUT
-    @Path("{clubSlug}")
-    public Response updateClub(
-            @PathParam("clubSlug") String slug
+    @Path("{clubId}")
+    public ClubView updateClub(
+            @PathParam("clubId") Long clubId,
+            ClubInformationRequest informationRequest
     ) {
-        return Response.ok().build();
+        return clubController.updateClub(clubId, informationRequest);
     }
 
     @DELETE
-    @Path("{clubSlug}")
+    @Path("{clubId}")
     public Response deleteClub(
-            @PathParam("clubSlug") String slug
+            @PathParam("clubId") Long clubId
     ) {
-        clubController.deleteClub(slug);
+        clubController.deleteClub(clubId);
         return Response.ok().build();
     }
 
     @GET
-    @Path("/{clubSlug}/activity")
+    @Path("/{clubId}/activity")
     public List<Activity> getClubActivities(
-            @PathParam("clubSlug") String slug
+            @PathParam("clubId") Long clubId
     ) {
         return Collections.emptyList();
     }
 
     @GET
-    @Path("/{clubSlug}/member")
+    @Path("/{clubId}/member")
     public PaginationResponse<AccountView> getClubMembers(
-            @PathParam("clubSlug") String slug,
+            @PathParam("clubId") Long clubId,
             @BeanParam PaginationQuery paginationQuery
     ) {
         return clubController.getMembers(
                 paginationQuery,
-                slug
+                clubId
         );
     }
 
     @GET
-    @Path("/{clubSlug}/member/{accountId}")
+    @Path("/{clubId}/member/{accountId}")
     public AccountView getClubMemberInformation(
-            @PathParam("clubSlug") String slug,
+            @PathParam("clubId") Long clubId,
             @PathParam("accountId") Long accountId
     ) {
-        return clubController.getMember(slug, accountId);
+        return clubController.getMember(clubId, accountId);
     }
-
-    @POST
-    @Path("/{clubSlug}/member/request")
-    public AccountView requestClubJoin(
-            @PathParam("clubSlug") String slug,
-            @Context Account account,
-            ClubMemberRequest clubMemberRequest
-    ) {
-        return clubController.requestMemberToClub(slug, account, clubMemberRequest);
-    }
-
-    // TODO: Add check whether Account is actually owner of this club.
 
     @DELETE
-    @Path("/{clubSlug}/member/{accountId}")
+    @Path("/{clubId}/member/{accountId}")
     public Response deleteMemberFromClub(
-            @PathParam("clubSlug") String slug,
+            @PathParam("clubId") Long clubId,
             @PathParam("accountId") Long accountId,
             @Context Account account
     ) {
-        clubController.removeMemberFromClub(slug, accountId);
+        clubController.removeMemberFromClub(clubId, accountId);
         return Response.ok().build();
     }
 
     @POST
-    @Path("/{clubSlug}/accept/{accountId}")
-    public AccountView acceptUserToClub(
-            @PathParam("clubSlug") String slug,
+    @Path("/{clubId}/member/{accountId}")
+    @RolesAllowed({"admin"})
+    public AccountView addMemberFromClub(
+            @PathParam("clubId") Long clubId,
             @PathParam("accountId") Long accountId,
-            @Context Account account
+            ClubMemberRequest clubMemberRequest
     ) {
-        return clubController.acceptMemberToClub(slug, accountId);
+        return clubController.addMemberToClub(clubId, accountId, clubMemberRequest);
     }
 
     @POST
-    @Path("/{clubSlug}/decline/{accountId}")
-    public Response declineUserFromClub(
-            @PathParam("clubSlug") String slug,
+    @Path("/{clubId}/member/request")
+    public AccountView requestClubJoin(
+            @PathParam("clubId") Long clubId,
+            @Context Account account,
+            ClubMemberRequest clubMemberRequest
+    ) {
+        return clubController.requestMemberToClub(
+                clubId,
+                account,
+                clubMemberRequest
+        );
+    }
+
+    @PUT
+    @Path("/{clubId}/accept/{accountId}")
+    public AccountView acceptUserToClub(
+            @PathParam("clubId") Long clubId,
             @PathParam("accountId") Long accountId,
             @Context Account account
     ) {
-        clubController.removeMemberFromClub(slug, accountId);
+        return clubController.acceptMemberToClub(clubId, accountId);
+    }
+
+    @PUT
+    @Path("/{clubId}/decline/{accountId}")
+    public Response declineUserFromClub(
+            @PathParam("clubId") Long clubId,
+            @PathParam("accountId") Long accountId,
+            @Context Account account
+    ) {
+        clubController.removeMemberFromClub(clubId, accountId);
         return Response.ok().build();
     }
 }

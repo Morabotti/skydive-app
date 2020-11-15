@@ -32,10 +32,6 @@ public abstract class Club {
     @Nullable
     public abstract Instant getDeletedAt();
 
-    @Nullable
-    @JsonIgnore
-    public abstract Account getCreatorAccount();
-
     @JsonIgnore
     public Optional<ClubProfile> getClubProfile() {
         return getClubProfiles().stream().findFirst();
@@ -65,6 +61,5 @@ public abstract class Club {
                     Timestamp::from,
                     Timestamp::toInstant
             )
-            .setCreatorAccountAccessor(CLUB.CREATOR_ACCOUNT_ID, Account::getId)
             .build();
 }

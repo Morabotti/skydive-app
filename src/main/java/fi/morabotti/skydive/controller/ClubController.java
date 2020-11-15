@@ -9,12 +9,12 @@ import fi.morabotti.skydive.db.enums.ClubAccountRole;
 import fi.morabotti.skydive.domain.ClubDomain;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Club;
-import fi.morabotti.skydive.model.ClubAccount;
+import fi.morabotti.skydive.model.ClubProfile;
 import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.club.ClubAccountQuery;
-import fi.morabotti.skydive.view.club.ClubCreationRequest;
+import fi.morabotti.skydive.view.club.ClubInformationRequest;
 import fi.morabotti.skydive.view.club.ClubMemberRequest;
 import fi.morabotti.skydive.view.club.ClubQuery;
 import fi.morabotti.skydive.view.club.ClubView;
@@ -80,20 +80,20 @@ public class ClubController {
 
     /**
      * Fetches club member.
-     * @param slug String slug for club
+     * @param clubId Long slug for club
      * @param accountId Long target account id
      * @return AccountView of account if member
      * @throws NotFoundException if club not found
      * */
     public AccountView getMember(
-            String slug,
+            Long clubId,
             Long accountId
     ) {
-        Club club = getClubMembership(slug, accountId, true);
+        getClubMembership(clubId, accountId, true);
 
         return AccountView.of(
                 clubAccountDao.findAccount(
-                        ClubAccountQuery.of(club.getId(), accountId)
+                        ClubAccountQuery.of(clubId, accountId)
                 )
                         .get()
                         .orElseThrow(NotFoundException::new)
@@ -103,15 +103,15 @@ public class ClubController {
     /**
      * Fetches clubs member.
      * @param paginationQuery PaginationQuery used to paginate response
-     * @param slug String identifies wanted club
+     * @param clubId Long identifies wanted club
      * @return PaginationResponse of AccountView
      * @throws NotFoundException if club not found
      * */
     public PaginationResponse<AccountView> getMembers(
             PaginationQuery paginationQuery,
-            String slug
+            Long clubId
     ) {
-        Club club = clubDao.getClubBySlug(slug).get()
+        Club club = clubDao.getById(clubId).get()
                 .orElseThrow(NotFoundException::new);
 
         ClubAccountQuery query = new ClubAccountQuery()
@@ -129,7 +129,7 @@ public class ClubController {
     }
 
     /**
-     * Fetches club by slug.
+     * Fetches club by id.
      * @param slug String identifies wanted club
      * @return ClubView
      * @throws NotFoundException if club not found
@@ -156,26 +156,19 @@ public class ClubController {
 
     /**
      * Creates new club.
-     * @param creationRequest ClubCreationRequest used for information of club
-     * @param creatorAccount Account that is created the club
-     * @return Club that is created
+     * @param informationRequest ClubInformationRequest used for information of club
+     * @return ClubView that is created
      * @throws BadRequestException if club is not created
      * */
     public ClubView createClub(
-            ClubCreationRequest creationRequest,
-            Account creatorAccount
+            ClubInformationRequest informationRequest
     ) {
         return ClubView.of(
-                clubDao.create(
-                        clubDomain.createClub(
-                                creationRequest,
-                                creatorAccount
-                        )
-                )
+                clubDao.create(clubDomain.createClub(informationRequest))
                         .flatMap(club -> clubProfileDao.create(
                                 clubDomain.createClubProfile(
                                         club,
-                                        creationRequest
+                                        informationRequest
                                 )
                         ))
                         .flatMap(clubDao::getById)
@@ -185,12 +178,49 @@ public class ClubController {
     }
 
     /**
+     * Updates existing club.
+     * @param clubId Long id of the club
+     * @param informationRequest ClubInformationRequest used for information of club
+     * @return ClubView of updated club
+     * @throws BadRequestException if club is not created
+     * @throws NotFoundException if club is not found
+     * */
+    public ClubView updateClub(
+            Long clubId,
+            ClubInformationRequest informationRequest
+    ) {
+        Club club = clubDao.getById(clubId).get()
+                .orElseThrow(NotFoundException::new);
+
+        ClubProfile clubProfile = club.getClubProfile().isPresent()
+                ? club.getClubProfile().get()
+                : clubDomain.createClubProfile(club, informationRequest);
+
+        return ClubView.of(
+                clubDao.update(
+                        clubDomain.updateClub(
+                                club,
+                                informationRequest
+                        )
+                )
+                        .peek(c -> clubProfileDao.update(
+                                clubDomain.updateClubProfile(
+                                        clubProfile,
+                                        informationRequest
+                                )
+                        ))
+                        .get()
+                        .orElseThrow(BadRequestException::new)
+        );
+    }
+
+    /**
      * Deletes club, its profile, clears planes and accounts.
-     * @param slug String slug for club
+     * @param clubId Long id for club
      * @throws NotFoundException if club is not found with slug
      * */
-    public Void deleteClub(String slug) {
-        Club club = clubDao.getClubBySlug(slug).get()
+    public Void deleteClub(Long clubId) {
+        Club club = clubDao.getById(clubId).get()
                 .orElseThrow(NotFoundException::new);
 
         return clubAccountDao.deleteByClub(club.getId())
@@ -207,45 +237,46 @@ public class ClubController {
 
     /**
      * Adds member to club. Should be available for admin only.
-     * @param slug String slug for club
+     * @param clubId Long id for club
      * @param accountId Integer account id
-     * @param accountRole AccountRole role of the user
-     * @return ClubAccount that is created
+     * @param clubMemberRequest ClubMemberRequest role of the user
+     * @return AccountView that is created
      * @throws BadRequestException if club slug is not valid or account is member already
      * */
-    public ClubAccount addMemberToClub(
-            String slug,
+    public AccountView addMemberToClub(
+            Long clubId,
             Long accountId,
-            ClubAccountRole accountRole
+            ClubMemberRequest clubMemberRequest
     ) {
-        Club club = getClubMembership(slug, accountId, false);
+        getClubMembership(clubId, accountId, false);
 
-        return clubDao.getClubBySlug(slug)
-                .flatMap(c -> clubAccountDao.create(
-                        club.getId(),
+        return AccountView.of(
+                clubAccountDao.create(
+                        clubId,
                         accountId,
-                        accountRole,
+                        clubMemberRequest.getRole(),
                         true
-                ))
-                .flatMap(clubAccountDao::getById)
-                .get()
-                .orElseThrow(BadRequestException::new);
+                )
+                        .flatMap(clubAccountDao::getById)
+                        .get()
+                        .orElseThrow(BadRequestException::new)
+        );
     }
 
     /**
      * Creates request to join club.
-     * @param slug String slug for club
+     * @param clubId Long id for club
      * @param account Account of the requester
      * @param memberRequest ClubMemberRequest requested role
      * @return AccountView that is created
      * @throws BadRequestException if club slug is not valid or account is member already
      * */
     public AccountView requestMemberToClub(
-            String slug,
+            Long clubId,
             Account account,
             ClubMemberRequest memberRequest
     ) {
-        Club club = getClubMembership(slug, account.getId(), false);
+        getClubMembership(clubId, account.getId(), false);
 
         if (!account.getAccountRole().equals(AccountRole.admin)
                 && memberRequest.getRole().equals(ClubAccountRole.club)
@@ -255,7 +286,7 @@ public class ClubController {
 
         return AccountView.of(
                 clubAccountDao.create(
-                        club.getId(),
+                        clubId,
                         account.getId(),
                         memberRequest.getRole(),
                         false
@@ -268,20 +299,20 @@ public class ClubController {
 
     /**
      * Accepts request to join club. Requires ClubAccount with accepted.
-     * @param slug String slug for club
+     * @param clubId Long id for club
      * @param accountId Integer account id
      * @return AccountView that is created
      * @throws BadRequestException if club slug is not valid or account is member already
      * */
     public AccountView acceptMemberToClub(
-            String slug,
+            Long clubId,
             Long accountId
     ) {
-        Club club = getClubMembership(slug, accountId, true);
+        Club club = getClubMembership(clubId, accountId, true);
 
         return AccountView.of(
                 clubAccountDao.updateStatus(
-                        club.getId(),
+                        clubId,
                         accountId,
                         true
                 )
@@ -295,25 +326,22 @@ public class ClubController {
 
     /**
      * Removes member from club.
-     * @param slug String slug for club
+     * @param clubId Long id for club
      * @param accountId Integer account id
      * @return ClubAccount that is created
      * @throws BadRequestException if club slug is not valid or account is member already
      * */
-    public Void removeMemberFromClub(String slug, Long accountId) {
-        Club club = getClubMembership(slug, accountId, true);
+    public Void removeMemberFromClub(Long clubId, Long accountId) {
+        getClubMembership(clubId, accountId, true);
 
-        return clubAccountDao.delete(
-                club.getId(),
-                accountId
-        ).get();
+        return clubAccountDao.delete(clubId, accountId).get();
     }
 
-    private Club getClubMembership(String clubSlug, Long accountId, Boolean shouldBeMember) {
-        Club club = clubDao.checkClubBySlug(clubSlug)
+    private Club getClubMembership(Long clubId, Long accountId, Boolean shouldBeMember) {
+        Club club = clubDao.getById(clubId).get()
                 .orElseThrow(NotFoundException::new);
 
-        Boolean isMember = clubAccountDao.checkIfMember(club.getId(), accountId);
+        Boolean isMember = clubAccountDao.checkIfMember(clubId, accountId);
 
         if (!isMember && shouldBeMember) {
             throw new BadRequestException("Account is not member.");

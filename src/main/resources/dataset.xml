@@ -29,4 +29,13 @@
             address="Street 1"
             phone="123456789"
             account_id="1" />
+    <profile
+            id="2"
+            first_name="User"
+            last_name="Test"
+            zipcode="123456"
+            city="TestCity"
+            address="Street 2"
+            phone="123456789"
+            account_id="2" />
 </dataset>

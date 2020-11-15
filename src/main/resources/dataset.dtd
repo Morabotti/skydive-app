@@ -3,11 +3,10 @@
         session*,
         club*,
         club_account*,
-        club_activity*,
-        club_activity_intrest*,
-        club_activity_invite*,
-        club_activity_participation*,
-        club_pilot_activity_participation*,
+        activity*,
+        activity_invite*,
+        activity_participation*,
+        pilot_activity_participation*,
         club_profile*,
         plane*,
         jump*,
@@ -67,11 +66,12 @@
 <!ATTLIST plane
         id CDATA #REQUIRED
         license_number CDATA #REQUIRED
+        seats CDATA #REQUIRED
         club_id CDATA #REQUIRED
 >
 
-<!ELEMENT club_activity EMPTY>
-<!ATTLIST club_activity
+<!ELEMENT activity EMPTY>
+<!ATTLIST activity
         id CDATA #REQUIRED
         type CDATA #REQUIRED
         description CDATA #REQUIRED
@@ -84,8 +84,8 @@
         club_id CDATA #REQUIRED
 >
 
-<!ELEMENT club_activity_invite EMPTY>
-<!ATTLIST club_activity_invite
+<!ELEMENT activity_invite EMPTY>
+<!ATTLIST activity_invite
         id CDATA #REQUIRED
         access_key CDATA #REQUIRED
         active_start_date CDATA #IMPLIED
@@ -93,9 +93,10 @@
         club_activity_id CDATA #REQUIRED
 >
 
-<!ELEMENT club_pilot_activity_participation EMPTY>
-<!ATTLIST club_pilot_activity_participation
+<!ELEMENT pilot_activity_participation EMPTY>
+<!ATTLIST pilot_activity_participation
         id CDATA #REQUIRED
+        active CDATA #REQUIRED
         club_activity_id CDATA #REQUIRED
         account_id CDATA #REQUIRED
         plane_id CDATA #REQUIRED
@@ -103,18 +104,10 @@
         deleted_at CDATA #IMPLIED
 >
 
-<!ELEMENT club_activity_intrest EMPTY>
-<!ATTLIST club_activity_intrest
+<!ELEMENT activity_participation EMPTY>
+<!ATTLIST activity_participation
         id CDATA #REQUIRED
-        account_id CDATA #REQUIRED
-        club_activity_id CDATA #REQUIRED
-        created_at CDATA #REQUIRED
-        deleted_at CDATA #IMPLIED
->
-
-<!ELEMENT club_activity_participation EMPTY>
-<!ATTLIST club_activity_participation
-        id CDATA #REQUIRED
+        active CDATA #REQUIRED
         account_id CDATA #REQUIRED
         club_activity_id CDATA #REQUIRED
         created_at CDATA #REQUIRED

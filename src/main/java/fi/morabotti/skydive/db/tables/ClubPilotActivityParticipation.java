@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ClubPilotActivityParticipation extends TableImpl<ClubPilotActivityParticipationRecord> {
 
-    private static final long serialVersionUID = -357929365;
+    private static final long serialVersionUID = 689634421;
 
     /**
      * The reference instance of <code>club_pilot_activity_participation</code>
@@ -61,6 +61,11 @@ public class ClubPilotActivityParticipation extends TableImpl<ClubPilotActivityP
      * The column <code>club_pilot_activity_participation.id</code>.
      */
     public final TableField<ClubPilotActivityParticipationRecord, Long> ID = createField("id", org.jooq.impl.SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+
+    /**
+     * The column <code>club_pilot_activity_participation.active</code>.
+     */
+    public final TableField<ClubPilotActivityParticipationRecord, Boolean> ACTIVE = createField("active", org.jooq.impl.SQLDataType.BIT.nullable(false).defaultValue(org.jooq.impl.DSL.inline("b'0'", org.jooq.impl.SQLDataType.BIT)), this, "");
 
     /**
      * The column <code>club_pilot_activity_participation.account_id</code>.
