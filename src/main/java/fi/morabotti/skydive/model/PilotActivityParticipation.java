@@ -46,7 +46,7 @@ public abstract class PilotActivityParticipation {
             .setAccountAccessor(PILOT_ACTIVITY_PARTICIPATION.ACCOUNT_ID, Account::getId)
             .setActivityAccessor(PILOT_ACTIVITY_PARTICIPATION.ACTIVITY_ID, Activity::getId)
             .setPlaneAccessor(PILOT_ACTIVITY_PARTICIPATION.PLANE_ID, Plane::getId)
-            .setDeletedAtAccessor(
+            .setCreatedAtAccessor(
                     PILOT_ACTIVITY_PARTICIPATION.CREATED_AT,
                     Timestamp::from,
                     Timestamp::toInstant

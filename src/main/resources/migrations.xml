@@ -148,6 +148,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="seats" type="int" />
+            <column name="deleted_at" type="datetime" />
             <column name="club_id" type="bigint">
                 <constraints
                         nullable="false"

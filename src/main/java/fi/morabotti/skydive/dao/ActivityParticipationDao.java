@@ -61,6 +61,7 @@ public class ActivityParticipationDao {
                 .and(PILOT_ACTIVITY_PARTICIPATION.DELETED_AT.isNull())
                 .and(ACCOUNT.DELETED_AT.isNull())
                 .and(PROFILE.DELETED_AT.isNull())
+                .and(PLANE.DELETED_AT.isNull())
                 .fetch()
                 .stream()
                 .collect(

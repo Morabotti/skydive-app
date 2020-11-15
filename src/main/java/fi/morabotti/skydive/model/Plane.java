@@ -7,6 +7,7 @@ import fi.jubic.easyvalue.EasyValue;
 import fi.morabotti.skydive.db.tables.records.PlaneRecord;
 
 import javax.annotation.Nullable;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 import static fi.morabotti.skydive.db.tables.Plane.PLANE;
@@ -44,5 +45,10 @@ public abstract class Plane {
             .setLicenseNumberAccessor(PLANE.LICENSE_NUMBER)
             .setSeatsAccessor(PLANE.SEATS)
             .setClubAccessor(PLANE.CLUB_ID, Club::getId)
+            .setDeletedAtAccessor(
+                    PLANE.DELETED_AT,
+                    Timestamp::from,
+                    Timestamp::toInstant
+            )
             .build();
 }

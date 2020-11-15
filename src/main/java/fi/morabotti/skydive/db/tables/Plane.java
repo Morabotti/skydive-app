@@ -9,6 +9,7 @@ import fi.morabotti.skydive.db.Indexes;
 import fi.morabotti.skydive.db.Keys;
 import fi.morabotti.skydive.db.tables.records.PlaneRecord;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Plane extends TableImpl<PlaneRecord> {
 
-    private static final long serialVersionUID = -1738593671;
+    private static final long serialVersionUID = 621339010;
 
     /**
      * The reference instance of <code>plane</code>
@@ -70,6 +71,11 @@ public class Plane extends TableImpl<PlaneRecord> {
      * The column <code>plane.seats</code>.
      */
     public final TableField<PlaneRecord, Integer> SEATS = createField("seats", org.jooq.impl.SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>plane.deleted_at</code>.
+     */
+    public final TableField<PlaneRecord, Timestamp> DELETED_AT = createField("deleted_at", org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
 
     /**
      * The column <code>plane.club_id</code>.

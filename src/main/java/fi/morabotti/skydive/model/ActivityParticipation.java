@@ -45,7 +45,7 @@ public abstract class ActivityParticipation {
             .setActiveAccessor(ACTIVITY_PARTICIPATION.ACTIVE)
             .setAccountAccessor(ACTIVITY_PARTICIPATION.ACCOUNT_ID, Account::getId)
             .setActivityAccessor(ACTIVITY_PARTICIPATION.ACTIVITY_ID, Activity::getId)
-            .setDeletedAtAccessor(
+            .setCreatedAtAccessor(
                     ACTIVITY_PARTICIPATION.CREATED_AT,
                     Timestamp::from,
                     Timestamp::toInstant
