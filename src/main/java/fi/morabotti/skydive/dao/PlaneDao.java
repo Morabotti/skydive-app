@@ -5,9 +5,13 @@ import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.skydive.config.Configuration;
 import fi.morabotti.skydive.model.Plane;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import static fi.morabotti.skydive.db.tables.Plane.PLANE;
@@ -26,27 +30,40 @@ public class PlaneDao {
         this.transactionProvider = transactionProvider;
     }
 
+    public List<Plane> fetchPlanes(Long clubId) {
+        return DSL.using(jooqConfiguration)
+                .select(PLANE.asterisk())
+                .from(PLANE)
+                .where(PLANE.CLUB_ID.eq(clubId))
+                .and(PLANE.DELETED_AT.isNull())
+                .fetch()
+                .stream()
+                .collect(Plane.mapper);
+    }
+
     public Transactional<Optional<Plane>, DSLContext> getById(Long id) {
         return Transactional.of(
                 context -> context
                         .select(PLANE.asterisk())
                         .from(PLANE)
                         .where(PLANE.ID.eq(id))
+                        .and(PLANE.DELETED_AT.isNull())
                         .fetchOptional()
                         .flatMap(Plane.mapper::mapOptional),
                 transactionProvider
         );
     }
 
-    public Transactional<Long, DSLContext> create(Plane club) {
+    public Transactional<Long, DSLContext> create(Long clubId, Plane plane) {
         return Transactional.of(
                 context -> context.insertInto(PLANE)
                         .set(
                                 Plane.mapper.write(
                                         context.newRecord(PLANE),
-                                        club
+                                        plane
                                 )
                         )
+                        .set(PLANE.CLUB_ID, clubId)
                         .returning()
                         .fetchOne()
                         .get(PLANE.ID),
@@ -57,7 +74,8 @@ public class PlaneDao {
     public Transactional<Void, DSLContext> delete(Long id) {
         return Transactional.of(
                 context -> {
-                    context.delete(PLANE)
+                    context.update(PLANE)
+                            .set(PLANE.DELETED_AT, Timestamp.from(Instant.now()))
                             .where(PLANE.ID.eq(id))
                             .execute();
                     return null;
@@ -78,13 +96,14 @@ public class PlaneDao {
         );
     }
 
-    public Transactional<Optional<Plane>, DSLContext> update(Plane plane) {
+    public Transactional<Optional<Plane>, DSLContext> update(Long clubId, Plane plane) {
         return Transactional.of(
                 context -> context.update(PLANE)
                         .set(Plane.mapper.write(
                                 context.newRecord(PLANE),
                                 plane
                         ))
+                        .set(PLANE.CLUB_ID, clubId)
                         .where(PLANE.ID.eq(plane.getId()))
                         .execute(),
                 transactionProvider

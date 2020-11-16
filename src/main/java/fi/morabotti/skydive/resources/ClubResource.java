@@ -3,6 +3,7 @@ package fi.morabotti.skydive.resources;
 import fi.morabotti.skydive.controller.ClubController;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Activity;
+import fi.morabotti.skydive.model.Plane;
 import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
@@ -100,6 +101,52 @@ public class ClubResource {
             @PathParam("clubId") Long clubId
     ) {
         return Collections.emptyList();
+    }
+
+    @GET
+    @Path("/{clubId}/plane")
+    public List<Plane> getPlanes(
+            @PathParam("clubId") Long clubId
+    ) {
+        return clubController.getPlanes(clubId);
+    }
+
+    @GET
+    @Path("/{clubId}/plane/{planeId}")
+    public Plane getPlanes(
+            @PathParam("clubId") Long clubId,
+            @PathParam("planeId") Long planeId
+    ) {
+        return clubController.getPlane(planeId);
+    }
+
+    @POST
+    @Path("/{clubId}/plane")
+    public Plane createPlane(
+            @PathParam("clubId") Long clubId,
+            Plane plane
+    ) {
+        return clubController.createPlane(clubId, plane);
+    }
+
+    @PUT
+    @Path("/{clubId}/plane/{planeId}")
+    public Plane updatePlane(
+            @PathParam("clubId") Long clubId,
+            @PathParam("planeId") Long planeId,
+            Plane plane
+    ) {
+        return clubController.updatePlane(clubId, plane);
+    }
+
+    @DELETE
+    @Path("/{clubId}/plane/{planeId}")
+    public Response deletePlane(
+            @PathParam("clubId") Long clubId,
+            @PathParam("planeId") Long planeId
+    ) {
+        clubController.deletePlane(planeId);
+        return Response.ok().build();
     }
 
     @GET

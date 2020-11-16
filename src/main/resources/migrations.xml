@@ -147,7 +147,12 @@
             <column name="license_number" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="seats" type="int" />
+            <column name="active" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false" />
+            </column>
+            <column name="seats" type="int">
+                <constraints nullable="false" />
+            </column>
             <column name="deleted_at" type="datetime" />
             <column name="club_id" type="bigint">
                 <constraints

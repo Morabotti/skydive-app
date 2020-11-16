@@ -10,6 +10,7 @@ import fi.morabotti.skydive.domain.ClubDomain;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Club;
 import fi.morabotti.skydive.model.ClubProfile;
+import fi.morabotti.skydive.model.Plane;
 import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
@@ -25,6 +26,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -152,6 +154,61 @@ public class ClubController {
                 clubDao.getById(id).get()
                         .orElseThrow(NotFoundException::new)
         );
+    }
+
+    /**
+     * Fetch plane by plane Id.
+     * @param clubId Long identifies clubs
+     * @return List of Plane
+     * */
+    public List<Plane> getPlanes(Long clubId) {
+        return planeDao.fetchPlanes(clubId);
+    }
+
+    /**
+     * Fetch plane by plane Id.
+     * @param id Long identifies wanted plane
+     * @return Plane
+     * @throws NotFoundException if plane not found
+     * */
+    public Plane getPlane(Long id) {
+        return planeDao.getById(id).get()
+                .orElseThrow(NotFoundException::new);
+    }
+
+    /**
+     * Creates new plane for club.
+     * @param clubId Long identifies club.
+     * @param plane Plane to be created
+     * @return newly created Plane
+     * @throws InternalServerErrorException if something went wrong
+     * */
+    public Plane createPlane(Long clubId, Plane plane) {
+        return planeDao.create(clubId, plane)
+                .flatMap(planeDao::getById)
+                .get()
+                .orElseThrow(InternalServerErrorException::new);
+    }
+
+    /**
+     * Updates plane.
+     * @param clubId Long identifies club.
+     * @param plane Plane to be updated
+     * @return updated Plane
+     * @throws InternalServerErrorException if something went wrong
+     * */
+    public Plane updatePlane(Long clubId, Plane plane) {
+        return planeDao.update(clubId, plane).get()
+                .orElseThrow(InternalServerErrorException::new);
+    }
+
+    /**
+     * Removes plane by Id.
+     * @param planeId Long identifies plane.
+     * @return Void
+     * */
+    public Void deletePlane(Long planeId) {
+        return planeDao.delete(planeId).get();
     }
 
     /**

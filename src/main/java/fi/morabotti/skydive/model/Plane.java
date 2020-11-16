@@ -20,7 +20,8 @@ public abstract class Plane {
 
     public abstract String getLicenseNumber();
 
-    @Nullable
+    public abstract Boolean getActive();
+
     public abstract Integer getSeats();
 
     @Nullable
@@ -44,6 +45,7 @@ public abstract class Plane {
             .setIdAccessor(PLANE.ID)
             .setLicenseNumberAccessor(PLANE.LICENSE_NUMBER)
             .setSeatsAccessor(PLANE.SEATS)
+            .setActiveAccessor(PLANE.ACTIVE)
             .setClubAccessor(PLANE.CLUB_ID, Club::getId)
             .setDeletedAtAccessor(
                     PLANE.DELETED_AT,
