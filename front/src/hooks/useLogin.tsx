@@ -68,7 +68,8 @@ export const useLogin = (): LoginContext => {
       user: {
         role: AuthRoles.ADMIN,
         username: 'Test User',
-        profile: null
+        profile: null,
+        clubStatus: null
       }
     })
     setRequest(false, false)

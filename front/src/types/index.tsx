@@ -1,7 +1,14 @@
 import { LazyExoticComponent, FC, ElementType } from 'react'
 import { PreloadableComponent } from 'react-lazy-with-preload'
 import { SvgIconProps } from '@material-ui/core'
-import { AuthRoles, RouteType } from '@enums'
+
+import {
+  ActivityAccess,
+  ActivityType,
+  AuthRoles,
+  ClubRole,
+  RouteType
+} from '@enums'
 
 export type ViewComponentProps = LazyExoticComponent<FC>
 export type RouteComponent = ViewComponentProps | FC | PreloadableComponent<FC>
@@ -11,10 +18,23 @@ export interface LoginRequest {
   password: string
 }
 
+export interface PaginationResult<T> {
+  result: T[],
+  length: number
+}
+
+export interface UserClubStatus {
+  id: number,
+  role: ClubRole,
+  accepted: boolean,
+  createdAt: string
+}
+
 export interface User {
   username: string,
   role: AuthRoles,
-  profile: null | UserProfile
+  profile: null | UserProfile,
+  clubStatus: null | UserClubStatus
 }
 
 export interface UserProfile {
@@ -86,4 +106,92 @@ export interface RegisterUser {
 export interface RegisterUserForm extends RegisterUser {
   rePassword: string,
   showPassword: boolean
+}
+
+export interface ClubRequest {
+  name: string,
+  slug: string,
+  description: string,
+  isPublic: boolean,
+  address: string,
+  city: string,
+  zipCode: string,
+  phone: string
+}
+
+export interface ClubProfile {
+  id: number,
+  description: string,
+  address: string,
+  zipCode: string,
+  city: string,
+  phone: string,
+  deletedAt: null | string
+}
+
+export interface Club {
+  id: number,
+  name: string,
+  slug: string,
+  isPublic: boolean,
+  clubProfile: ClubProfile,
+  deletedAt: null | string
+}
+
+export interface Activity {
+  id: number,
+  title: string,
+  description: string,
+  type: ActivityType,
+  access: ActivityAccess,
+  visible: boolean,
+  token: string,
+  startDate: string,
+  endDate: string | null,
+  createdAt: string,
+  deletedAt: null | string,
+  club: Club | null
+}
+
+export interface UpdateActivity {
+  title: string,
+  description: string,
+  type: ActivityType,
+  access: ActivityAccess,
+  visibility: boolean,
+  startDate: string,
+  endDate: string,
+  club: Club
+}
+
+export interface Plane {
+  id: number,
+  licenseNumber: string,
+  active: boolean,
+  seats: number,
+  deletedAt: null | string
+}
+
+export type UpdatePlane = Omit<Plane, 'deletedAt'>
+
+export interface ClubMemberRequest {
+  role: ClubRole
+}
+
+export interface UserParticipant {
+  id: number,
+  active: boolean,
+  account: User,
+  activity: null | Activity,
+  createdAt: string,
+  deletedAt: string | null
+}
+
+export interface PilotParticipant extends UserParticipant {
+  plane: Plane | null
+}
+
+export interface ActivityParticipationList {
+  pilotParticipants: PilotParticipant[],
+  participants: UserParticipant[]
 }

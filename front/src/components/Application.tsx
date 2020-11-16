@@ -3,6 +3,7 @@ import { hot } from 'react-hot-loader'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { publicRoutes, dashboardRoutes } from '@routes'
 import { AuthProvider, DashboardProvider } from '@hooks'
+import { QueryCache, ReactQueryCacheProvider } from 'react-query'
 
 import {
   DashboardAuthLayer,
@@ -16,53 +17,57 @@ import {
 
 const AuthNavigation = lazy(() => import('@components/navigation/AuthNavigation'))
 
+const queryCache = new QueryCache()
+
 const Application: FC = () => (
   <ApplicationTheme>
-    <BrowserRouter>
-      <AuthProvider>
-        <Suspense fallback={<PrimaryLoader />}>
-          <ApplicationDates>
-            <Switch>
-              <Route path='/dashboard'>
-                <DashboardAuthLayer>
-                  <SnackbarContainer>
-                    <DashboardProvider>
-                      <AuthNavigation>
-                        <Suspense fallback={<PageSuspense />}>
-                          {dashboardRoutes.map(({
-                            path,
-                            access,
-                            component: Component
-                          }) => (
-                            <Route exact key={path} path={path}>
-                              <ViewLoader access={access}>
-                                <Component />
-                              </ViewLoader>
-                            </Route>
-                          ))}
-                        </Suspense>
-                      </AuthNavigation>
-                    </DashboardProvider>
-                  </SnackbarContainer>
-                </DashboardAuthLayer>
-              </Route>
-              <Route path='/'>
-                <Suspense fallback={<PageSuspense manualHeight />}>
-                  {publicRoutes.map(({ component: Component, path }) => (
-                    <Route key={path} exact path={path}>
-                      <ViewLoader>
-                        <Component />
-                      </ViewLoader>
-                    </Route>
-                  ))}
-                </Suspense>
-                <Redirect to='/login' />
-              </Route>
-            </Switch>
-          </ApplicationDates>
-        </Suspense>
-      </AuthProvider>
-    </BrowserRouter>
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <BrowserRouter>
+        <AuthProvider>
+          <Suspense fallback={<PrimaryLoader />}>
+            <ApplicationDates>
+              <Switch>
+                <Route path='/dashboard'>
+                  <DashboardAuthLayer>
+                    <SnackbarContainer>
+                      <DashboardProvider>
+                        <AuthNavigation>
+                          <Suspense fallback={<PageSuspense />}>
+                            {dashboardRoutes.map(({
+                              path,
+                              access,
+                              component: Component
+                            }) => (
+                              <Route exact key={path} path={path}>
+                                <ViewLoader access={access}>
+                                  <Component />
+                                </ViewLoader>
+                              </Route>
+                            ))}
+                          </Suspense>
+                        </AuthNavigation>
+                      </DashboardProvider>
+                    </SnackbarContainer>
+                  </DashboardAuthLayer>
+                </Route>
+                <Route path='/'>
+                  <Suspense fallback={<PageSuspense manualHeight />}>
+                    {publicRoutes.map(({ component: Component, path }) => (
+                      <Route key={path} exact path={path}>
+                        <ViewLoader>
+                          <Component />
+                        </ViewLoader>
+                      </Route>
+                    ))}
+                  </Suspense>
+                  <Redirect to='/login' />
+                </Route>
+              </Switch>
+            </ApplicationDates>
+          </Suspense>
+        </AuthProvider>
+      </BrowserRouter>
+    </ReactQueryCacheProvider>
   </ApplicationTheme>
 )
 

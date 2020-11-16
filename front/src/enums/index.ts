@@ -20,3 +20,22 @@ export enum NotificationType {
   INFO = 'info',
   DEFAULT = 'default'
 }
+
+export enum ActivityType {
+  JUMP = 'jump',
+  MISC = 'misc'
+}
+
+export enum ActivityAccess {
+  OPEN = 'open',
+  CLUB_ONLY = 'club-only',
+  INVITE = 'invite',
+  PILOT_ONLY = 'pilot-only',
+  USER_ONLY = 'user-only'
+}
+
+export enum ClubRole {
+  CLUB = 'club',
+  PILOT = 'pilot',
+  USER = 'user'
+}
