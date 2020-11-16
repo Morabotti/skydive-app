@@ -59,24 +59,33 @@ public class ActivityController {
      * @param dateRangeQuery DateRangeQuery used to define range
      * @return PaginationResponse of ActivityView
      * */
-    public PaginationResponse<ActivityView> getActivities(
+    public PaginationResponse<ActivityView> getAllActivities(
             PaginationQuery paginationQuery,
             DateRangeQuery dateRangeQuery
     ) {
-        ActivityQuery activityQuery = new ActivityQuery();
+        return getActivitiesWithQueries(
+                paginationQuery,
+                dateRangeQuery,
+                new ActivityQuery()
+        );
+    }
 
-        return PaginationResponse.create(
-                activityDao.fetchActivities(
-                        paginationQuery,
-                        dateRangeQuery,
-                        activityQuery
-                ).stream()
-                        .map(ActivityView::of)
-                        .collect(Collectors.toList()),
-                activityDao.fetchActivitiesLength(
-                        activityQuery,
-                        dateRangeQuery
-                )
+    /**
+     * Fetches certain club activities.
+     * @param paginationQuery PaginationQuery used to paginate response
+     * @param dateRangeQuery DateRangeQuery used to define range
+     * @param clubId Long used to
+     * @return PaginationResponse of ActivityView
+     * */
+    public PaginationResponse<ActivityView> getClubActivities(
+            PaginationQuery paginationQuery,
+            DateRangeQuery dateRangeQuery,
+            Long clubId
+    ) {
+        return getActivitiesWithQueries(
+                paginationQuery,
+                dateRangeQuery,
+                new ActivityQuery().withClubId(clubId)
         );
     }
 
@@ -203,6 +212,33 @@ public class ActivityController {
                         )
                         .get()
                         .orElseThrow(InternalServerErrorException::new)
+        );
+    }
+
+    /**
+     * Fetches activities based on queries.
+     * @param paginationQuery PaginationQuery used to paginate response
+     * @param dateRangeQuery DateRangeQuery used to define range
+     * @param activityQuery ActivityQuery used to define selection
+     * @return PaginationResponse of ActivityView
+     * */
+    private PaginationResponse<ActivityView> getActivitiesWithQueries(
+            PaginationQuery paginationQuery,
+            DateRangeQuery dateRangeQuery,
+            ActivityQuery activityQuery
+    ) {
+        return PaginationResponse.create(
+                activityDao.fetchActivities(
+                        paginationQuery,
+                        dateRangeQuery,
+                        activityQuery
+                ).stream()
+                        .map(ActivityView::of)
+                        .collect(Collectors.toList()),
+                activityDao.fetchActivitiesLength(
+                        activityQuery,
+                        dateRangeQuery
+                )
         );
     }
 

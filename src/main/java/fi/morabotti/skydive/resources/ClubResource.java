@@ -1,12 +1,14 @@
 package fi.morabotti.skydive.resources;
 
+import fi.morabotti.skydive.controller.ActivityController;
 import fi.morabotti.skydive.controller.ClubController;
 import fi.morabotti.skydive.model.Account;
-import fi.morabotti.skydive.model.Activity;
 import fi.morabotti.skydive.model.Plane;
 import fi.morabotti.skydive.view.AccountView;
+import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
+import fi.morabotti.skydive.view.activity.ActivityView;
 import fi.morabotti.skydive.view.club.ClubInformationRequest;
 import fi.morabotti.skydive.view.club.ClubMemberRequest;
 import fi.morabotti.skydive.view.club.ClubQuery;
@@ -27,7 +29,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
 import java.util.List;
 
 @Path("/club")
@@ -36,12 +37,15 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ClubResource {
     private final ClubController clubController;
+    private final ActivityController activityController;
 
     @Inject
     public ClubResource(
-            ClubController clubController
+            ClubController clubController,
+            ActivityController activityController
     ) {
         this.clubController = clubController;
+        this.activityController = activityController;
     }
 
     @GET
@@ -97,10 +101,16 @@ public class ClubResource {
 
     @GET
     @Path("/{clubId}/activity")
-    public List<Activity> getClubActivities(
+    public PaginationResponse<ActivityView> getClubActivities(
+            @BeanParam PaginationQuery paginationQuery,
+            @BeanParam DateRangeQuery dateRangeQuery,
             @PathParam("clubId") Long clubId
     ) {
-        return Collections.emptyList();
+        return activityController.getClubActivities(
+                paginationQuery,
+                dateRangeQuery,
+                clubId
+        );
     }
 
     @GET

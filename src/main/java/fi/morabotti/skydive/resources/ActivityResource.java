@@ -44,7 +44,7 @@ public class ActivityResource {
             @BeanParam PaginationQuery paginationQuery,
             @BeanParam DateRangeQuery dateRangeQuery
     ) {
-        return activityController.getActivities(
+        return activityController.getAllActivities(
                 paginationQuery,
                 dateRangeQuery
         );
