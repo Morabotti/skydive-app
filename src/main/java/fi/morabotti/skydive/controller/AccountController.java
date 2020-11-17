@@ -1,6 +1,7 @@
 package fi.morabotti.skydive.controller;
 
 import fi.morabotti.skydive.dao.AccountDao;
+import fi.morabotti.skydive.dao.ClubAccountDao;
 import fi.morabotti.skydive.dao.ProfileDao;
 import fi.morabotti.skydive.dao.SessionDao;
 import fi.morabotti.skydive.domain.AccountDomain;
@@ -14,6 +15,7 @@ import fi.morabotti.skydive.view.auth.RegisterRequest;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -27,6 +29,7 @@ public class AccountController {
     private final AccountDao accountDao;
     private final SessionDao sessionDao;
     private final ProfileDao profileDao;
+    private final ClubAccountDao clubAccountDao;
 
     private static final Integer CACHE_SIZE = 50;
     private static final Integer TOKEN_LIFETIME_HOURS = 1;
@@ -38,14 +41,29 @@ public class AccountController {
             AccountDomain accountDomain,
             AccountDao accountDao,
             SessionDao sessionDao,
-            ProfileDao profileDao
+            ProfileDao profileDao,
+            ClubAccountDao clubAccountDao
     ) {
         this.accountDomain = accountDomain;
         this.accountDao = accountDao;
         this.sessionDao = sessionDao;
         this.profileDao = profileDao;
+        this.clubAccountDao = clubAccountDao;
 
         this.sessionCache = new LinkedBlockingQueue<>();
+    }
+
+    /**
+     * Performs soft delete to account and profile. This also resets
+     * every club membership.
+     * @param accountId Long id of the user
+     * @return Void
+     * */
+    public Void deleteAccount(Long accountId) {
+        return profileDao.deleteByAccountId(accountId)
+                .flatMap(ignored -> clubAccountDao.deleteByAccountId(accountId))
+                .flatMap(ignored -> accountDao.deleteAccountById(accountId))
+                .get();
     }
 
     /**
@@ -195,7 +213,7 @@ public class AccountController {
      * it is added to cache. If not, a new one is created
      * to cache and to persistent storage.
      * @param account Account to create or update the session for.
-     * @return Session that has been created or updated      .
+     * @return Session that has been created or updated.
      * */
     private Session createOrUpdateSession(Account account) {
         persistOldestSession();
@@ -207,12 +225,16 @@ public class AccountController {
 
         Session session = sessionDao.findValidByAccountId(account.getId())
                 .map(s -> s.toBuilder().setValidUntil(newExpiryTime).build())
-                .orElseGet(() ->  sessionDao.create(accountDomain
-                        .createSession(
+                .orElseGet(() ->  sessionDao.create(
+                        accountDomain.createSession(
                                 UUID.randomUUID(),
                                 newExpiryTime,
                                 account
-                        )));
+                        ))
+                        .flatMap(sessionDao::getById)
+                        .get()
+                        .orElseThrow(InternalServerErrorException::new)
+                );
 
         return addSession(
                 session

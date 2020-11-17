@@ -1,11 +1,13 @@
 package fi.morabotti.skydive.dao;
 
+import fi.jubic.easyutils.transactional.TransactionProvider;
+import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.skydive.config.Configuration;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Session;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.SelectOnConditionStep;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
@@ -21,40 +23,46 @@ import static fi.morabotti.skydive.db.tables.Session.SESSION;
 @Singleton
 public class SessionDao {
     private final org.jooq.Configuration jooqConfiguration;
+    private final TransactionProvider<DSLContext> transactionProvider;
 
     @Inject
-    public SessionDao(Configuration configuration) {
+    public SessionDao(
+            Configuration configuration,
+            TransactionProvider<DSLContext> transactionProvider
+    ) {
         this.jooqConfiguration = configuration.getJooqConfiguration().getConfiguration();
+        this.transactionProvider = transactionProvider;
     }
 
-    public Session create(Session session) {
-        DSLContext context = DSL.using(jooqConfiguration);
+    public Transactional<Optional<Session>, DSLContext> getById(Long id) {
+        return Transactional.of(
+                context -> selectAccount(context)
+                        .where(SESSION.ID.eq(id))
+                        .stream()
+                        .map(Session.mapper.withAccount(Account.mapper)::map)
+                        .findFirst(),
+                transactionProvider
+        );
+    }
 
-        Long sessionId = context
-                .insertInto(SESSION)
-                .set(Session.mapper.write(
-                        context.newRecord(SESSION),
-                        session
-                ))
-                .returning()
-                .fetchOne().component1();
-
-        return Session.mapper
-                .withAccount(Account.mapper)
-                .map(
-                        context.select(
-                                SESSION.asterisk(),
-                                ACCOUNT.asterisk()
+    public Transactional<Long, DSLContext> create(Session session) {
+        return Transactional.of(
+                context -> context.insertInto(SESSION)
+                        .set(
+                                Session.mapper.write(
+                                        context.newRecord(SESSION),
+                                        session
+                                )
                         )
-                                .from(SESSION)
-                                .join(ACCOUNT).on(SESSION.ACCOUNT_ID.eq(ACCOUNT.ID))
-                                .where(SESSION.ID.eq(sessionId))
-                                .fetchOne()
-                );
+                        .returning()
+                        .fetchOne()
+                        .get(SESSION.ID),
+                transactionProvider
+        );
     }
 
     public Optional<Session> findValidByToken(String tokenString) {
-        return fetchWithAccount()
+        return selectAccount(DSL.using(jooqConfiguration))
                 .where(SESSION.TOKEN.eq(tokenString))
                 .and(SESSION.VALID_UNTIL.greaterOrEqual(Timestamp.from(Instant.now())))
                 .fetch()
@@ -64,7 +72,7 @@ public class SessionDao {
     }
 
     public Optional<Session> findValidByAccountId(Long accountId) {
-        return fetchWithAccount()
+        return selectAccount(DSL.using(jooqConfiguration))
                 .where(SESSION.VALID_UNTIL.greaterOrEqual(Timestamp.from(Instant.now())))
                 .and(SESSION.ACCOUNT_ID.eq(accountId))
                 .fetch()
@@ -87,12 +95,11 @@ public class SessionDao {
                 .execute();
     }
 
-    private SelectOnConditionStep<Record> fetchWithAccount() {
-        return DSL.using(jooqConfiguration)
-                .select(
-                        SESSION.asterisk(),
-                        ACCOUNT.asterisk()
-                )
+    private SelectJoinStep<Record> selectAccount(DSLContext context) {
+        return context.select(
+                SESSION.asterisk(),
+                ACCOUNT.asterisk()
+        )
                 .from(SESSION)
                 .join(ACCOUNT).on(SESSION.ACCOUNT_ID.eq(ACCOUNT.ID));
     }

@@ -12,6 +12,8 @@ import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.club.ClubAccountQuery;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
@@ -49,15 +51,7 @@ public class ClubAccountDao {
             PaginationQuery paginationQuery,
             ClubAccountQuery clubAccountQuery
     ) {
-        return DSL.using(jooqConfiguration)
-                .select(
-                        CLUB_ACCOUNT.asterisk(),
-                        ACCOUNT.asterisk(),
-                        PROFILE.asterisk()
-                )
-                .from(CLUB_ACCOUNT)
-                .join(ACCOUNT).onKey(Keys.FK_CLUB_ACCOUNT_ACCOUNT_ID)
-                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+        return selectClubAccount(DSL.using(jooqConfiguration))
                 .where(getConditions(clubAccountQuery))
                 .limit(paginationQuery.getLimit().orElse(20))
                 .offset(paginationQuery.getOffset().orElse(0))
@@ -83,15 +77,7 @@ public class ClubAccountDao {
 
     public Transactional<Optional<ClubAccount>, DSLContext> getById(Long id) {
         return Transactional.of(
-                context -> context
-                        .select(
-                                CLUB_ACCOUNT.asterisk(),
-                                ACCOUNT.asterisk(),
-                                PROFILE.asterisk()
-                        )
-                        .from(CLUB_ACCOUNT)
-                        .join(ACCOUNT).onKey(Keys.FK_CLUB_ACCOUNT_ACCOUNT_ID)
-                        .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+                context -> selectClubAccount(context)
                         .where(CLUB_ACCOUNT.ID.eq(id))
                         .fetch()
                         .stream()
@@ -109,15 +95,7 @@ public class ClubAccountDao {
             ClubAccountQuery clubAccountQuery
     ) {
         return Transactional.of(
-                context -> context
-                        .select(
-                                CLUB_ACCOUNT.asterisk(),
-                                ACCOUNT.asterisk(),
-                                PROFILE.asterisk()
-                        )
-                        .from(CLUB_ACCOUNT)
-                        .join(ACCOUNT).onKey(Keys.FK_CLUB_ACCOUNT_ACCOUNT_ID)
-                        .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+                context -> selectClubAccount(context)
                         .where(getConditions(clubAccountQuery))
                         .fetch()
                         .stream()
@@ -168,7 +146,7 @@ public class ClubAccountDao {
         );
     }
 
-    public Transactional<Void, DSLContext> deleteByAccount(Long accountId) {
+    public Transactional<Void, DSLContext> deleteByAccountId(Long accountId) {
         return Transactional.of(
                 context -> {
                     context.delete(CLUB_ACCOUNT)
@@ -180,7 +158,7 @@ public class ClubAccountDao {
         );
     }
 
-    public Transactional<Void, DSLContext> deleteByClub(Long clubId) {
+    public Transactional<Void, DSLContext> deleteByClubId(Long clubId) {
         return Transactional.of(
                 context -> {
                     context.delete(CLUB_ACCOUNT)
@@ -215,6 +193,17 @@ public class ClubAccountDao {
                 },
                 transactionProvider
         );
+    }
+
+    private SelectJoinStep<Record> selectClubAccount(DSLContext context) {
+        return context.select(
+                CLUB_ACCOUNT.asterisk(),
+                ACCOUNT.asterisk(),
+                PROFILE.asterisk()
+        )
+                .from(CLUB_ACCOUNT)
+                .join(ACCOUNT).onKey(Keys.FK_CLUB_ACCOUNT_ACCOUNT_ID)
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT);
     }
 
     private Condition getConditions(ClubAccountQuery accountQuery) {

@@ -10,6 +10,8 @@ import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.club.ClubQuery;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
@@ -49,13 +51,7 @@ public class ClubDao {
             ClubQuery clubQuery,
             Boolean isPrivate
     ) {
-        return DSL.using(jooqConfiguration)
-                .select(
-                        CLUB.asterisk(),
-                        CLUB_PROFILE.asterisk()
-                )
-                .from(CLUB)
-                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
+        return selectClub(DSL.using(jooqConfiguration))
                 .where(getConditions(clubQuery, isPrivate))
                 .limit(paginationQuery.getLimit().orElse(20))
                 .offset(paginationQuery.getOffset().orElse(0))
@@ -76,13 +72,7 @@ public class ClubDao {
 
     public Transactional<Optional<Club>, DSLContext> getById(Long id) {
         return Transactional.of(
-                context -> context
-                        .select(
-                                CLUB.asterisk(),
-                                CLUB_PROFILE.asterisk()
-                        )
-                        .from(CLUB)
-                        .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
+                context -> selectClub(context)
                         .where(CLUB.ID.eq(id))
                         .and(CLUB.DELETED_AT.isNull())
                         .fetch()
@@ -94,13 +84,7 @@ public class ClubDao {
 
     public Transactional<Optional<Club>, DSLContext> getClubBySlug(String slug) {
         return Transactional.of(
-                context -> context
-                        .select(
-                                CLUB.asterisk(),
-                                CLUB_PROFILE.asterisk()
-                        )
-                        .from(CLUB)
-                        .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
+                context -> selectClub(context)
                         .where(CLUB.SLUG.eq(slug))
                         .and(CLUB.DELETED_AT.isNull())
                         .fetch()
@@ -172,5 +156,14 @@ public class ClubDao {
         }
 
         return CLUB.DELETED_AT.isNull().and(CLUB.IS_PUBLIC.eq(true));
+    }
+
+    private SelectJoinStep<Record> selectClub(DSLContext context) {
+        return context.select(
+                        CLUB.asterisk(),
+                        CLUB_PROFILE.asterisk()
+                )
+                .from(CLUB)
+                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB);
     }
 }

@@ -280,7 +280,7 @@ public class ClubController {
         Club club = clubDao.getById(clubId).get()
                 .orElseThrow(NotFoundException::new);
 
-        return clubAccountDao.deleteByClub(club.getId())
+        return clubAccountDao.deleteByClubId(club.getId())
                 .flatMap(ignored -> planeDao.deleteByClub(club.getId()))
                 .flatMap(ignored -> clubProfileDao.delete(
                         club.getClubProfile()
