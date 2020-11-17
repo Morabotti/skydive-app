@@ -178,6 +178,38 @@ public class ActivityParticipationDao {
         );
     }
 
+    public Transactional<Long, DSLContext> create(ActivityParticipation participation) {
+        return Transactional.of(
+                context -> context.insertInto(ACTIVITY_PARTICIPATION)
+                        .set(
+                                ActivityParticipation.mapper.write(
+                                        context.newRecord(ACTIVITY_PARTICIPATION),
+                                        participation
+                                )
+                        )
+                        .returning()
+                        .fetchOne()
+                        .get(ACTIVITY_PARTICIPATION.ID),
+                transactionProvider
+        );
+    }
+
+    public Transactional<Long, DSLContext> create(PilotActivityParticipation participation) {
+        return Transactional.of(
+                context -> context.insertInto(PILOT_ACTIVITY_PARTICIPATION)
+                        .set(
+                                PilotActivityParticipation.mapper.write(
+                                        context.newRecord(PILOT_ACTIVITY_PARTICIPATION),
+                                        participation
+                                )
+                        )
+                        .returning()
+                        .fetchOne()
+                        .get(PILOT_ACTIVITY_PARTICIPATION.ID),
+                transactionProvider
+        );
+    }
+
     public Transactional<Void, DSLContext> deleteActivityParticipation(Long activityId) {
         return Transactional.of(
                 context -> {
@@ -236,7 +268,7 @@ public class ActivityParticipationDao {
         );
     }
 
-    public Transactional<Optional<ActivityParticipation>, DSLContext> updateParticipation(
+    public Transactional<Optional<ActivityParticipation>, DSLContext> update(
             ActivityParticipation activityParticipation
     ) {
         return Transactional.of(
@@ -252,7 +284,7 @@ public class ActivityParticipationDao {
         ).flatMap(ignored -> getParticipation(activityParticipation.getId()));
     }
 
-    public Transactional<Optional<PilotActivityParticipation>, DSLContext> updatePilotParticipation(
+    public Transactional<Optional<PilotActivityParticipation>, DSLContext> update(
             PilotActivityParticipation pilotActivityParticipation
     ) {
         return Transactional.of(

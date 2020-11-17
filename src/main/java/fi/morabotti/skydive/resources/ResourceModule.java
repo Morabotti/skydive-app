@@ -15,12 +15,16 @@ public class ResourceModule {
     static Set<Object> provideResources(
             AuthenticationResource authenticationResource,
             ClubResource clubResource,
-            ActivityResource activityResource
+            ActivityResource activityResource,
+            PersonalResource personalResource,
+            UserResource userResource
     ) {
         return Stream.of(
                 authenticationResource,
                 clubResource,
-                activityResource
+                activityResource,
+                personalResource,
+                userResource
         )
                 .collect(Collectors.toSet());
     }

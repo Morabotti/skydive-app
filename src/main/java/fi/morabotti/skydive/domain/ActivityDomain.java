@@ -1,6 +1,10 @@
 package fi.morabotti.skydive.domain;
 
+import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Activity;
+import fi.morabotti.skydive.model.ActivityParticipation;
+import fi.morabotti.skydive.model.PilotActivityParticipation;
+import fi.morabotti.skydive.model.Plane;
 import fi.morabotti.skydive.view.activity.ActivityInformationRequest;
 
 import javax.inject.Inject;
@@ -16,6 +20,34 @@ public class ActivityDomain {
     @Inject
     public ActivityDomain(ClubDomain clubDomain) {
         this.clubDomain = clubDomain;
+    }
+
+    public ActivityParticipation createParticipation(
+            Activity activity,
+            Account account,
+            Boolean active
+    ) {
+        return ActivityParticipation.builder()
+                .setActivity(activity)
+                .setAccount(account)
+                .setActive(active)
+                .setCreatedAt(Instant.now())
+                .build();
+    }
+
+    public PilotActivityParticipation createPilotParticipation(
+            Activity activity,
+            Account account,
+            Boolean active,
+            Plane plane
+    ) {
+        return PilotActivityParticipation.builder()
+                .setActivity(activity)
+                .setAccount(account)
+                .setActive(active)
+                .setPlane(plane)
+                .setCreatedAt(Instant.now())
+                .build();
     }
 
     public Activity updateActivity(

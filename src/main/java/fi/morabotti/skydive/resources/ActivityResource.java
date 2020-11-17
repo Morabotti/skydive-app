@@ -2,6 +2,8 @@ package fi.morabotti.skydive.resources;
 
 import fi.morabotti.skydive.controller.ActivityController;
 import fi.morabotti.skydive.model.Account;
+import fi.morabotti.skydive.model.ActivityParticipation;
+import fi.morabotti.skydive.model.PilotActivityParticipation;
 import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
@@ -107,5 +109,29 @@ public class ActivityResource {
             @PathParam("activityId") Long id
     ) {
         return activityController.getParticipants(id);
+    }
+
+    @POST
+    @Path("{activityId}/participate/user")
+    public ActivityParticipation participateInActivityAsUser(
+            @PathParam("activityId") Long id,
+            @Context Account account
+    ) {
+        return activityController.joinActivityAsUser(account, id, false);
+    }
+
+    @POST
+    @Path("{activityId}/participate/pilot/{planeId}")
+    public PilotActivityParticipation participateInActivityAsPilot(
+            @PathParam("activityId") Long activityId,
+            @PathParam("planeId") Long planeId,
+            @Context Account account
+    ) {
+        return activityController.joinActivityAsPilot(
+                account,
+                activityId,
+                planeId,
+                false
+        );
     }
 }

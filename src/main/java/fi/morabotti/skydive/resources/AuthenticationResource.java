@@ -1,6 +1,7 @@
 package fi.morabotti.skydive.resources;
 
 import fi.morabotti.skydive.controller.AccountController;
+import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.TokenResponse;
 import fi.morabotti.skydive.view.auth.LoginRequest;
@@ -14,10 +15,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/auth")
 @Singleton
@@ -60,6 +64,22 @@ public class AuthenticationResource {
             RegisterRequest registerRequest
     ) {
         return accountController.createUser(registerRequest);
+    }
+
+    @PUT
+    @Path("/profile")
+    public Response updateProfile(
+            @Context Account account
+    ) {
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/password")
+    public Response changePassword(
+            @Context Account account
+    ) {
+        return Response.ok().build();
     }
 
     @GET
