@@ -81,6 +81,23 @@ public class ClubController {
     }
 
     /**
+     * Fetches clubs that certain account.
+     * @param accountId Long id of wanted account clubs
+     * @return List of ClubView with AccountStatus set
+     * */
+    public List<ClubView> getAccountClubs(
+            Long accountId
+    ) {
+        return clubAccountDao.fetchClubMembers(
+                PaginationQuery.of(999, 0),
+                ClubAccountQuery.of(null, accountId)
+        )
+                .stream()
+                .map(ClubView::of)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Fetches club member.
      * @param clubId Long slug for club
      * @param accountId Long target account id

@@ -1,4 +1,5 @@
 import React, { memo } from 'react'
+import clsx from 'clsx'
 
 import {
   Container,
@@ -14,12 +15,14 @@ const useStyles = makeStyles(theme => createStyles({
 
 interface Props {
   variant?: 'default' | 'no-max-width',
-  children: JSX.Element | JSX.Element[]
+  children: JSX.Element | JSX.Element[],
+  className?: string
 }
 
 export const DashboardContainer = memo(({
   variant = 'default',
-  children
+  children,
+  className
 }: Props) => {
   const classes = useStyles()
 
@@ -32,7 +35,10 @@ export const DashboardContainer = memo(({
   }
 
   return (
-    <Container className={classes.container} maxWidth='md'>
+    <Container
+      className={clsx(classes.container, className)}
+      maxWidth='md'
+    >
       {children}
     </Container>
   )

@@ -11,13 +11,19 @@ import fi.morabotti.skydive.model.Club;
 import fi.morabotti.skydive.model.PilotActivityParticipation;
 import fi.morabotti.skydive.model.Plane;
 import fi.morabotti.skydive.model.Profile;
+import fi.morabotti.skydive.view.DateRangeQuery;
+import fi.morabotti.skydive.view.activity.ActivityParticipationQuery;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +31,7 @@ import static fi.morabotti.skydive.db.tables.Account.ACCOUNT;
 import static fi.morabotti.skydive.db.tables.Activity.ACTIVITY;
 import static fi.morabotti.skydive.db.tables.ActivityParticipation.ACTIVITY_PARTICIPATION;
 import static fi.morabotti.skydive.db.tables.Club.CLUB;
+import static fi.morabotti.skydive.db.tables.ClubProfile.CLUB_PROFILE;
 import static fi.morabotti.skydive.db.tables.PilotActivityParticipation.PILOT_ACTIVITY_PARTICIPATION;
 import static fi.morabotti.skydive.db.tables.Plane.PLANE;
 import static fi.morabotti.skydive.db.tables.Profile.PROFILE;
@@ -44,21 +51,11 @@ public class ActivityParticipationDao {
     }
 
     public List<PilotActivityParticipation> getPilotParticipants(
-            Long activityId
+            ActivityParticipationQuery participationQuery,
+            DateRangeQuery rangeQuery
     ) {
-        return DSL.using(jooqConfiguration)
-                .select(
-                        PILOT_ACTIVITY_PARTICIPATION.asterisk(),
-                        ACCOUNT.asterisk(),
-                        PROFILE.asterisk(),
-                        PLANE.asterisk()
-                )
-                .from(PILOT_ACTIVITY_PARTICIPATION)
-                .join(ACCOUNT).onKey(Keys.FK_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID)
-                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
-                .join(PLANE).onKey(Keys.FK_PILOT_ACTIVITY_PARTICIPATION_PLANE_ID)
-                .where(PILOT_ACTIVITY_PARTICIPATION.ACTIVITY_ID.eq(activityId))
-                .and(PILOT_ACTIVITY_PARTICIPATION.DELETED_AT.isNull())
+        return selectPilotParticipation(DSL.using(jooqConfiguration))
+                .where(getPilotConditions(participationQuery, rangeQuery))
                 .and(ACCOUNT.DELETED_AT.isNull())
                 .and(PROFILE.DELETED_AT.isNull())
                 .and(PLANE.DELETED_AT.isNull())
@@ -76,19 +73,11 @@ public class ActivityParticipationDao {
     }
 
     public List<ActivityParticipation> getParticipants(
-            Long activityId
+            ActivityParticipationQuery participationQuery,
+            DateRangeQuery rangeQuery
     ) {
-        return DSL.using(jooqConfiguration)
-                .select(
-                        ACTIVITY_PARTICIPATION.asterisk(),
-                        ACCOUNT.asterisk(),
-                        PROFILE.asterisk()
-                )
-                .from(ACTIVITY_PARTICIPATION)
-                .join(ACCOUNT).onKey(Keys.FK_ACTIVITY_PARTICIPATION_ACCOUNT_ID)
-                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
-                .where(ACTIVITY_PARTICIPATION.ACTIVITY_ID.eq(activityId))
-                .and(ACTIVITY_PARTICIPATION.DELETED_AT.isNull())
+        return selectParticipation(DSL.using(jooqConfiguration))
+                .where(getConditions(participationQuery, rangeQuery))
                 .and(ACCOUNT.DELETED_AT.isNull())
                 .and(PROFILE.DELETED_AT.isNull())
                 .fetch()
@@ -107,21 +96,7 @@ public class ActivityParticipationDao {
             Long id
     ) {
         return Transactional.of(
-                context -> context
-                        .select(
-                                PILOT_ACTIVITY_PARTICIPATION.asterisk(),
-                                ACTIVITY.asterisk(),
-                                ACCOUNT.asterisk(),
-                                PROFILE.asterisk(),
-                                CLUB.asterisk(),
-                                PLANE.asterisk()
-                        )
-                        .from(PILOT_ACTIVITY_PARTICIPATION)
-                        .join(ACTIVITY).onKey(Keys.FK_PILOT_ACTIVITY_PARTICIPATION_ACTIVITY_ID)
-                        .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
-                        .join(ACCOUNT).onKey(Keys.FK_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID)
-                        .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
-                        .join(PLANE).onKey(Keys.FK_PILOT_ACTIVITY_PARTICIPATION_PLANE_ID)
+                context -> selectPilotParticipation(context)
                         .where(PILOT_ACTIVITY_PARTICIPATION.ID.eq(id))
                         .and(PILOT_ACTIVITY_PARTICIPATION.DELETED_AT.isNull())
                         .and(ACCOUNT.DELETED_AT.isNull())
@@ -146,19 +121,7 @@ public class ActivityParticipationDao {
             Long id
     ) {
         return Transactional.of(
-                context -> context
-                        .select(
-                                ACTIVITY_PARTICIPATION.asterisk(),
-                                ACTIVITY.asterisk(),
-                                ACCOUNT.asterisk(),
-                                PROFILE.asterisk(),
-                                CLUB.asterisk()
-                        )
-                        .from(ACTIVITY_PARTICIPATION)
-                        .join(ACTIVITY).onKey(Keys.FK_ACTIVITY_PARTICIPATION_ACTIVITY_ID)
-                        .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
-                        .join(ACCOUNT).onKey(Keys.FK_ACTIVITY_PARTICIPATION_ACCOUNT_ID)
-                        .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+                context -> selectParticipation(context)
                         .where(ACTIVITY_PARTICIPATION.ID.eq(id))
                         .and(ACTIVITY_PARTICIPATION.DELETED_AT.isNull())
                         .and(ACCOUNT.DELETED_AT.isNull())
@@ -299,5 +262,127 @@ public class ActivityParticipationDao {
                         .execute(),
                 transactionProvider
         ).flatMap(ignored -> getPilotParticipation(pilotActivityParticipation.getId()));
+    }
+
+    private Condition getPilotConditions(
+            ActivityParticipationQuery participationQuery,
+            DateRangeQuery rangeQuery
+    ) {
+        return Optional.of(PILOT_ACTIVITY_PARTICIPATION.DELETED_AT.isNull())
+                .map(condition -> rangeQuery.getFrom()
+                        .map(from -> condition.and(
+                                PILOT_ACTIVITY_PARTICIPATION.CREATED_AT.greaterOrEqual(
+                                        Timestamp.from(
+                                                from.atStartOfDay().toInstant(ZoneOffset.UTC)
+                                        )
+                                )
+                        )).orElse(condition)
+                )
+                .map(condition -> rangeQuery.getTo()
+                        .map(to -> condition.and(
+                                PILOT_ACTIVITY_PARTICIPATION.CREATED_AT.lessOrEqual(
+                                        Timestamp.from(
+                                                to.atStartOfDay().toInstant(ZoneOffset.UTC)
+                                        )
+                                )
+                        )).orElse(condition)
+                )
+                .map(condition -> participationQuery.getAccountId()
+                        .map(accountId -> condition.and(
+                                PILOT_ACTIVITY_PARTICIPATION.ACCOUNT_ID.eq(accountId))
+                        )
+                        .orElse(condition)
+                )
+                .map(condition -> participationQuery.getActivityId()
+                        .map(activityId -> condition.and(
+                                PILOT_ACTIVITY_PARTICIPATION.ACTIVITY_ID.eq(activityId))
+                        )
+                        .orElse(condition)
+                )
+                .map(condition -> participationQuery.getActive()
+                        .map(active -> condition.and(
+                                PILOT_ACTIVITY_PARTICIPATION.ACTIVE.eq(active))
+                        )
+                        .orElse(condition)
+                )
+                .get();
+    }
+
+    private Condition getConditions(
+            ActivityParticipationQuery participationQuery,
+            DateRangeQuery rangeQuery
+    ) {
+        return Optional.of(ACTIVITY_PARTICIPATION.DELETED_AT.isNull())
+                .map(condition -> rangeQuery.getFrom()
+                        .map(from -> condition.and(
+                                ACTIVITY_PARTICIPATION.CREATED_AT.greaterOrEqual(
+                                        Timestamp.from(
+                                                from.atStartOfDay().toInstant(ZoneOffset.UTC)
+                                        )
+                                )
+                        )).orElse(condition)
+                )
+                .map(condition -> rangeQuery.getTo()
+                        .map(to -> condition.and(
+                                ACTIVITY_PARTICIPATION.CREATED_AT.lessOrEqual(
+                                        Timestamp.from(
+                                                to.atStartOfDay().toInstant(ZoneOffset.UTC)
+                                        )
+                                )
+                        )).orElse(condition)
+                )
+                .map(condition -> participationQuery.getAccountId()
+                        .map(accountId -> condition.and(
+                                ACTIVITY_PARTICIPATION.ACCOUNT_ID.eq(accountId))
+                        )
+                        .orElse(condition)
+                )
+                .map(condition -> participationQuery.getActivityId()
+                        .map(activityId -> condition.and(
+                                ACTIVITY_PARTICIPATION.ACTIVITY_ID.eq(activityId))
+                        )
+                        .orElse(condition)
+                )
+                .map(condition -> participationQuery.getActive()
+                        .map(active -> condition.and(ACTIVITY_PARTICIPATION.ACTIVE.eq(active)))
+                        .orElse(condition)
+                )
+                .get();
+    }
+
+    private SelectJoinStep<Record> selectParticipation(DSLContext context) {
+        return context.select(
+                ACTIVITY_PARTICIPATION.asterisk(),
+                ACCOUNT.asterisk(),
+                PROFILE.asterisk(),
+                ACTIVITY.asterisk(),
+                CLUB.asterisk(),
+                CLUB_PROFILE.asterisk()
+        )
+                .from(ACTIVITY_PARTICIPATION)
+                .join(ACCOUNT).onKey(Keys.FK_ACTIVITY_PARTICIPATION_ACCOUNT_ID)
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+                .join(ACTIVITY).onKey(Keys.FK_ACTIVITY_PARTICIPATION_ACTIVITY_ID)
+                .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
+                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB);
+    }
+
+    private SelectJoinStep<Record> selectPilotParticipation(DSLContext context) {
+        return context.select(
+                PILOT_ACTIVITY_PARTICIPATION.asterisk(),
+                ACTIVITY.asterisk(),
+                ACCOUNT.asterisk(),
+                PROFILE.asterisk(),
+                CLUB.asterisk(),
+                CLUB_PROFILE.asterisk(),
+                PLANE.asterisk()
+        )
+                .from(PILOT_ACTIVITY_PARTICIPATION)
+                .join(ACTIVITY).onKey(Keys.FK_PILOT_ACTIVITY_PARTICIPATION_ACTIVITY_ID)
+                .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
+                .join(ACCOUNT).onKey(Keys.FK_PILOT_ACTIVITY_PARTICIPATION_ACCOUNT_ID)
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+                .join(PLANE).onKey(Keys.FK_PILOT_ACTIVITY_PARTICIPATION_PLANE_ID)
+                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB);
     }
 }

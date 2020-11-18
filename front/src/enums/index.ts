@@ -10,7 +10,8 @@ export enum AuthRoles {
 }
 
 export enum LocalStorageKeys {
-  TOKEN = 'token'
+  TOKEN = 'token',
+  APPLICATION_CACHE = 'skydive-cache'
 }
 
 export enum NotificationType {
@@ -38,4 +39,9 @@ export enum ClubRole {
   CLUB = 'club',
   PILOT = 'pilot',
   USER = 'user'
+}
+
+export enum ParticipationRole {
+  USER = 'user',
+  PILOT = 'pilot'
 }

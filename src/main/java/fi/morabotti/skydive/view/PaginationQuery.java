@@ -32,5 +32,9 @@ public class PaginationQuery {
     public Optional<Integer> getOffset() {
         return Optional.ofNullable(this.offset);
     }
+
+    public static PaginationQuery of(Integer limit, Integer offset) {
+        return new PaginationQuery(limit, offset);
+    }
 }
 

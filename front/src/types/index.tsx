@@ -7,7 +7,8 @@ import {
   ActivityType,
   AuthRoles,
   ClubRole,
-  RouteType
+  RouteType,
+  ParticipationRole
 } from '@enums'
 
 export type ViewComponentProps = LazyExoticComponent<FC>
@@ -178,20 +179,16 @@ export interface ClubMemberRequest {
   role: ClubRole
 }
 
-export interface UserParticipant {
+export interface Participation {
   id: number,
   active: boolean,
-  account: User,
+  role: ParticipationRole,
+  account: null | User,
   activity: null | Activity,
   createdAt: string,
   deletedAt: string | null
 }
 
-export interface PilotParticipant extends UserParticipant {
+export interface PilotParticipation extends Participation {
   plane: Plane | null
-}
-
-export interface ActivityParticipationList {
-  pilotParticipants: PilotParticipant[],
-  participants: UserParticipant[]
 }

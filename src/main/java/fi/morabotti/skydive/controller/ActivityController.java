@@ -20,6 +20,7 @@ import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.activity.ActivityInformationRequest;
+import fi.morabotti.skydive.view.activity.ActivityParticipationQuery;
 import fi.morabotti.skydive.view.activity.ActivityParticipationView;
 import fi.morabotti.skydive.view.activity.ActivityQuery;
 import fi.morabotti.skydive.view.activity.ActivityView;
@@ -30,9 +31,12 @@ import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Singleton
 public class ActivityController {
@@ -76,6 +80,33 @@ public class ActivityController {
                 dateRangeQuery,
                 new ActivityQuery()
         );
+    }
+
+    public List<ActivityParticipationView> getAccountsActivities(
+            Long accountId
+    ) {
+        ActivityParticipationQuery query = new ActivityParticipationQuery()
+                .withAccountId(accountId);
+
+        DateRangeQuery rangeQuery = new DateRangeQuery(
+                LocalDate.now().minusWeeks(1),
+                LocalDate.now().plusWeeks(2)
+        );
+
+        return Stream.concat(
+                participationDao.getParticipants(
+                        query,
+                        rangeQuery
+                )
+                        .stream()
+                        .map(ActivityParticipationView::of),
+                participationDao.getPilotParticipants(
+                        query,
+                        rangeQuery
+                )
+                        .stream()
+                        .map(ActivityParticipationView::of)
+        ).collect(Collectors.toList());
     }
 
     /**
@@ -239,15 +270,28 @@ public class ActivityController {
     /**
      * Fetches participants for certain activity.
      * @param activityId Long id of the activity
-     * @return ActivityParticipationView
+     * @return List of ActivityParticipationView
      * */
-    public ActivityParticipationView getParticipants(
+    public List<ActivityParticipationView> getParticipants(
             Long activityId
     ) {
-        return ActivityParticipationView.create(
-                participationDao.getParticipants(activityId),
-                participationDao.getPilotParticipants(activityId)
-        );
+        ActivityParticipationQuery query = new ActivityParticipationQuery()
+                .withActivityId(activityId);
+
+        return Stream.concat(
+                participationDao.getParticipants(
+                        query,
+                        new DateRangeQuery()
+                )
+                        .stream()
+                        .map(ActivityParticipationView::of),
+                participationDao.getPilotParticipants(
+                        query,
+                        new DateRangeQuery()
+                )
+                        .stream()
+                        .map(ActivityParticipationView::of)
+        ).collect(Collectors.toList());
     }
 
     /**

@@ -1,8 +1,9 @@
 import { useEffect, useCallback, useState } from 'react'
-import { useInitialContext, useAuth } from '@hooks'
-import { AuthRoles } from '@enums'
+import { useInitialContext, useAuth, useCaching } from '@hooks'
+import { LocalStorageKeys } from '@enums'
 import { LoginRequest } from '@types'
 import { useHistory, useLocation } from 'react-router'
+import { loginRequest } from '@client'
 
 interface LoginContext {
   error: boolean,
@@ -22,14 +23,15 @@ interface LoginContext {
 }
 
 export const useLogin = (): LoginContext => {
+  const { getCacheItem, setCacheItem, removeCacheItem } = useCaching()
   const { search } = useLocation()
   const { push } = useHistory()
   const { setAuth, auth } = useAuth()
   const { error, loading, setRequest } = useInitialContext(false, false)
-  const [remember, setRemember] = useState(true)
+  const [remember, setRemember] = useState(getCacheItem('lastUsername') !== '')
   const [show, setShow] = useState(true)
   const [login, setLogin] = useState<LoginRequest>({
-    username: '',
+    username: getCacheItem('lastUsername'),
     password: ''
   })
 
@@ -39,12 +41,13 @@ export const useLogin = (): LoginContext => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     event.persist()
+    setRequest(false, false)
 
     setLogin(prev => ({
       ...prev,
       [name]: event.target.value
     }))
-  }, [setLogin])
+  }, [setLogin, setRequest])
 
   const togglePassword = useCallback(() => {
     setShow(prev => !prev)
@@ -57,36 +60,37 @@ export const useLogin = (): LoginContext => {
   const onSubmit = useCallback(async (e?: React.FormEvent) => {
     e?.preventDefault()
 
-    /*
     if (login.username === '' || login.password === '') {
       return
     }
-    */
 
-    setAuth({
-      token: 'sdasadasdsaddas',
-      user: {
-        role: AuthRoles.ADMIN,
-        username: 'Test User',
-        profile: null,
-        clubStatus: null
-      }
-    })
-    setRequest(false, false)
-
-    /*
     setRequest(true, false)
     try {
       const response = await loginRequest(login)
       localStorage.setItem(LocalStorageKeys.TOKEN, response.token)
+
+      if (remember) {
+        setCacheItem('lastUsername', login.username)
+      }
+      else if (!remember && getCacheItem('lastUsername') !== '') {
+        removeCacheItem('lastUsername')
+      }
+
       setRequest(false, false)
       setAuth(response)
     }
     catch (e) {
       setRequest(false, true)
     }
-    */
-  }, [setRequest, setAuth])
+  }, [
+    setRequest,
+    setAuth,
+    login,
+    setCacheItem,
+    removeCacheItem,
+    getCacheItem,
+    remember
+  ])
 
   useEffect(() => {
     if (auth !== null) {

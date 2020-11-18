@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static fi.morabotti.skydive.db.tables.Account.ACCOUNT;
+import static fi.morabotti.skydive.db.tables.Club.CLUB;
 import static fi.morabotti.skydive.db.tables.ClubAccount.CLUB_ACCOUNT;
+import static fi.morabotti.skydive.db.tables.ClubProfile.CLUB_PROFILE;
 import static fi.morabotti.skydive.db.tables.Profile.PROFILE;
 
 @Singleton
@@ -199,11 +201,15 @@ public class ClubAccountDao {
         return context.select(
                 CLUB_ACCOUNT.asterisk(),
                 ACCOUNT.asterisk(),
-                PROFILE.asterisk()
+                PROFILE.asterisk(),
+                CLUB.asterisk(),
+                CLUB_PROFILE.asterisk()
         )
                 .from(CLUB_ACCOUNT)
                 .join(ACCOUNT).onKey(Keys.FK_CLUB_ACCOUNT_ACCOUNT_ID)
-                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT);
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+                .join(CLUB).onKey(Keys.FK_CLUB_ACCOUNT_CLUB_ID)
+                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB);
     }
 
     private Condition getConditions(ClubAccountQuery accountQuery) {

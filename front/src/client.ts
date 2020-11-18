@@ -13,7 +13,7 @@ import {
   User,
   ClubMemberRequest,
   UpdateActivity,
-  ActivityParticipationList
+  Participation
 } from '@types'
 
 const addAuthToken = () => ({
@@ -444,8 +444,32 @@ export const deleteActivity = (
 
 export const getActivityParticipation = (
   activityId: number
-): Promise<ActivityParticipationList> => fetch(
+): Promise<Participation[]> => fetch(
   `/api/activity/${activityId}`,
+  {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())
+
+export const getPersonalClubs = (): Promise<Club[]> => fetch(
+  `/api/personal/club`,
+  {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())
+
+export const getPersonalActivities = (): Promise<Participation[]> => fetch(
+  `/api/personal/activity`,
   {
     method: 'GET',
     headers: {

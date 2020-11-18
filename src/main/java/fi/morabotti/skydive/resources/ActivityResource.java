@@ -25,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.UUID;
 
 @Path("/activity")
@@ -105,7 +106,7 @@ public class ActivityResource {
 
     @GET
     @Path("/{activityId}/member")
-    public ActivityParticipationView getActivityMembers(
+    public List<ActivityParticipationView> getActivityMembers(
             @PathParam("activityId") Long id
     ) {
         return activityController.getParticipants(id);

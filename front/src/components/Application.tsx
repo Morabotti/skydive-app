@@ -2,7 +2,7 @@ import React, { FC, Suspense, lazy } from 'react'
 import { hot } from 'react-hot-loader'
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
 import { publicRoutes, dashboardRoutes } from '@routes'
-import { AuthProvider, DashboardProvider } from '@hooks'
+import { AuthProvider, DashboardProvider, StateContextProvider } from '@hooks'
 import { QueryCache, ReactQueryCacheProvider } from 'react-query'
 
 import {
@@ -31,21 +31,23 @@ const Application: FC = () => (
                   <DashboardAuthLayer>
                     <SnackbarContainer>
                       <DashboardProvider>
-                        <AuthNavigation>
-                          <Suspense fallback={<PageSuspense />}>
-                            {dashboardRoutes.map(({
-                              path,
-                              access,
-                              component: Component
-                            }) => (
-                              <Route exact key={path} path={path}>
-                                <ViewLoader access={access}>
-                                  <Component />
-                                </ViewLoader>
-                              </Route>
-                            ))}
-                          </Suspense>
-                        </AuthNavigation>
+                        <StateContextProvider>
+                          <AuthNavigation>
+                            <Suspense fallback={<PageSuspense />}>
+                              {dashboardRoutes.map(({
+                                path,
+                                access,
+                                component: Component
+                              }) => (
+                                <Route exact key={path} path={path}>
+                                  <ViewLoader access={access}>
+                                    <Component />
+                                  </ViewLoader>
+                                </Route>
+                              ))}
+                            </Suspense>
+                          </AuthNavigation>
+                        </StateContextProvider>
                       </DashboardProvider>
                     </SnackbarContainer>
                   </DashboardAuthLayer>
@@ -60,8 +62,8 @@ const Application: FC = () => (
                       </Route>
                     ))}
                   </Suspense>
-                  <Redirect to='/login' />
                 </Route>
+                <Redirect to='/login' />
               </Switch>
             </ApplicationDates>
           </Suspense>
