@@ -24,9 +24,6 @@ public abstract class AccountView {
     @Nullable
     public abstract Profile getProfile();
 
-    @Nullable
-    public abstract ClubAccountView getClubStatus();
-
     public abstract Builder toBuilder();
 
     public static Builder builder() {
@@ -42,16 +39,6 @@ public abstract class AccountView {
                 .setUsername(account.getUsername())
                 .setRole(account.getAccountRole())
                 .setProfile(account.getProfile().orElse(null))
-                .setClubStatus(null)
-                .build();
-    }
-
-    public static AccountView of(ClubAccount clubAccount) {
-        Account account = Optional.ofNullable(clubAccount.getAccount())
-                .orElseThrow(InternalServerErrorException::new);
-
-        return AccountView.of(account).toBuilder()
-                .setClubStatus(ClubAccountView.of(clubAccount))
                 .build();
     }
 }

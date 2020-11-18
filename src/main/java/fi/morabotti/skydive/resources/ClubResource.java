@@ -4,11 +4,11 @@ import fi.morabotti.skydive.controller.ActivityController;
 import fi.morabotti.skydive.controller.ClubController;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Plane;
-import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.activity.ActivityView;
+import fi.morabotti.skydive.view.club.ClubAccountView;
 import fi.morabotti.skydive.view.club.ClubInformationRequest;
 import fi.morabotti.skydive.view.club.ClubMemberRequest;
 import fi.morabotti.skydive.view.club.ClubQuery;
@@ -161,7 +161,7 @@ public class ClubResource {
 
     @GET
     @Path("/{clubId}/member")
-    public PaginationResponse<AccountView> getClubMembers(
+    public PaginationResponse<ClubAccountView> getClubMembers(
             @PathParam("clubId") Long clubId,
             @BeanParam PaginationQuery paginationQuery
     ) {
@@ -173,7 +173,7 @@ public class ClubResource {
 
     @GET
     @Path("/{clubId}/member/{accountId}")
-    public AccountView getClubMemberInformation(
+    public ClubAccountView getClubMemberInformation(
             @PathParam("clubId") Long clubId,
             @PathParam("accountId") Long accountId
     ) {
@@ -187,14 +187,14 @@ public class ClubResource {
             @PathParam("accountId") Long accountId,
             @Context Account account
     ) {
-        clubController.removeMemberFromClub(clubId, accountId);
+        clubController.removeMemberFromClub(clubId, accountId, true);
         return Response.ok().build();
     }
 
     @POST
     @Path("/{clubId}/member/{accountId}")
     @RolesAllowed({"admin"})
-    public AccountView addMemberFromClub(
+    public ClubAccountView addMemberFromClub(
             @PathParam("clubId") Long clubId,
             @PathParam("accountId") Long accountId,
             ClubMemberRequest clubMemberRequest
@@ -204,7 +204,7 @@ public class ClubResource {
 
     @POST
     @Path("/{clubId}/member/request")
-    public AccountView requestClubJoin(
+    public ClubAccountView requestClubJoin(
             @PathParam("clubId") Long clubId,
             @Context Account account,
             ClubMemberRequest clubMemberRequest
@@ -218,7 +218,7 @@ public class ClubResource {
 
     @PUT
     @Path("/{clubId}/accept/{accountId}")
-    public AccountView acceptUserToClub(
+    public ClubAccountView acceptUserToClub(
             @PathParam("clubId") Long clubId,
             @PathParam("accountId") Long accountId,
             @Context Account account
@@ -233,7 +233,7 @@ public class ClubResource {
             @PathParam("accountId") Long accountId,
             @Context Account account
     ) {
-        clubController.removeMemberFromClub(clubId, accountId);
+        clubController.removeMemberFromClub(clubId, accountId, false);
         return Response.ok().build();
     }
 }

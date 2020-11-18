@@ -82,33 +82,6 @@ public class ActivityController {
         );
     }
 
-    public List<ActivityParticipationView> getAccountsActivities(
-            Long accountId
-    ) {
-        ActivityParticipationQuery query = new ActivityParticipationQuery()
-                .withAccountId(accountId);
-
-        DateRangeQuery rangeQuery = new DateRangeQuery(
-                LocalDate.now().minusWeeks(1),
-                LocalDate.now().plusWeeks(2)
-        );
-
-        return Stream.concat(
-                participationDao.getParticipants(
-                        query,
-                        rangeQuery
-                )
-                        .stream()
-                        .map(ActivityParticipationView::of),
-                participationDao.getPilotParticipants(
-                        query,
-                        rangeQuery
-                )
-                        .stream()
-                        .map(ActivityParticipationView::of)
-        ).collect(Collectors.toList());
-    }
-
     /**
      * Fetches certain club activities.
      * @param paginationQuery PaginationQuery used to paginate response
@@ -268,9 +241,41 @@ public class ActivityController {
     }
 
     /**
+     * Fetches activities for certain account id.
+     * @param accountId Long id of the account
+     * @return List of ActivityParticipationView with activity data
+     * */
+    public List<ActivityParticipationView> getAccountsActivities(
+            Long accountId
+    ) {
+        ActivityParticipationQuery query = new ActivityParticipationQuery()
+                .withAccountId(accountId);
+
+        DateRangeQuery rangeQuery = new DateRangeQuery(
+                LocalDate.now().minusWeeks(1),
+                LocalDate.now().plusWeeks(3)
+        );
+
+        return Stream.concat(
+                participationDao.getParticipates(
+                        query,
+                        rangeQuery
+                )
+                        .stream()
+                        .map(ActivityParticipationView::of),
+                participationDao.getPilotParticipates(
+                        query,
+                        rangeQuery
+                )
+                        .stream()
+                        .map(ActivityParticipationView::of)
+        ).collect(Collectors.toList());
+    }
+
+    /**
      * Fetches participants for certain activity.
      * @param activityId Long id of the activity
-     * @return List of ActivityParticipationView
+     * @return List of ActivityParticipationView with account data
      * */
     public List<ActivityParticipationView> getParticipants(
             Long activityId

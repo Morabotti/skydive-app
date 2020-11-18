@@ -183,7 +183,7 @@ public class ActivityDao {
                 )
                 .map(condition -> dateRangeQuery.getTo()
                         .map(to -> condition.and(
-                                ACTIVITY.END_DATE.lessOrEqual(
+                                ACTIVITY.START_DATE.lessOrEqual(
                                         Timestamp.from(
                                                 to.atStartOfDay().toInstant(ZoneOffset.UTC)
                                         )

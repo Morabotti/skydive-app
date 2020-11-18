@@ -6,7 +6,9 @@ import fi.morabotti.skydive.config.Configuration;
 import fi.morabotti.skydive.db.Keys;
 import fi.morabotti.skydive.db.enums.ClubAccountRole;
 import fi.morabotti.skydive.model.Account;
+import fi.morabotti.skydive.model.Club;
 import fi.morabotti.skydive.model.ClubAccount;
+import fi.morabotti.skydive.model.ClubProfile;
 import fi.morabotti.skydive.model.Profile;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.club.ClubAccountQuery;
@@ -49,7 +51,7 @@ public class ClubAccountDao {
                 .fetchOne(0, Long.class);
     }
 
-    public List<ClubAccount> fetchClubMembers(
+    public List<ClubAccount> fetchClubs(
             PaginationQuery paginationQuery,
             ClubAccountQuery clubAccountQuery
     ) {
@@ -59,22 +61,32 @@ public class ClubAccountDao {
                 .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
                 .stream()
-                .collect(ClubAccount.mapper.collectingManyWithAccount(
-                                Account.mapper.collectingWithProfiles(
-                                        Profile.mapper
+                .collect(ClubAccount.mapper
+                        .collectingManyWithClub(
+                                Club.mapper.collectingWithClubProfiles(
+                                        ClubProfile.mapper
                                 )
                         )
                 );
     }
 
-    public Boolean checkIfMember(Long clubId, Long accountId) {
-        return DSL.using(jooqConfiguration)
-                .select()
-                .from(CLUB_ACCOUNT)
-                .where(CLUB_ACCOUNT.CLUB_ID.eq(clubId))
-                .and(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId))
-                .fetchOptional()
-                .isPresent();
+    public List<ClubAccount> fetchClubAccounts(
+            PaginationQuery paginationQuery,
+            ClubAccountQuery clubAccountQuery
+    ) {
+        return selectClubAccount(DSL.using(jooqConfiguration))
+                .where(getConditions(clubAccountQuery))
+                .limit(paginationQuery.getLimit().orElse(20))
+                .offset(paginationQuery.getOffset().orElse(0))
+                .fetch()
+                .stream()
+                .collect(ClubAccount.mapper
+                        .collectingManyWithAccount(
+                                Account.mapper.collectingWithProfiles(
+                                        Profile.mapper
+                                )
+                        )
+                );
     }
 
     public Transactional<Optional<ClubAccount>, DSLContext> getById(Long id) {
@@ -83,7 +95,9 @@ public class ClubAccountDao {
                         .where(CLUB_ACCOUNT.ID.eq(id))
                         .fetch()
                         .stream()
-                        .collect(ClubAccount.mapper.collectingWithAccount(
+                        .collect(ClubAccount.mapper
+                                .withClub(Club.mapper)
+                                .collectingWithAccount(
                                         Account.mapper.collectingWithProfiles(
                                                 Profile.mapper
                                         )
@@ -101,7 +115,9 @@ public class ClubAccountDao {
                         .where(getConditions(clubAccountQuery))
                         .fetch()
                         .stream()
-                        .collect(ClubAccount.mapper.collectingWithAccount(
+                        .collect(ClubAccount.mapper
+                                .withClub(Club.mapper)
+                                .collectingWithAccount(
                                         Account.mapper.collectingWithProfiles(
                                                 Profile.mapper
                                         )

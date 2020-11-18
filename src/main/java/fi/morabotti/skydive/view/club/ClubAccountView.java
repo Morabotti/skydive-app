@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.jubic.easyvalue.EasyValue;
 import fi.morabotti.skydive.db.enums.ClubAccountRole;
 import fi.morabotti.skydive.model.ClubAccount;
+import fi.morabotti.skydive.view.AccountView;
 
 import javax.annotation.Nullable;
 import java.time.Instant;
+import java.util.Optional;
 
 @EasyValue
 @JsonDeserialize(builder = ClubAccountView.Builder.class)
@@ -15,10 +17,14 @@ public abstract class ClubAccountView {
 
     public abstract ClubAccountRole getRole();
 
-    @Nullable
     public abstract Boolean getAccepted();
 
     @Nullable
+    public abstract AccountView getAccount();
+
+    @Nullable
+    public abstract ClubView getClub();
+
     public abstract Instant getCreatedAt();
 
     public static Builder builder() {
@@ -35,6 +41,14 @@ public abstract class ClubAccountView {
                 .setAccepted(clubAccount.getAccepted())
                 .setCreatedAt(clubAccount.getCreatedAt())
                 .setRole(clubAccount.getRole())
+                .setAccount(Optional.ofNullable(clubAccount.getAccount())
+                        .map(AccountView::of)
+                        .orElse(null)
+                )
+                .setClub(Optional.ofNullable(clubAccount.getClub())
+                        .map(ClubView::of)
+                        .orElse(null)
+                )
                 .build();
     }
 }

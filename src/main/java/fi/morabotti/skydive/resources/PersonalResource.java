@@ -4,7 +4,7 @@ import fi.morabotti.skydive.controller.ActivityController;
 import fi.morabotti.skydive.controller.ClubController;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.view.activity.ActivityParticipationView;
-import fi.morabotti.skydive.view.club.ClubView;
+import fi.morabotti.skydive.view.club.ClubAccountView;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,7 +36,7 @@ public class PersonalResource {
 
     @GET
     @Path("/club")
-    public List<ClubView> getMyClubs(
+    public List<ClubAccountView> getMyClubs(
             @Context Account account
     ) {
         return clubController.getAccountClubs(account.getId());

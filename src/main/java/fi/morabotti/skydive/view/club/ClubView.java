@@ -28,9 +28,6 @@ public abstract class ClubView {
     @Nullable
     public abstract Instant getDeletedAt();
 
-    @Nullable
-    public abstract ClubAccountView getClubAccount();
-
     public abstract Builder toBuilder();
 
     public static Builder builder() {
@@ -49,16 +46,6 @@ public abstract class ClubView {
                 .setIsPublic(club.getIsPublic())
                 .setClubProfile(club.getClubProfile().orElse(null))
                 .setDeletedAt(club.getDeletedAt())
-                .setClubAccount(null)
-                .build();
-    }
-
-    public static ClubView of(ClubAccount clubAccount) {
-        Club club = Optional.ofNullable(clubAccount.getClub())
-                .orElseThrow(InternalServerErrorException::new);
-
-        return ClubView.of(club).toBuilder()
-                .setClubAccount(ClubAccountView.of(clubAccount))
                 .build();
     }
 }

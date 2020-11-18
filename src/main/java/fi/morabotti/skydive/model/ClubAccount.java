@@ -20,17 +20,15 @@ public abstract class ClubAccount {
 
     public abstract ClubAccountRole getRole();
 
-    @Nullable
     public abstract Boolean getAccepted();
 
     @Nullable
     public abstract Account getAccount();
 
     @Nullable
-    public abstract Instant getCreatedAt();
-
-    @Nullable
     public abstract Club getClub();
+
+    public abstract Instant getCreatedAt();
 
     public abstract Builder toBuilder();
 

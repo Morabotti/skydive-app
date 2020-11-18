@@ -8,6 +8,7 @@ import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Activity;
 import fi.morabotti.skydive.model.ActivityParticipation;
 import fi.morabotti.skydive.model.Club;
+import fi.morabotti.skydive.model.ClubProfile;
 import fi.morabotti.skydive.model.PilotActivityParticipation;
 import fi.morabotti.skydive.model.Plane;
 import fi.morabotti.skydive.model.Profile;
@@ -92,6 +93,51 @@ public class ActivityParticipationDao {
                 );
     }
 
+    public List<PilotActivityParticipation> getPilotParticipates(
+            ActivityParticipationQuery participationQuery,
+            DateRangeQuery rangeQuery
+    ) {
+        return selectPilotParticipation(DSL.using(jooqConfiguration))
+                .where(getPilotConditions(participationQuery, rangeQuery))
+                .and(ACTIVITY.DELETED_AT.isNull())
+                .and(CLUB.DELETED_AT.isNull())
+                .and(CLUB_PROFILE.DELETED_AT.isNull())
+                .fetch()
+                .stream()
+                .collect(PilotActivityParticipation.mapper
+                        .withPlane(Plane.mapper)
+                        .collectingManyWithActivity(
+                                Activity.mapper.collectingWithClub(
+                                        Club.mapper.collectingWithClubProfiles(
+                                                ClubProfile.mapper
+                                        )
+                                )
+                        )
+                );
+    }
+
+    public List<ActivityParticipation> getParticipates(
+            ActivityParticipationQuery participationQuery,
+            DateRangeQuery rangeQuery
+    ) {
+        return selectParticipation(DSL.using(jooqConfiguration))
+                .where(getConditions(participationQuery, rangeQuery))
+                .and(ACTIVITY.DELETED_AT.isNull())
+                .and(CLUB.DELETED_AT.isNull())
+                .and(CLUB_PROFILE.DELETED_AT.isNull())
+                .fetch()
+                .stream()
+                .collect(ActivityParticipation.mapper
+                        .collectingManyWithActivity(
+                                Activity.mapper.collectingWithClub(
+                                        Club.mapper.collectingWithClubProfiles(
+                                                ClubProfile.mapper
+                                        )
+                                )
+                        )
+                );
+    }
+
     public Transactional<Optional<PilotActivityParticipation>, DSLContext> getPilotParticipation(
             Long id
     ) {
@@ -103,15 +149,14 @@ public class ActivityParticipationDao {
                         .and(CLUB.DELETED_AT.isNull())
                         .fetch()
                         .stream()
-                        .collect(
-                                PilotActivityParticipation.mapper
-                                        .withPlane(Plane.mapper)
-                                        .withActivity(Activity.mapper.withClub(Club.mapper))
-                                        .collectingWithAccount(
-                                                Account.mapper.collectingWithProfiles(
-                                                        Profile.mapper
-                                                )
+                        .collect(PilotActivityParticipation.mapper
+                                .withPlane(Plane.mapper)
+                                .withActivity(Activity.mapper.withClub(Club.mapper))
+                                .collectingWithAccount(
+                                        Account.mapper.collectingWithProfiles(
+                                                Profile.mapper
                                         )
+                                )
                         ),
                 transactionProvider
         );

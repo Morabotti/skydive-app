@@ -24,18 +24,11 @@ export interface PaginationResult<T> {
   length: number
 }
 
-export interface UserClubStatus {
-  id: number,
-  role: ClubRole,
-  accepted: boolean,
-  createdAt: string
-}
-
 export interface User {
+  id: number,
   username: string,
   role: AuthRoles,
-  profile: null | UserProfile,
-  clubStatus: null | UserClubStatus
+  profile: null | UserProfile
 }
 
 export interface UserProfile {
@@ -191,4 +184,13 @@ export interface Participation {
 
 export interface PilotParticipation extends Participation {
   plane: Plane | null
+}
+
+export interface ClubAccount {
+  id: number,
+  role: ClubRole,
+  accepted: boolean,
+  createdAt: string,
+  club: Club | null,
+  account: Account | null
 }
