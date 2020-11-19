@@ -496,3 +496,60 @@ export const getPersonalActivities = (): Promise<Participation[]> => fetch(
 )
   .then(checkResponse)
   .then((res) => res.json())
+
+export const participateAsUser = (
+  activityId: number
+): Promise<Participation> => fetch(
+  `/api/activity/${activityId}/participate/user`,
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())
+
+export const participateAsPilot = (
+  activityId: number,
+  plane: Plane
+): Promise<Participation> => fetch(
+  `/api/activity/${activityId}/participate/pilot`,
+  {
+    method: 'POST',
+    body: JSON.stringify(plane),
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())
+
+export const removeParticipationAsUser = (
+  activityId: number
+): Promise<Response> => fetch(
+  `/api/activity/${activityId}/participate/user`,
+  {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())
+
+export const removeParticipationAsPilot = (
+  activityId: number
+): Promise<Response> => fetch(
+  `/api/activity/${activityId}/participate/pilot`,
+  {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)

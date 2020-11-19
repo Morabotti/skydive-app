@@ -9,7 +9,8 @@ import {
 
 const useStyles = makeStyles(theme => createStyles({
   container: {
-    padding: theme.spacing(0)
+    padding: theme.spacing(0),
+    overflow: 'hidden'
   }
 }))
 

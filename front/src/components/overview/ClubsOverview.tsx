@@ -8,8 +8,11 @@ import {
   createStyles,
   Paper,
   Typography as T,
-  Button
+  Button,
+  IconButton
 } from '@material-ui/core'
+import { Skeleton } from '@material-ui/lab'
+import { DotsVertical } from 'mdi-material-ui'
 
 const useStyles = makeStyles(theme => createStyles({
   paper: {
@@ -25,36 +28,75 @@ const useStyles = makeStyles(theme => createStyles({
   fullHeight: {
     flexGrow: 1,
     padding: theme.spacing(1, 0)
+  },
+  title: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  padding: {
+    padding: theme.spacing(1)
   }
 }))
 
 interface Props {
   loading: boolean,
-  clubs: ClubAccount[] | undefined
+  clubs: ClubAccount[] | undefined,
+  mainClub: ClubAccount | undefined
 }
 
 export const ClubsOverview = ({
   loading,
-  clubs
+  clubs,
+  mainClub
 }: Props) => {
   const classes = useStyles()
 
   return (
     <Paper square className={classes.paper}>
       <div className={classes.wrapper}>
-        <div>
-          <T variant='h4'>My Clubs</T>
+        <div className={classes.title}>
+          {loading ? (
+            <>
+              <Skeleton variant='rect' width='40%' height={40} />
+              <Skeleton variant='circle' width={40} height={40} />
+            </>
+          ) : (
+            <>
+              <T variant='h4'>{mainClub ? 'My Club' : 'My Clubs'}</T>
+              {mainClub && (
+                <IconButton className={classes.padding}>
+                  <DotsVertical />
+                </IconButton>
+              )}
+            </>
+          )}
         </div>
         <div className={classes.fullHeight}>
           <ClubOverviewList
             loading={loading}
             clubs={clubs}
+            mainClub={mainClub}
           />
         </div>
         <Actions align='right'>
-          <Button color='primary'>
-            Show all clubs
-          </Button>
+          {loading ? (
+            <>
+              <Skeleton variant='rect' width={144} height={39} />
+              <Skeleton variant='rect' width={166} height={39} />
+            </>
+          ) : (
+            <>
+              {mainClub && (
+                <Button color='secondary'>
+                  Open club profile
+                </Button>
+              )}
+              <Button color='primary'>
+                Show all clubs
+              </Button>
+            </>
+          )}
         </Actions>
       </div>
     </Paper>

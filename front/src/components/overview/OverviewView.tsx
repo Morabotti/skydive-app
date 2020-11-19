@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 const OverviewView = () => {
   const classes = useStyles()
-  const { clubs, activities } = useOverview()
+  const { clubs, activities, mainClub } = useOverview()
 
   return (
     <DashboardContainer className={classes.container}>
@@ -43,6 +43,7 @@ const OverviewView = () => {
             <ClubsOverview
               loading={clubs.isLoading}
               clubs={clubs.data}
+              mainClub={mainClub}
             />
           </Grid>
           <Grid item xs={12} className={classes.item}>

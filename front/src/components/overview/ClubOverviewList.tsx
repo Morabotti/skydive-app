@@ -1,6 +1,6 @@
 import React from 'react'
 import { ClubAccount } from '@types'
-import { ClubOverviewTile } from '@components/overview'
+import { ClubOverviewTile, MainClubOverview } from '@components/overview'
 import { createStyles, makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles(() => createStyles({
@@ -11,22 +11,29 @@ const useStyles = makeStyles(() => createStyles({
 
 interface Props {
   clubs?: ClubAccount[],
-  loading?: boolean
+  loading?: boolean,
+  mainClub?: ClubAccount
 }
 
 export const ClubOverviewList = ({
   clubs,
-  loading
+  loading,
+  mainClub
 }: Props) => {
   const classes = useStyles()
 
   if (loading || !clubs) {
     return (
-      <div className={classes.container}>
-        {[...Array(3)].map((e, i) => (
-          <ClubOverviewTile key={i} loading />
-        ))}
-      </div>
+      <MainClubOverview loading />
+    )
+  }
+
+  if (mainClub) {
+    return (
+      <MainClubOverview
+        clubAccount={mainClub}
+        loading={loading}
+      />
     )
   }
 

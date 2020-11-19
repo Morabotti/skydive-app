@@ -3,6 +3,7 @@ import { ClubAccount } from '@types'
 import { Skeleton } from '@material-ui/lab'
 import { ChevronRight } from 'mdi-material-ui'
 import clsx from 'clsx'
+import moment from 'moment'
 
 import {
   makeStyles,
@@ -123,7 +124,13 @@ export const ClubOverviewTile = ({
         <T
           variant='body1'
           color='textSecondary'
-        >{clubAccount.club.clubProfile.city}</T>
+        >
+          {clubAccount.club.clubProfile.city}
+          {clubAccount.accepted
+            ? `, Member since ${moment(clubAccount.createdAt).format('DD.MM.YYYY')}`
+            : `, Not yet a member`
+          }
+        </T>
       </div>
       <div className={classes.seeMore}>
         <ChevronRight />
