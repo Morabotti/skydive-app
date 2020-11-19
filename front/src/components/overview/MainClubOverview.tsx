@@ -17,7 +17,8 @@ const useStyles = makeStyles(theme => createStyles({
     width: '100%',
     height: '100%',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    padding: theme.spacing(2)
   },
   top: {
     display: 'flex',

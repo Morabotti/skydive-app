@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { makeStyles, createStyles } from '@material-ui/core'
+import { makeStyles, createStyles, Divider } from '@material-ui/core'
 import clsx from 'clsx'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -25,25 +25,32 @@ const useStyles = makeStyles(theme => createStyles({
 interface Props {
   children: JSX.Element | JSX.Element[] | false,
   align?: 'right' | 'left' | 'center' | 'space-between',
-  className?: string
+  className?: string,
+  withDivider?: boolean
 }
 
 export const Actions = memo(({
   children,
   align,
-  className
+  className,
+  withDivider
 }: Props) => {
   const classes = useStyles()
 
   return (
-    <div
-      className={clsx(classes.actions, className, {
-        [classes.alignLeft]: align === 'left',
-        [classes.alignCenter]: align === 'center',
-        [classes.alignSpaceBetween]: align === 'space-between'
-      })}
-    >
-      {children}
-    </div>
+    <>
+      {withDivider && (
+        <Divider />
+      )}
+      <div
+        className={clsx(classes.actions, className, {
+          [classes.alignLeft]: align === 'left',
+          [classes.alignCenter]: align === 'center',
+          [classes.alignSpaceBetween]: align === 'space-between'
+        })}
+      >
+        {children}
+      </div>
+    </>
   )
 })

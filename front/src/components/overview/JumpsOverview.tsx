@@ -1,28 +1,23 @@
 import React from 'react'
-import { Actions } from '@components/common'
+import { Actions, DashboardSection } from '@components/common'
 
 import {
   makeStyles,
   createStyles,
-  Paper,
-  Typography as T,
   Button
 } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => createStyles({
-  paper: {
-    width: '100%',
-    height: '100%'
-  },
   wrapper: {
-    padding: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
     height: '100%'
   },
   fullHeight: {
-    flexGrow: 1,
-    padding: theme.spacing(1, 0)
+    flexGrow: 1
+  },
+  padding: {
+    padding: theme.spacing(1, 2)
   }
 }))
 
@@ -35,21 +30,20 @@ export const JumpsOverview = ({
 }: Props) => {
   const classes = useStyles()
 
-  console.log(loading)
-
   return (
-    <Paper square className={classes.paper}>
+    <DashboardSection
+      title='My Jumps'
+      loading={loading}
+      variant='no-padding'
+    >
       <div className={classes.wrapper}>
-        <div>
-          <T variant='h4'>My Jumps</T>
-        </div>
         <div className={classes.fullHeight} />
-        <Actions align='right'>
+        <Actions align='right' withDivider className={classes.padding}>
           <Button color='primary'>
             Show my jumps
           </Button>
         </Actions>
       </div>
-    </Paper>
+    </DashboardSection>
   )
 }

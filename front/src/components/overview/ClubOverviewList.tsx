@@ -39,10 +39,11 @@ export const ClubOverviewList = ({
 
   return (
     <div className={classes.container}>
-      {clubs.map(club => (
+      {clubs.filter((i, j) => j < 3).map((club, index, array) => (
         <ClubOverviewTile
           key={club.id}
           clubAccount={club}
+          last={index === array.length - 1}
         />
       ))}
     </div>

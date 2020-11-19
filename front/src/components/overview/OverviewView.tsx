@@ -15,6 +15,13 @@ const useStyles = makeStyles(theme => createStyles({
       height: 'auto'
     }
   },
+  full: {
+    width: '100%',
+    height: '100%',
+    [theme.breakpoints.down('sm')]: {
+      height: 'auto'
+    }
+  },
   paper: {
     width: '100%',
     height: '100%'
@@ -52,10 +59,14 @@ const OverviewView = () => {
             />
           </Grid>
         </Grid>
-        <ActivityOverview
-          loading={activities.isLoading}
-          activities={activities.data}
-        />
+        <Grid container spacing={2} className={classes.container}>
+          <Grid item xs={12} className={classes.full}>
+            <ActivityOverview
+              loading={activities.isLoading}
+              activities={activities.data}
+            />
+          </Grid>
+        </Grid>
       </div>
     </DashboardContainer>
   )
