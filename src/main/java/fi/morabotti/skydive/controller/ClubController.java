@@ -429,10 +429,10 @@ public class ClubController {
         if (!account.isPresent() && shouldBeMember) {
             throw new BadRequestException("Account is not member.");
         }
-        else if (account.isPresent() && !account.get().getAccepted() && shouldBeAccepted) {
+        else if (account.isPresent() && account.get().getAccepted() == null && shouldBeAccepted) {
             throw new BadRequestException("Account is not accepted into club yet.");
         }
-        else if (account.isPresent() && account.get().getAccepted() && !shouldBeAccepted) {
+        else if (account.isPresent() && account.get().getAccepted() != null && !shouldBeAccepted) {
             throw new BadRequestException("Account is already accepted to club.");
         }
         else if (account.isPresent() && !shouldBeMember) {

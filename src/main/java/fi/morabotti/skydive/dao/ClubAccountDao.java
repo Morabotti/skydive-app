@@ -20,6 +20,8 @@ import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -138,7 +140,10 @@ public class ClubAccountDao {
                         .set(CLUB_ACCOUNT.ACCOUNT_ID, accountId)
                         .set(CLUB_ACCOUNT.CLUB_ID, clubId)
                         .set(CLUB_ACCOUNT.ROLE, role)
-                        .set(CLUB_ACCOUNT.ACCEPTED, accepted)
+                        .set(CLUB_ACCOUNT.ACCEPTED, accepted
+                                ? Timestamp.from(Instant.now())
+                                : null
+                        )
                         .returning()
                         .fetchOne()
                         .get(CLUB_ACCOUNT.ID),
@@ -154,7 +159,10 @@ public class ClubAccountDao {
         return Transactional.of(
                 context -> {
                     context.update(CLUB_ACCOUNT)
-                            .set(CLUB_ACCOUNT.ACCEPTED, accepted)
+                            .set(CLUB_ACCOUNT.ACCEPTED, accepted
+                                    ? Timestamp.from(Instant.now())
+                                    : null
+                            )
                             .where(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId))
                             .and(CLUB_ACCOUNT.CLUB_ID.eq(clubId))
                             .execute();
@@ -239,7 +247,10 @@ public class ClubAccountDao {
                         .orElse(condition)
                 )
                 .map(condition -> accountQuery.getAccepted()
-                        .map(accepted -> condition.and(CLUB_ACCOUNT.ACCEPTED.eq(accepted)))
+                        .map(accepted -> condition.and(accepted
+                                ? CLUB_ACCOUNT.ACCEPTED.isNotNull()
+                                : CLUB_ACCOUNT.ACCEPTED.isNull()
+                        ))
                         .orElse(condition)
                 )
                 .map(condition -> accountQuery.getRole()

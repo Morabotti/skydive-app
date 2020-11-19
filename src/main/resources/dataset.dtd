@@ -36,7 +36,7 @@
         id CDATA #REQUIRED
         role CDATA #REQUIRED
         account_id CDATA #REQUIRED
-        accepted CDATA #REQUIRED
+        accepted CDATA #IMPLIED
         club_id CDATA #REQUIRED
         created_at CDATA #REQUIRED
 >

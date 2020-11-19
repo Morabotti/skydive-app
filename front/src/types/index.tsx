@@ -199,7 +199,7 @@ export interface PilotParticipation extends Participation {
 export interface ClubAccount {
   id: number,
   role: ClubRole,
-  accepted: boolean,
+  accepted: string | null,
   createdAt: string,
   club: Club | null,
   account: Account | null

@@ -119,9 +119,7 @@
             <column name="role" type="enum('club', 'pilot', 'user')">
                 <constraints nullable="false" />
             </column>
-            <column name="accepted" type="boolean" defaultValueBoolean="false">
-                <constraints nullable="false" />
-            </column>
+            <column name="accepted" type="datetime" />
             <column name="created_at" type="datetime" defaultValue="now()" />
             <column name="club_id" type="bigint">
                 <constraints

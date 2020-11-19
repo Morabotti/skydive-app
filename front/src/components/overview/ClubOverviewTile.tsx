@@ -126,8 +126,8 @@ export const ClubOverviewTile = ({
           color='textSecondary'
         >
           {clubAccount.club.clubProfile.city}
-          {clubAccount.accepted
-            ? `, Member since ${moment(clubAccount.createdAt).format('DD.MM.YYYY')}`
+          {clubAccount.accepted !== null
+            ? `, Member since ${moment(clubAccount.accepted).format('DD.MM.YYYY')}`
             : `, Not yet a member`
           }
         </T>

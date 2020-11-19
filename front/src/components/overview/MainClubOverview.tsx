@@ -131,8 +131,8 @@ export const MainClubOverview = ({
         </T>
         <T variant='body1' className={classes.withLogo} color='textSecondary'>
           <Update />
-          {clubAccount.accepted
-            ? `Member since ${moment(clubAccount.createdAt).format('DD.MM.YYYY')}`
+          {clubAccount.accepted !== null
+            ? `Member since ${moment(clubAccount.accepted).format('DD.MM.YYYY')}`
             : `Not yet a member (requested on ${moment(clubAccount.createdAt).format('DD.MM.YYYY')})`
           }
         </T>

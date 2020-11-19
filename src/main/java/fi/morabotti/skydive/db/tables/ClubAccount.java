@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ClubAccount extends TableImpl<ClubAccountRecord> {
 
-    private static final long serialVersionUID = -1014645281;
+    private static final long serialVersionUID = -2104433486;
 
     /**
      * The reference instance of <code>club_account</code>
@@ -71,7 +71,7 @@ public class ClubAccount extends TableImpl<ClubAccountRecord> {
     /**
      * The column <code>club_account.accepted</code>.
      */
-    public final TableField<ClubAccountRecord, Boolean> ACCEPTED = createField("accepted", org.jooq.impl.SQLDataType.BIT.nullable(false).defaultValue(org.jooq.impl.DSL.inline("b'0'", org.jooq.impl.SQLDataType.BIT)), this, "");
+    public final TableField<ClubAccountRecord, Timestamp> ACCEPTED = createField("accepted", org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
 
     /**
      * The column <code>club_account.created_at</code>.

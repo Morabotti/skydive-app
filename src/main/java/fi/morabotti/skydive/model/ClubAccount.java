@@ -20,7 +20,8 @@ public abstract class ClubAccount {
 
     public abstract ClubAccountRole getRole();
 
-    public abstract Boolean getAccepted();
+    @Nullable
+    public abstract Instant getAccepted();
 
     @Nullable
     public abstract Account getAccount();
@@ -42,10 +43,14 @@ public abstract class ClubAccount {
     public static final ClubAccountRecordMapper<ClubAccountRecord> mapper
             = ClubAccountRecordMapper.builder(CLUB_ACCOUNT)
             .setIdAccessor(CLUB_ACCOUNT.ID)
-            .setAcceptedAccessor(CLUB_ACCOUNT.ACCEPTED)
             .setAccountAccessor(CLUB_ACCOUNT.ACCOUNT_ID, Account::getId)
             .setClubAccessor(CLUB_ACCOUNT.CLUB_ID, Club::getId)
             .setRoleAccessor(CLUB_ACCOUNT.ROLE)
+            .setAcceptedAccessor(
+                    CLUB_ACCOUNT.ACCEPTED,
+                    Timestamp::from,
+                    Timestamp::toInstant
+            )
             .setCreatedAtAccessor(
                     CLUB_ACCOUNT.CREATED_AT,
                     Timestamp::from,

@@ -17,7 +17,8 @@ public abstract class ClubAccountView {
 
     public abstract ClubAccountRole getRole();
 
-    public abstract Boolean getAccepted();
+    @Nullable
+    public abstract Instant getAccepted();
 
     @Nullable
     public abstract AccountView getAccount();
