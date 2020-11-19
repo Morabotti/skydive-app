@@ -142,12 +142,21 @@ public class ClubDao {
             ClubQuery clubQuery,
             Boolean isPrivate
     ) {
+        Optional<Condition> baseConditions = Optional.of(CLUB.DELETED_AT.isNull())
+                .map(condition -> clubQuery.getCity()
+                        .map(city -> condition.and(CLUB_PROFILE.CITY.eq(city)))
+                        .orElse(condition)
+                )
+                .map(condition -> clubQuery.getSearch()
+                        .map(search -> condition.and(CLUB.NAME.contains(search))
+                                .or(CLUB_PROFILE.ZIPCODE.contains(search))
+                                .or(CLUB_PROFILE.CITY.contains(search))
+                        )
+                        .orElse(condition)
+                );
+
         if (isPrivate) {
-            return Optional.of(CLUB.DELETED_AT.isNull())
-                    .map(condition -> clubQuery.getCity()
-                            .map(city -> condition.and(CLUB_PROFILE.CITY.eq(city)))
-                            .orElse(condition)
-                    )
+            return baseConditions
                     .map(condition -> clubQuery.getIsPublic()
                             .map(isPublic -> condition.and(CLUB.IS_PUBLIC.eq(isPublic)))
                             .orElse(condition)
@@ -155,11 +164,7 @@ public class ClubDao {
                     .get();
         }
 
-        return Optional.of(CLUB.DELETED_AT.isNull())
-                .map(condition -> clubQuery.getCity()
-                        .map(city -> condition.and(CLUB_PROFILE.CITY.eq(city)))
-                        .orElse(condition)
-                )
+        return baseConditions
                 .map(condition -> condition.and(CLUB.IS_PUBLIC.eq(true)))
                 .get();
     }

@@ -1,8 +1,18 @@
 package fi.morabotti.skydive.resources;
 
+import fi.morabotti.skydive.controller.AccountController;
+import fi.morabotti.skydive.controller.ActivityController;
+import fi.morabotti.skydive.controller.ClubController;
+import fi.morabotti.skydive.view.AccountView;
+import fi.morabotti.skydive.view.PaginationQuery;
+import fi.morabotti.skydive.view.PaginationResponse;
+import fi.morabotti.skydive.view.activity.ActivityParticipationView;
+import fi.morabotti.skydive.view.club.ClubAccountView;
+
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -12,6 +22,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("/user")
 @Singleton
@@ -19,60 +30,74 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @RolesAllowed({"admin"})
 public class UserResource {
+    private final AccountController accountController;
+    private final ClubController clubController;
+    private final ActivityController activityController;
+
     @Inject
-    public UserResource() {
-
-    }
-
-    @GET
-    public Response getUsers() {
-        return Response.ok().build();
-    }
-
-    @GET
-    @Path("{userId}")
-    public Response getUserById(
-            @PathParam("userId") Long userId
+    public UserResource(
+            AccountController accountController,
+            ClubController clubController,
+            ActivityController activityController
     ) {
-        return Response.ok().build();
+        this.accountController = accountController;
+        this.clubController = clubController;
+        this.activityController = activityController;
+    }
+
+    @GET
+    public PaginationResponse<AccountView> getUsers(
+            @BeanParam PaginationQuery paginationQuery
+    ) {
+        return accountController.getAccounts(paginationQuery);
+    }
+
+    @GET
+    @Path("{accountId}")
+    public AccountView getUserById(
+            @PathParam("accountId") Long accountId
+    ) {
+        return accountController.getAccount(accountId);
     }
 
     @PUT
-    @Path("{userId}")
+    @Path("{accountId}")
     public Response updateUser(
-            @PathParam("userId") Long userId
+            @PathParam("accountId") Long accountId
     ) {
         return Response.ok().build();
     }
 
     @DELETE
-    @Path("{userId}")
+    @Path("{accountId}")
     public Response deleteUser(
-            @PathParam("userId") Long userId
+            @PathParam("accountId") Long accountId
     ) {
+        accountController.deleteAccount(accountId);
         return Response.ok().build();
     }
 
     @GET
-    @Path("/{userId}/activity")
-    public Response getUserActivities(
-            @PathParam("userId") Long userId
+    @Path("/{accountId}/activity")
+    public List<ActivityParticipationView> getUserActivities(
+            @PathParam("accountId") Long accountId
     ) {
-        return Response.ok().build();
+        // TODO: Add custom ranges etc...
+        return activityController.getAccountsActivities(accountId);
     }
 
     @GET
-    @Path("/{userId}/club")
-    public Response getUserClubs(
-            @PathParam("userId") Long userId
+    @Path("/{accountId}/club")
+    public List<ClubAccountView> getUserClubs(
+            @PathParam("accountId") Long accountId
     ) {
-        return Response.ok().build();
+        return clubController.getAccountClubs(accountId);
     }
 
     @GET
-    @Path("/{userId}/jump")
+    @Path("/{accountId}/jump")
     public Response getUserJumps(
-            @PathParam("userId") Long userId
+            @PathParam("accountId") Long accountId
     ) {
         return Response.ok().build();
     }

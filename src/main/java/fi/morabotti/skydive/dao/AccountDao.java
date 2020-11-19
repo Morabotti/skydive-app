@@ -8,6 +8,7 @@ import fi.morabotti.skydive.db.enums.AccountRole;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Profile;
 import fi.morabotti.skydive.security.Password;
+import fi.morabotti.skydive.view.PaginationQuery;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
@@ -15,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import static fi.morabotti.skydive.db.tables.Account.ACCOUNT;
@@ -32,6 +34,29 @@ public class AccountDao {
     ) {
         this.jooqConfiguration = configuration.getJooqConfiguration().getConfiguration();
         this.transactionProvider = transactionProvider;
+    }
+
+    public Long fetchAccountsLength() {
+        return DSL.using(jooqConfiguration)
+                .selectCount()
+                .from(ACCOUNT)
+                .where(ACCOUNT.DELETED_AT.isNull())
+                .and(PROFILE.DELETED_AT.isNull())
+                .fetchOne(0, Long.class);
+    }
+
+    public List<Account> fetchAccounts(PaginationQuery paginationQuery) {
+        return DSL.using(jooqConfiguration)
+                .select()
+                .from(ACCOUNT)
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+                .where(ACCOUNT.DELETED_AT.isNull())
+                .and(PROFILE.DELETED_AT.isNull())
+                .limit(paginationQuery.getLimit().orElse(20))
+                .offset(paginationQuery.getOffset().orElse(0))
+                .fetch()
+                .stream()
+                .collect(Account.mapper.collectingManyWithProfiles(Profile.mapper));
     }
 
     public Optional<Account> findAccountById(Long accountId) {

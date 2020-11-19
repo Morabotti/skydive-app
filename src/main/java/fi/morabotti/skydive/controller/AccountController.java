@@ -6,9 +6,12 @@ import fi.morabotti.skydive.dao.ProfileDao;
 import fi.morabotti.skydive.dao.SessionDao;
 import fi.morabotti.skydive.domain.AccountDomain;
 import fi.morabotti.skydive.exception.AuthenticationException;
+import fi.morabotti.skydive.exception.NotFoundException;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Session;
 import fi.morabotti.skydive.view.AccountView;
+import fi.morabotti.skydive.view.PaginationQuery;
+import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.TokenResponse;
 import fi.morabotti.skydive.view.auth.RegisterRequest;
 
@@ -21,6 +24,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 @Singleton
 public class AccountController {
@@ -51,6 +55,36 @@ public class AccountController {
         this.clubAccountDao = clubAccountDao;
 
         this.sessionCache = new LinkedBlockingQueue<>();
+    }
+
+    /**
+     * Returns accounts on platform.
+     * @param paginationQuery PaginationQuery to define range
+     * @return PaginationResponse of AccountView
+     * */
+    public PaginationResponse<AccountView> getAccounts(
+            PaginationQuery paginationQuery
+    ) {
+        return PaginationResponse.create(
+                accountDao.fetchAccounts(paginationQuery)
+                        .stream()
+                        .map(AccountView::of)
+                        .collect(Collectors.toList()),
+                accountDao.fetchAccountsLength()
+        );
+    }
+
+    /**
+     * Returns account with id.
+     * @param accountId Long id of the account
+     * @return AccountView
+     * */
+    public AccountView getAccount(Long accountId) {
+        return AccountView.of(
+                accountDao.getById(accountId)
+                        .get()
+                        .orElseThrow(NotFoundException::new)
+        );
     }
 
     /**
