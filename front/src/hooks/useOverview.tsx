@@ -1,29 +1,19 @@
-import { useCallback, useEffect } from 'react'
-import { useGlobalState } from '@hooks'
-import { Activity, Club } from '@types'
+import { ClubAccount, Participation } from '@types'
+import { QueryResult, useQuery } from 'react-query'
+import { Client } from '@enums'
+import { getPersonalActivities, getPersonalClubs } from '@client'
 
 interface OverviewContext {
-  myClubs: Club[] | null,
-  myActivities: Activity[] | null
+  clubs: QueryResult<ClubAccount[]>,
+  activities: QueryResult<Participation[]>
 }
 
 export const useOverview = (): OverviewContext => {
-  const { myActivities, myClubs } = useGlobalState()
-
-  const fetchInitials = useCallback(() => {
-    if (myClubs === null || myActivities === null) {
-      return
-    }
-
-    console.log(myClubs, myActivities)
-  }, [myActivities, myClubs])
-
-  useEffect(() => {
-    fetchInitials()
-  }, [fetchInitials])
+  const clubs = useQuery(Client.MY_CLUBS, getPersonalClubs)
+  const activities = useQuery(Client.MY_ACTIVITIES, getPersonalActivities)
 
   return {
-    myActivities,
-    myClubs
+    clubs,
+    activities
   }
 }

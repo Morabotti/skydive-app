@@ -1,3 +1,8 @@
+export enum Client {
+  MY_CLUBS,
+  MY_ACTIVITIES
+}
+
 export enum RouteType {
   AUTHED_ROUTED = 'auth-routed',
   AUTHED_PRIVATE = 'auth-private',

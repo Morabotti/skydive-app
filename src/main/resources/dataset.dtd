@@ -35,9 +35,10 @@
 <!ATTLIST club_account
         id CDATA #REQUIRED
         role CDATA #REQUIRED
-        created_at CDATA #REQUIRED
-        club_id CDATA #REQUIRED
         account_id CDATA #REQUIRED
+        accepted CDATA #REQUIRED
+        club_id CDATA #REQUIRED
+        created_at CDATA #REQUIRED
 >
 
 <!ELEMENT club EMPTY>
@@ -45,20 +46,19 @@
         id CDATA #REQUIRED
         name CDATA #REQUIRED
         slug CDATA #REQUIRED
-        public CDATA #REQUIRED
+        is_public CDATA #REQUIRED
         deleted_at CDATA #IMPLIED
-        creator_account_id CDATA #REQUIRED
 >
 
 <!ELEMENT club_profile EMPTY>
 <!ATTLIST club_profile
         id CDATA #REQUIRED
         club_id CDATA #REQUIRED
-        description CDATA #IMPLIED
-        zipcode CDATA #IMPLIED
-        city CDATA #IMPLIED
-        phone CDATA #IMPLIED
-        address CDATA #IMPLIED
+        description CDATA #REQUIRED
+        zipcode CDATA #REQUIRED
+        city CDATA #REQUIRED
+        phone CDATA #REQUIRED
+        address CDATA #REQUIRED
         deleted_at CDATA #IMPLIED
 >
 

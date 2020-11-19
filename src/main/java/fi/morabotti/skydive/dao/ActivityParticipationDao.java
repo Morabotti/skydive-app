@@ -309,14 +309,11 @@ public class ActivityParticipationDao {
         ).flatMap(ignored -> getPilotParticipation(pilotActivityParticipation.getId()));
     }
 
-    private Condition getPilotConditions(
-            ActivityParticipationQuery participationQuery,
-            DateRangeQuery rangeQuery
-    ) {
-        return Optional.of(PILOT_ACTIVITY_PARTICIPATION.DELETED_AT.isNull())
+    private Condition getDateRangeConditions(DateRangeQuery rangeQuery) {
+        return Optional.of(ACTIVITY.DELETED_AT.isNull())
                 .map(condition -> rangeQuery.getFrom()
                         .map(from -> condition.and(
-                                PILOT_ACTIVITY_PARTICIPATION.CREATED_AT.greaterOrEqual(
+                                ACTIVITY.START_DATE.greaterOrEqual(
                                         Timestamp.from(
                                                 from.atStartOfDay().toInstant(ZoneOffset.UTC)
                                         )
@@ -325,13 +322,22 @@ public class ActivityParticipationDao {
                 )
                 .map(condition -> rangeQuery.getTo()
                         .map(to -> condition.and(
-                                PILOT_ACTIVITY_PARTICIPATION.CREATED_AT.lessOrEqual(
+                                ACTIVITY.START_DATE.lessOrEqual(
                                         Timestamp.from(
                                                 to.atStartOfDay().toInstant(ZoneOffset.UTC)
                                         )
                                 )
                         )).orElse(condition)
                 )
+                .get();
+    }
+
+    private Condition getPilotConditions(
+            ActivityParticipationQuery participationQuery,
+            DateRangeQuery rangeQuery
+    ) {
+        return Optional.of(getDateRangeConditions(rangeQuery))
+                .map(condition -> condition.and(PILOT_ACTIVITY_PARTICIPATION.DELETED_AT.isNull()))
                 .map(condition -> participationQuery.getAccountId()
                         .map(accountId -> condition.and(
                                 PILOT_ACTIVITY_PARTICIPATION.ACCOUNT_ID.eq(accountId))
@@ -357,25 +363,8 @@ public class ActivityParticipationDao {
             ActivityParticipationQuery participationQuery,
             DateRangeQuery rangeQuery
     ) {
-        return Optional.of(ACTIVITY_PARTICIPATION.DELETED_AT.isNull())
-                .map(condition -> rangeQuery.getFrom()
-                        .map(from -> condition.and(
-                                ACTIVITY_PARTICIPATION.CREATED_AT.greaterOrEqual(
-                                        Timestamp.from(
-                                                from.atStartOfDay().toInstant(ZoneOffset.UTC)
-                                        )
-                                )
-                        )).orElse(condition)
-                )
-                .map(condition -> rangeQuery.getTo()
-                        .map(to -> condition.and(
-                                ACTIVITY_PARTICIPATION.CREATED_AT.lessOrEqual(
-                                        Timestamp.from(
-                                                to.atStartOfDay().toInstant(ZoneOffset.UTC)
-                                        )
-                                )
-                        )).orElse(condition)
-                )
+        return Optional.of(getDateRangeConditions(rangeQuery))
+                .map(condition -> condition.and(ACTIVITY_PARTICIPATION.DELETED_AT.isNull()))
                 .map(condition -> participationQuery.getAccountId()
                         .map(accountId -> condition.and(
                                 ACTIVITY_PARTICIPATION.ACCOUNT_ID.eq(accountId))

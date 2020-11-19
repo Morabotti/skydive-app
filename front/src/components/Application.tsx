@@ -1,6 +1,6 @@
 import React, { FC, Suspense, lazy } from 'react'
 import { hot } from 'react-hot-loader'
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { publicRoutes, dashboardRoutes } from '@routes'
 import { AuthProvider, DashboardProvider, StateContextProvider } from '@hooks'
 import { QueryCache, ReactQueryCacheProvider } from 'react-query'
@@ -17,7 +17,13 @@ import {
 
 const AuthNavigation = lazy(() => import('@components/navigation/AuthNavigation'))
 
-const queryCache = new QueryCache()
+const queryCache = new QueryCache({
+  defaultConfig: {
+    queries: {
+      refetchOnWindowFocus: false
+    }
+  }
+})
 
 const Application: FC = () => (
   <ApplicationTheme>
@@ -63,7 +69,6 @@ const Application: FC = () => (
                     ))}
                   </Suspense>
                 </Route>
-                <Redirect to='/login' />
               </Switch>
             </ApplicationDates>
           </Suspense>

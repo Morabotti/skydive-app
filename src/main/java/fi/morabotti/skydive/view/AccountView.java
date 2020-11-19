@@ -4,13 +4,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import fi.jubic.easyvalue.EasyValue;
 import fi.morabotti.skydive.db.enums.AccountRole;
 import fi.morabotti.skydive.model.Account;
-import fi.morabotti.skydive.model.ClubAccount;
 import fi.morabotti.skydive.model.Profile;
-import fi.morabotti.skydive.view.club.ClubAccountView;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.InternalServerErrorException;
-import java.util.Optional;
 
 @EasyValue
 @JsonDeserialize(builder = AccountView.Builder.class)

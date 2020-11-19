@@ -1,7 +1,5 @@
 import React from 'react'
-import { ClubAccount } from '@types'
 import { Actions } from '@components/common'
-import { ClubOverviewList } from '@components/overview'
 
 import {
   makeStyles,
@@ -29,31 +27,26 @@ const useStyles = makeStyles(theme => createStyles({
 }))
 
 interface Props {
-  loading: boolean,
-  clubs: ClubAccount[] | undefined
+  loading: boolean
 }
 
-export const ClubsOverview = ({
-  loading,
-  clubs
+export const JumpsOverview = ({
+  loading
 }: Props) => {
   const classes = useStyles()
+
+  console.log(loading)
 
   return (
     <Paper square className={classes.paper}>
       <div className={classes.wrapper}>
         <div>
-          <T variant='h4'>My Clubs</T>
+          <T variant='h4'>My Jumps</T>
         </div>
-        <div className={classes.fullHeight}>
-          <ClubOverviewList
-            loading={loading}
-            clubs={clubs}
-          />
-        </div>
+        <div className={classes.fullHeight} />
         <Actions align='right'>
           <Button color='primary'>
-            Show all clubs
+            Show my jumps
           </Button>
         </Actions>
       </div>

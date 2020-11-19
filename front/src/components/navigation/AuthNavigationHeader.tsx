@@ -1,8 +1,9 @@
 import React, { memo } from 'react'
-import { Cog, Bell } from 'mdi-material-ui'
+import { Cog, Bell, Apps } from 'mdi-material-ui'
 import { Route, AuthUser } from '@types'
 import { customPalette } from '@theme'
-import { AuthLoggedInAction, AuthLocationNavigation } from '@components/navigation'
+import { AuthLoggedInAction } from '@components/navigation'
+import { useInView } from 'react-intersection-observer'
 import clsx from 'clsx'
 
 import {
@@ -65,6 +66,16 @@ const useStyles = makeStyles(theme => createStyles({
   },
   primaryText: {
     color: customPalette.header.primaryText
+  },
+  location: {
+    color: customPalette.header.secondaryText,
+    height: 38,
+    width: 38
+  },
+  center: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
   }
 }))
 
@@ -80,6 +91,7 @@ export const AuthNavigationHeader = memo(({
   onRevokeAuth
 }: Props) => {
   const classes = useStyles()
+  const [ref, onTop] = useInView({ threshold: 0.99 })
 
   const onNavigateTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -95,11 +107,27 @@ export const AuthNavigationHeader = memo(({
       <Toolbar>
         <Grid container spacing={2} alignItems='center'>
           <Grid item>
-            <AuthLocationNavigation />
+            <div className={classes.center}>
+              <button className={classes.headerButton}>
+                <Apps
+                  className={classes.location}
+                />
+              </button>
+            </div>
           </Grid>
-          <Grid item xs className={classes.hiddenOverflow}>
+          <Grid
+            item
+            xs
+            className={classes.hiddenOverflow}
+            ref={ref}
+          >
             <button
-              className={clsx(classes.headerButton, classes.navigationButton, classes.navigateBackToTop)}
+              className={clsx(
+                classes.headerButton,
+                classes.navigationButton, {
+                  [classes.navigateBackToTop]: !onTop
+                }
+              )}
               onClick={onNavigateTop}
             >
               <T

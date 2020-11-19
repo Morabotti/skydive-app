@@ -28,6 +28,7 @@ public class ActivityDomain {
             Boolean active
     ) {
         return ActivityParticipation.builder()
+                .setId(0L)
                 .setActivity(activity)
                 .setAccount(account)
                 .setActive(active)
@@ -42,6 +43,7 @@ public class ActivityDomain {
             Plane plane
     ) {
         return PilotActivityParticipation.builder()
+                .setId(0L)
                 .setActivity(activity)
                 .setAccount(account)
                 .setActive(active)

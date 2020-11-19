@@ -13,12 +13,27 @@ import {
   ClubMemberRequest,
   UpdateActivity,
   Participation,
-  ClubAccount
+  ClubAccount,
+  PaginationQuery,
+  ClubQuery
 } from '@types'
 
 const addAuthToken = () => ({
   'Authorization': localStorage.getItem(LocalStorageKeys.TOKEN) || ''
 })
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const searchParams = (objects: any[]) => {
+  const query = new URLSearchParams()
+
+  for (const object of objects) {
+    for (const key in object) {
+      query.set(key, String(object[key]))
+    }
+  }
+
+  return query.toString()
+}
 
 const checkResponse = (res: Response): Promise<Response> => {
   if (!res.ok) {
@@ -114,8 +129,11 @@ export const updateClub = (
   .then(checkResponse)
   .then((res) => res.json())
 
-export const getClubs = (): Promise<PaginationResult<Club>> => fetch(
-  `/api/club`,
+export const getClubs = (
+  pagination: PaginationQuery,
+  clubQuery?: ClubQuery
+): Promise<PaginationResult<Club>> => fetch(
+  `/api/club?${searchParams([pagination, clubQuery])}`,
   {
     method: 'GET',
     headers: {

@@ -155,7 +155,13 @@ public class ClubDao {
                     .get();
         }
 
-        return CLUB.DELETED_AT.isNull().and(CLUB.IS_PUBLIC.eq(true));
+        return Optional.of(CLUB.DELETED_AT.isNull())
+                .map(condition -> clubQuery.getCity()
+                        .map(city -> condition.and(CLUB_PROFILE.CITY.eq(city)))
+                        .orElse(condition)
+                )
+                .map(condition -> condition.and(CLUB.IS_PUBLIC.eq(true)))
+                .get();
     }
 
     private SelectJoinStep<Record> selectClub(DSLContext context) {

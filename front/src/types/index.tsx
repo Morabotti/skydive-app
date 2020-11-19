@@ -24,6 +24,16 @@ export interface PaginationResult<T> {
   length: number
 }
 
+export interface PaginationQuery {
+  limit: number,
+  offset: number
+}
+
+export interface ClubQuery {
+  city: string,
+  isPublic: boolean
+}
+
 export interface User {
   id: number,
   username: string,

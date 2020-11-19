@@ -26,6 +26,7 @@ import fi.morabotti.skydive.view.activity.ActivityQuery;
 import fi.morabotti.skydive.view.activity.ActivityView;
 import fi.morabotti.skydive.view.club.ClubAccountQuery;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
@@ -115,28 +116,12 @@ public class ActivityController {
             Long planeId,
             Boolean hasInvite
     ) {
-        Activity activity = activityDao.getById(activityId).get()
-                .orElseThrow(NotFoundException::new);
-
-        if (!hasInvite && activity.getAccess().equals(ActivityAccess.invite)) {
-            throw new NotAuthorizedException("User is not authorized to join");
-        }
-
-        if (!activity.getAccess().equals(ActivityAccess.open)) {
-            ClubAccount clubAccount = clubAccountDao.findAccount(
-                    ClubAccountQuery.of(
-                            Optional.ofNullable(activity.getClub())
-                                    .orElseThrow(InternalServerErrorException::new)
-                                    .getId(),
-                            account.getId()
-                    )
-            ).get()
-                    .orElseThrow(() -> new NotAuthorizedException("Not member of club"));
-
-            if (clubAccount.getRole().equals(ClubAccountRole.user)) {
-                throw new BadRequestException("Wrong method");
-            }
-        }
+        Activity activity = checkActivityAuth(
+                activityId,
+                account.getId(),
+                false,
+                true
+        );
 
         return planeDao.getById(planeId)
                 .flatMap(plane -> participationDao.create(
@@ -153,44 +138,51 @@ public class ActivityController {
     }
 
     /**
-     * Creates activity interest. Everyone who has access can interest activity.
+     * Removes participation or interest.
      * @param account Account of the participant
      * @param activityId Long of the activity
-     * @return ActivityParticipation
+     * @return Void
      * */
-    public ActivityParticipation activityInterest(
+    public Void removeUserParticipation(
             Account account,
             Long activityId
     ) {
-        Activity activity = activityDao.getById(activityId).get()
+        ActivityParticipation participation = participationDao.getParticipants(
+                new ActivityParticipationQuery()
+                        .withAccountId(account.getId())
+                        .withActivityId(activityId),
+                new DateRangeQuery()
+        )
+                .stream()
+                .findFirst()
                 .orElseThrow(NotFoundException::new);
 
-        if (activity.getAccess().equals(ActivityAccess.invite)) {
-            throw new NotAuthorizedException("Can't have interest in invite");
-        }
+        return participationDao.deleteParticipation(participation.getId())
+                .get();
+    }
 
-        if (!activity.getAccess().equals(ActivityAccess.open)) {
-            clubAccountDao.findAccount(
-                    ClubAccountQuery.of(
-                            Optional.ofNullable(activity.getClub())
-                                    .orElseThrow(InternalServerErrorException::new)
-                                    .getId(),
-                            account.getId()
-                    )
-            ).get()
-                    .orElseThrow(() -> new NotAuthorizedException("Not member of club"));
-        }
-
-        return participationDao.create(
-                activityDomain.createParticipation(
-                        activity,
-                        account,
-                        false
-                )
+    /**
+     * Removes pilot participation or interest.
+     * @param account Account of the participant
+     * @param activityId Long of the activity
+     * @return Void
+     * */
+    public Void removePilotParticipation(
+            Account account,
+            Long activityId
+    ) {
+        PilotActivityParticipation participation = participationDao.getPilotParticipants(
+                new ActivityParticipationQuery()
+                        .withAccountId(account.getId())
+                        .withActivityId(activityId),
+                new DateRangeQuery()
         )
-                .flatMap(participationDao::getParticipation)
-                .get()
-                .orElseThrow(InternalServerErrorException::new);
+                .stream()
+                .findFirst()
+                .orElseThrow(NotFoundException::new);
+
+        return participationDao.deletePilotParticipation(participation.getId())
+                .get();
     }
 
     /**
@@ -205,34 +197,47 @@ public class ActivityController {
             Long activityId,
             Boolean hasInvite
     ) {
-        Activity activity = activityDao.getById(activityId).get()
-                .orElseThrow(NotFoundException::new);
-
-        if (!hasInvite && activity.getAccess().equals(ActivityAccess.invite)) {
-            throw new NotAuthorizedException("User is not authorized to join");
-        }
-
-        if (!activity.getAccess().equals(ActivityAccess.open)) {
-            ClubAccount clubAccount = clubAccountDao.findAccount(
-                    ClubAccountQuery.of(
-                            Optional.ofNullable(activity.getClub())
-                                    .orElseThrow(InternalServerErrorException::new)
-                                    .getId(),
-                            account.getId()
-                    )
-            ).get()
-                    .orElseThrow(() -> new NotAuthorizedException("Not member of club"));
-
-            if (clubAccount.getRole().equals(ClubAccountRole.pilot)) {
-                throw new BadRequestException("Wrong method");
-            }
-        }
+        Activity activity = checkActivityAuth(
+                activityId,
+                account.getId(),
+                hasInvite,
+                false
+        );
 
         return participationDao.create(
                 activityDomain.createParticipation(
                         activity,
                         account,
                         true
+                )
+        )
+                .flatMap(participationDao::getParticipation)
+                .get()
+                .orElseThrow(InternalServerErrorException::new);
+    }
+
+    /**
+     * Creates activity interest. Everyone who has access can interest activity.
+     * @param account Account of the participant
+     * @param activityId Long of the activity
+     * @return ActivityParticipation
+     * */
+    public ActivityParticipation activityInterest(
+            Account account,
+            Long activityId
+    ) {
+        Activity activity = checkActivityAuth(
+                activityId,
+                account.getId(),
+                false,
+                null
+        );
+
+        return participationDao.create(
+                activityDomain.createParticipation(
+                        activity,
+                        account,
+                        false
                 )
         )
                 .flatMap(participationDao::getParticipation)
@@ -436,6 +441,48 @@ public class ActivityController {
                         dateRangeQuery
                 )
         );
+    }
+
+    /**
+     * Checks whether user is owner of the club.
+     * @param activityId Long id of the activity
+     * @param accountId Long id of the account
+     * @param hasInvite Boolean whether user has invite
+     * @return ClubAccount
+     * */
+    private Activity checkActivityAuth(
+            Long activityId,
+            Long accountId,
+            Boolean hasInvite,
+            @Nullable Boolean isPilotOnly
+    ) {
+        Activity activity = activityDao.getById(activityId).get()
+                .orElseThrow(NotFoundException::new);
+
+        if (!hasInvite && activity.getAccess().equals(ActivityAccess.invite)) {
+            throw new NotAuthorizedException("User is not authorized to join");
+        }
+
+        if (!activity.getAccess().equals(ActivityAccess.open)) {
+            ClubAccount clubAccount = clubAccountDao.findAccount(
+                    ClubAccountQuery.of(
+                            Optional.ofNullable(activity.getClub())
+                                    .orElseThrow(InternalServerErrorException::new)
+                                    .getId(),
+                            accountId
+                    )
+            ).get()
+                    .orElseThrow(() -> new NotAuthorizedException("Not member of club."));
+
+            if (isPilotOnly != null
+                    && isPilotOnly
+                    && !clubAccount.getRole().equals(ClubAccountRole.pilot)
+            ) {
+                throw new BadRequestException("Wrong method");
+            }
+        }
+
+        return activity;
     }
 
     /**

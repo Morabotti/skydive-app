@@ -38,4 +38,33 @@
             address="Street 2"
             phone="123456789"
             account_id="2" />
+    <club
+            id="1"
+            name="Test Club"
+            slug="test-club"
+            is_public="true" />
+    <club
+            id="2"
+            name="Second Club"
+            slug="second-club"
+            is_public="false" />
+    <club_profile
+            id="1"
+            club_id="1"
+            description="Test Club description"
+            zipcode="65200"
+            city="Vaasa"
+            phone="040012345678"
+            address="Teststreet 7" />
+    <club_profile
+            id="2"
+            club_id="2"
+            description="Second Test Club description"
+            zipcode="65200"
+            city="Helsinki"
+            phone="040012345678"
+            address="Teststreet 5" />
+
+    <club_account id="1" role="club" account_id="1" accepted="true" club_id="1" created_at="[now-1d]" />
+    <club_account id="2" role="club" account_id="1" accepted="true" club_id="2" created_at="[now-2d]" />
 </dataset>

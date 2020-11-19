@@ -29,7 +29,7 @@ export const routesTree: Route[] = [{
   component: OverviewView,
   path: '/dashboard',
   icon: Home,
-  name: 'Dashboard overview'
+  name: 'Overview'
 }, {
   access: [AuthRoles.ADMIN, AuthRoles.USER],
   type: RouteType.AUTHED_ROUTED,

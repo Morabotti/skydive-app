@@ -4,6 +4,7 @@ import fi.morabotti.skydive.controller.ActivityController;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.ActivityParticipation;
 import fi.morabotti.skydive.model.PilotActivityParticipation;
+import fi.morabotti.skydive.model.Plane;
 import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
@@ -122,17 +123,37 @@ public class ActivityResource {
     }
 
     @POST
-    @Path("{activityId}/participate/pilot/{planeId}")
+    @Path("{activityId}/participate/pilot")
     public PilotActivityParticipation participateInActivityAsPilot(
             @PathParam("activityId") Long activityId,
-            @PathParam("planeId") Long planeId,
-            @Context Account account
+            @Context Account account,
+            Plane plane
     ) {
         return activityController.joinActivityAsPilot(
                 account,
                 activityId,
-                planeId,
+                plane.getId(),
                 false
         );
+    }
+
+    @DELETE
+    @Path("{activityId}/participate/user")
+    public Response removeParticipation(
+            @PathParam("activityId") Long activityId,
+            @Context Account account
+    ) {
+        activityController.removeUserParticipation(account, activityId);
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("{activityId}/participate/pilot")
+    public Response removePilotParticipation(
+            @PathParam("activityId") Long activityId,
+            @Context Account account
+    ) {
+        activityController.removePilotParticipation(account, activityId);
+        return Response.ok().build();
     }
 }
