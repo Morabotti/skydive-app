@@ -4,9 +4,11 @@ import fi.morabotti.skydive.controller.AccountController;
 import fi.morabotti.skydive.controller.ActivityController;
 import fi.morabotti.skydive.controller.ClubController;
 import fi.morabotti.skydive.view.AccountView;
+import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.activity.ActivityParticipationView;
+import fi.morabotti.skydive.view.auth.UpdateRequest;
 import fi.morabotti.skydive.view.club.ClubAccountView;
 
 import javax.annotation.security.RolesAllowed;
@@ -62,10 +64,11 @@ public class UserResource {
 
     @PUT
     @Path("{accountId}")
-    public Response updateUser(
-            @PathParam("accountId") Long accountId
+    public AccountView updateUser(
+            @PathParam("accountId") Long accountId,
+            UpdateRequest updateRequest
     ) {
-        return Response.ok().build();
+        return accountController.updateUser(accountId, updateRequest);
     }
 
     @DELETE
@@ -80,10 +83,10 @@ public class UserResource {
     @GET
     @Path("/{accountId}/activity")
     public List<ActivityParticipationView> getUserActivities(
+            @BeanParam DateRangeQuery rangeQuery,
             @PathParam("accountId") Long accountId
     ) {
-        // TODO: Add custom ranges etc...
-        return activityController.getAccountsActivities(accountId);
+        return activityController.getAccountsActivities(rangeQuery, accountId);
     }
 
     @GET

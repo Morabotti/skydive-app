@@ -13,7 +13,9 @@ import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.TokenResponse;
+import fi.morabotti.skydive.view.auth.ChangePasswordRequest;
 import fi.morabotti.skydive.view.auth.RegisterRequest;
+import fi.morabotti.skydive.view.auth.UpdateRequest;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -98,6 +100,59 @@ public class AccountController {
                 .flatMap(ignored -> clubAccountDao.deleteByAccountId(accountId))
                 .flatMap(ignored -> accountDao.deleteAccountById(accountId))
                 .get();
+    }
+
+    /**
+     * Updates existing account.
+     * @param accountId Long id of the account
+     * @param passwordRequest ChangePasswordRequest defined new password
+     * @return Account that is updated. Currently useless.
+     * @throws NotFoundException if account is not found
+     * @throws BadRequestException if bad information
+     * */
+    public AccountView updatePassword(Long accountId, ChangePasswordRequest passwordRequest) {
+        return AccountView.of(
+                accountDao.getById(accountId)
+                        .flatMap(account -> accountDao.update(
+                                accountDomain.updatePassword(
+                                        account.orElseThrow(NotFoundException::new),
+                                        accountDomain.generatePassword(
+                                                passwordRequest.getPassword()
+                                        )
+                                )
+                        ))
+                        .get()
+                        .orElseThrow(BadRequestException::new)
+        );
+    }
+
+    /**
+     * Updates existing account.
+     * @param accountId Long id of the account
+     * @param updateRequest UpdateRequest used for information to fill profile
+     * @return Account that is updated
+     * @throws NotFoundException if account is not found
+     * @throws BadRequestException if bad information
+     * */
+    public AccountView updateUser(Long accountId, UpdateRequest updateRequest) {
+        return AccountView.of(
+                accountDao.getById(accountId)
+                        .flatMap(account ->
+                                profileDao.update(
+                                        accountDomain.updateProfile(
+                                                account.orElseThrow(NotFoundException::new)
+                                                        .getProfile()
+                                                        .orElseThrow(
+                                                                InternalServerErrorException::new
+                                                        ),
+                                                updateRequest
+                                        )
+                                )
+                        )
+                        .flatMap(ignored -> accountDao.getById(accountId))
+                        .get()
+                        .orElseThrow(BadRequestException::new)
+        );
     }
 
     /**

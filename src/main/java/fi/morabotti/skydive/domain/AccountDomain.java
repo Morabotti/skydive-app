@@ -7,6 +7,7 @@ import fi.morabotti.skydive.model.Profile;
 import fi.morabotti.skydive.model.Session;
 import fi.morabotti.skydive.security.Password;
 import fi.morabotti.skydive.view.auth.RegisterRequest;
+import fi.morabotti.skydive.view.auth.UpdateRequest;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -49,6 +50,24 @@ public class AccountDomain {
                 .setPasswordHash(password.getHash())
                 .setPasswordSalt(password.getSalt())
                 .setAccountRole(AccountRole.user)
+                .build();
+    }
+
+    public Account updatePassword(Account account, Password password) {
+        return account.toBuilder()
+                .setPasswordHash(password.getHash())
+                .setPasswordSalt(password.getSalt())
+                .build();
+    }
+
+    public Profile updateProfile(Profile profile, UpdateRequest updateRequest) {
+        return profile.toBuilder()
+                .setAddress(updateRequest.getAddress())
+                .setCity(updateRequest.getCity())
+                .setFirstName(updateRequest.getFirstName())
+                .setLastName(updateRequest.getLastName())
+                .setPhone(updateRequest.getPhone())
+                .setZipCode(updateRequest.getZipCode())
                 .build();
     }
 

@@ -3,7 +3,6 @@ package fi.morabotti.skydive.controller;
 import fi.morabotti.skydive.dao.ActivityDao;
 import fi.morabotti.skydive.dao.ActivityParticipationDao;
 import fi.morabotti.skydive.dao.ClubAccountDao;
-import fi.morabotti.skydive.dao.ClubDao;
 import fi.morabotti.skydive.dao.PlaneDao;
 import fi.morabotti.skydive.db.enums.AccountRole;
 import fi.morabotti.skydive.db.enums.ActivityAccess;
@@ -32,7 +31,6 @@ import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,7 +43,6 @@ public class ActivityController {
 
     private final ActivityDao activityDao;
     private final ClubAccountDao clubAccountDao;
-    private final ClubDao clubDao;
     private final ActivityParticipationDao participationDao;
     private final PlaneDao planeDao;
 
@@ -54,14 +51,12 @@ public class ActivityController {
             ActivityDomain activityDomain,
             ActivityDao activityDao,
             ClubAccountDao clubAccountDao,
-            ClubDao clubDao,
             ActivityParticipationDao participationDao,
             PlaneDao planeDao
     ) {
         this.activityDomain = activityDomain;
         this.activityDao = activityDao;
         this.clubAccountDao = clubAccountDao;
-        this.clubDao = clubDao;
         this.participationDao = participationDao;
         this.planeDao = planeDao;
     }
@@ -251,15 +246,11 @@ public class ActivityController {
      * @return List of ActivityParticipationView with activity data
      * */
     public List<ActivityParticipationView> getAccountsActivities(
+            DateRangeQuery rangeQuery,
             Long accountId
     ) {
         ActivityParticipationQuery query = new ActivityParticipationQuery()
                 .withAccountId(accountId);
-
-        DateRangeQuery rangeQuery = new DateRangeQuery(
-                LocalDate.now().minusWeeks(1),
-                LocalDate.now().plusWeeks(3)
-        );
 
         return Stream.concat(
                 participationDao.getParticipates(
@@ -456,7 +447,8 @@ public class ActivityController {
             Boolean hasInvite,
             @Nullable Boolean isPilotOnly
     ) {
-        Activity activity = activityDao.getById(activityId).get()
+        Activity activity = activityDao.getById(activityId)
+                .get()
                 .orElseThrow(NotFoundException::new);
 
         if (!hasInvite && activity.getAccess().equals(ActivityAccess.invite)) {
@@ -471,7 +463,8 @@ public class ActivityController {
                                     .getId(),
                             accountId
                     )
-            ).get()
+            )
+                    .get()
                     .orElseThrow(() -> new NotAuthorizedException("Not member of club."));
 
             if (isPilotOnly != null
@@ -495,9 +488,9 @@ public class ActivityController {
             Long clubId,
             Long accountId
     ) {
-        Optional<ClubAccount> clubAccount = clubAccountDao.findAccount(
-                ClubAccountQuery.of(clubId, accountId)
-        ).get();
+        Optional<ClubAccount> clubAccount = clubAccountDao
+                .findAccount(ClubAccountQuery.of(clubId, accountId))
+                .get();
 
         if (!clubAccount.isPresent() || !clubAccount.get().getRole().equals(ClubAccountRole.club)) {
             throw new NotAuthorizedException("User is not authorized.");

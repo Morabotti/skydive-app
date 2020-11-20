@@ -3,11 +3,13 @@ package fi.morabotti.skydive.resources;
 import fi.morabotti.skydive.controller.ActivityController;
 import fi.morabotti.skydive.controller.ClubController;
 import fi.morabotti.skydive.model.Account;
+import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.activity.ActivityParticipationView;
 import fi.morabotti.skydive.view.club.ClubAccountView;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -45,9 +47,10 @@ public class PersonalResource {
     @GET
     @Path("/activity")
     public List<ActivityParticipationView> getMyActivities(
+            @BeanParam DateRangeQuery rangeQuery,
             @Context Account account
     ) {
-        return activityController.getAccountsActivities(account.getId());
+        return activityController.getAccountsActivities(rangeQuery, account.getId());
     }
 
     @GET
