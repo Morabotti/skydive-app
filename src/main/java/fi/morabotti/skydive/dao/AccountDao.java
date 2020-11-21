@@ -41,7 +41,6 @@ public class AccountDao {
                 .selectCount()
                 .from(ACCOUNT)
                 .where(ACCOUNT.DELETED_AT.isNull())
-                .and(PROFILE.DELETED_AT.isNull())
                 .fetchOne(0, Long.class);
     }
 
@@ -128,7 +127,7 @@ public class AccountDao {
         );
     }
 
-    public Transactional<Void, DSLContext> updatePassword(Long id, Password password) {
+    public Transactional<Optional<Account>, DSLContext> updatePassword(Long id, Password password) {
         return Transactional.of(
                 context -> {
                     context
@@ -140,7 +139,7 @@ public class AccountDao {
                     return null;
                 },
                 transactionProvider
-        );
+        ).flatMap(ignored -> getById(id));
     }
 
     public Transactional<Optional<Account>, DSLContext> update(Account account) {

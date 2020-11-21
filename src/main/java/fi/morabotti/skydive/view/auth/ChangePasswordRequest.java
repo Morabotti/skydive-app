@@ -6,6 +6,8 @@ import fi.jubic.easyvalue.EasyValue;
 @EasyValue
 @JsonDeserialize(builder = ChangePasswordRequest.Builder.class)
 public abstract class ChangePasswordRequest {
+    public abstract String getOldPassword();
+
     public abstract String getPassword();
 
     public static class Builder extends EasyValue_ChangePasswordRequest.Builder {

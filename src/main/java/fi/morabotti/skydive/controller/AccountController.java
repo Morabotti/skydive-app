@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -105,22 +106,26 @@ public class AccountController {
     /**
      * Updates existing account.
      * @param accountId Long id of the account
-     * @param passwordRequest ChangePasswordRequest defined new password
+     * @param request ChangePasswordRequest defined new password
      * @return Account that is updated. Currently useless.
      * @throws NotFoundException if account is not found
      * @throws BadRequestException if bad information
      * */
-    public AccountView updatePassword(Long accountId, ChangePasswordRequest passwordRequest) {
+    public AccountView updatePassword(Long accountId, ChangePasswordRequest request) {
+        Account account = accountDao.getById(accountId).get()
+                .orElseThrow(NotFoundException::new);
+
+        if (!accountDomain.validatePassword(account, request.getOldPassword())) {
+            throw new NotAuthorizedException("Wrong old password");
+        }
+
         return AccountView.of(
-                accountDao.getById(accountId)
-                        .flatMap(account -> accountDao.update(
-                                accountDomain.updatePassword(
-                                        account.orElseThrow(NotFoundException::new),
-                                        accountDomain.generatePassword(
-                                                passwordRequest.getPassword()
-                                        )
-                                )
-                        ))
+                accountDao.updatePassword(
+                        accountId,
+                        accountDomain.generatePassword(
+                                request.getPassword()
+                        )
+                )
                         .get()
                         .orElseThrow(BadRequestException::new)
         );
@@ -140,11 +145,9 @@ public class AccountController {
                         .flatMap(account ->
                                 profileDao.update(
                                         accountDomain.updateProfile(
-                                                account.orElseThrow(NotFoundException::new)
-                                                        .getProfile()
-                                                        .orElseThrow(
-                                                                InternalServerErrorException::new
-                                                        ),
+                                                account.orElseThrow(
+                                                        NotFoundException::new
+                                                ),
                                                 updateRequest
                                         )
                                 )

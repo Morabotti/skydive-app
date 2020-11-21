@@ -13,6 +13,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.InternalServerErrorException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -53,14 +54,10 @@ public class AccountDomain {
                 .build();
     }
 
-    public Account updatePassword(Account account, Password password) {
-        return account.toBuilder()
-                .setPasswordHash(password.getHash())
-                .setPasswordSalt(password.getSalt())
-                .build();
-    }
+    public Profile updateProfile(Account account, UpdateRequest updateRequest) {
+        Profile profile = account.getProfile()
+                .orElseThrow(InternalServerErrorException::new);
 
-    public Profile updateProfile(Profile profile, UpdateRequest updateRequest) {
         return profile.toBuilder()
                 .setAddress(updateRequest.getAddress())
                 .setCity(updateRequest.getCity())
@@ -68,6 +65,7 @@ public class AccountDomain {
                 .setLastName(updateRequest.getLastName())
                 .setPhone(updateRequest.getPhone())
                 .setZipCode(updateRequest.getZipCode())
+                .setAccount(account)
                 .build();
     }
 
