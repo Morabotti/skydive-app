@@ -1,18 +1,29 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { ClubAccount, Participation } from '@types'
 import { QueryResult, useQuery } from 'react-query'
 import { Client } from '@enums'
 import { getPersonalActivities, getPersonalClubs } from '@client'
+import moment from 'moment'
 
 interface OverviewContext {
   clubs: QueryResult<ClubAccount[]>,
   activities: QueryResult<Participation[]>,
-  mainClub: ClubAccount | undefined
+  mainClub: ClubAccount | undefined,
+  showCalendar: boolean,
+  date: string,
+  selected: string,
+  onChangeDate: (date: string) => void,
+  onChangeSelectedDate: (date: string) => () => void,
+  toggleShowCalendar: (set: boolean) => () => void
 }
 
 export const useOverview = (): OverviewContext => {
   const clubs = useQuery(Client.MY_CLUBS, getPersonalClubs)
   const activities = useQuery(Client.MY_ACTIVITIES, getPersonalActivities)
+
+  const [showCalendar, setShowCalendar] = useState(true)
+  const [date, setDate] = useState(() => moment().toISOString())
+  const [selected, setSelected] = useState(() => moment().toISOString())
 
   const mainClub = useMemo(() => {
     if (!clubs.data) {
@@ -30,9 +41,27 @@ export const useOverview = (): OverviewContext => {
     }
   }, [clubs.data])
 
+  const onChangeDate = useCallback((newDate: string) => {
+    setDate(newDate)
+  }, [setDate])
+
+  const onChangeSelectedDate = useCallback((set: string) => () => {
+    setSelected(set)
+  }, [setSelected])
+
+  const toggleShowCalendar = useCallback((set: boolean) => () => {
+    setShowCalendar(set)
+  }, [setShowCalendar])
+
   return {
     clubs,
     activities,
-    mainClub
+    mainClub,
+    showCalendar,
+    date,
+    selected,
+    onChangeDate,
+    onChangeSelectedDate,
+    toggleShowCalendar
   }
 }

@@ -1,14 +1,10 @@
 import React from 'react'
 import { ClubAccount } from '@types'
-import { Actions, DashboardSection } from '@components/common'
+import { DashboardSection } from '@components/common'
 import { ClubOverviewList, ClubOverviewActions } from '@components/overview'
+import { makeStyles, createStyles } from '@material-ui/core'
 
-import {
-  makeStyles,
-  createStyles
-} from '@material-ui/core'
-
-const useStyles = makeStyles(theme => createStyles({
+const useStyles = makeStyles(() => createStyles({
   wrapper: {
     display: 'flex',
     flexDirection: 'column',
@@ -16,9 +12,6 @@ const useStyles = makeStyles(theme => createStyles({
   },
   fullHeight: {
     flexGrow: 1
-  },
-  padding: {
-    padding: theme.spacing(1, 2)
   }
 }))
 
@@ -49,12 +42,10 @@ export const ClubsOverview = ({
             mainClub={mainClub}
           />
         </div>
-        <Actions align='right' className={classes.padding} withDivider>
-          <ClubOverviewActions
-            loading={loading}
-            showClubProfile={mainClub !== undefined}
-          />
-        </Actions>
+        <ClubOverviewActions
+          loading={loading}
+          showClubProfile={mainClub !== undefined}
+        />
       </div>
     </DashboardSection>
   )

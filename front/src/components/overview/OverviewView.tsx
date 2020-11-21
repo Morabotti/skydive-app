@@ -40,7 +40,17 @@ const useStyles = makeStyles(theme => createStyles({
 
 const OverviewView = () => {
   const classes = useStyles()
-  const { clubs, activities, mainClub } = useOverview()
+  const {
+    clubs,
+    activities,
+    mainClub,
+    showCalendar,
+    date,
+    selected,
+    onChangeDate,
+    onChangeSelectedDate,
+    toggleShowCalendar
+  } = useOverview()
 
   return (
     <DashboardContainer className={classes.container}>
@@ -64,6 +74,12 @@ const OverviewView = () => {
             <ActivityOverview
               loading={activities.isLoading}
               activities={activities.data}
+              showCalendar={showCalendar}
+              date={date}
+              selected={selected}
+              onChangeDate={onChangeDate}
+              onChangeSelectedDate={onChangeSelectedDate}
+              toggleShowCalendar={toggleShowCalendar}
             />
           </Grid>
         </Grid>
