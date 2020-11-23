@@ -18,7 +18,8 @@ const useStyles = makeStyles(theme => createStyles({
     gridTemplateRows: 'auto'
   },
   wrapping: {
-    padding: theme.spacing(1, 2)
+    padding: theme.spacing(1, 2),
+    minHeight: 370
   },
   fullHeight: {
     display: 'flex',
@@ -102,6 +103,10 @@ export const ActivityCalendar = memo(({
           ))}
           {[...Array(dates.month)].map((e, i) => {
             const date = moment(dates.first).add(i, 'day')
+            const dayActivities = activities?.filter(i =>
+              i.activity?.startDate && moment(i.activity.startDate).isSame(date, 'day')
+            )
+
             return (
               <CalendarDay
                 key={i}
@@ -110,6 +115,7 @@ export const ActivityCalendar = memo(({
                 onClick={onChangeSelectedDate(date.toISOString())}
                 selectedDate={date.isSame(selected, 'day')}
                 currentDate={date.isSame(moment(), 'day')}
+                activities={dayActivities}
               />
             )
           })}

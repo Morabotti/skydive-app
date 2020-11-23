@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useCallback } from 'react'
+import React, { Fragment, useState, useCallback, useRef, useEffect } from 'react'
 import { MenuDown } from 'mdi-material-ui'
 import { AuthUser } from '@types'
 import { customPalette } from '@theme'
@@ -17,6 +17,7 @@ import {
   Hidden,
   Grow
 } from '@material-ui/core'
+import { useLocation } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => createStyles({
   loggedIn: {
@@ -40,7 +41,7 @@ const useStyles = makeStyles(theme => createStyles({
   innerAvatar: {
     color: theme.palette.common.white,
     marginBottom: theme.spacing(0.75),
-    fontSize: theme.typography.h3.fontSize,
+    fontSize: theme.typography.h4.fontSize,
     backgroundColor: customPalette.header.primaryText,
     width: '100px',
     height: '100px'
@@ -86,8 +87,8 @@ const useStyles = makeStyles(theme => createStyles({
   }
 }))
 
-const getFirstLetters = (name: string) => {
-  return name.charAt(0)
+const getLetters = (firstName: string, lastName: string) => {
+  return `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`
 }
 
 interface Props {
@@ -100,19 +101,37 @@ export const AuthLoggedInAction = ({
   revokeAuth
 }: Props) => {
   const classes = useStyles()
-  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
+  const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
+  const prevOpen = useRef(open)
+  const anchorRef = useRef<HTMLDivElement>(null)
+  const profile = auth.user.profile
 
-  const handleClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    setAnchorEl(event.currentTarget)
+  const handleMenu = useCallback(() => {
     setOpen(prev => !prev)
-  }, [setAnchorEl, setOpen])
+  }, [setOpen])
 
-  const closeDialog = useCallback(() => {
+  const handleClose = useCallback((e: React.MouseEvent<EventTarget>) => {
+    if (anchorRef.current && anchorRef.current.contains(e.target as HTMLButtonElement)) {
+      return
+    }
+
     setOpen(false)
   }, [setOpen])
 
-  if (!auth) {
+  useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current?.focus()
+    }
+
+    prevOpen.current = open
+  }, [open])
+
+  useEffect(() => {
+    setOpen(false)
+  }, [pathname, setOpen])
+
+  if (!auth || !profile) {
     return <Fragment />
   }
 
@@ -120,13 +139,13 @@ export const AuthLoggedInAction = ({
     <>
       <Popper
         open={open}
-        anchorEl={anchorEl}
+        anchorEl={anchorRef.current}
         placement='bottom'
         transition
         className={classes.popper}
       >
         {({ TransitionProps }) => (
-          <ClickAwayListener onClickAway={closeDialog}>
+          <ClickAwayListener onClickAway={handleClose}>
             <Grow
               {...TransitionProps}
               style={{ transformOrigin: 'center top' }}
@@ -140,7 +159,7 @@ export const AuthLoggedInAction = ({
                   <div className={classes.top}>
                     <Avatar
                       className={classes.innerAvatar}
-                    >{getFirstLetters(auth.user.username).toUpperCase()}</Avatar>
+                    >{getLetters(profile.firstName, profile.lastName).toUpperCase()}</Avatar>
                   </div>
                   <div className={classes.bottom}>
                     <T variant='body1'>{auth.user.username}</T>
@@ -175,11 +194,12 @@ export const AuthLoggedInAction = ({
       </Popper>
       <div
         className={classes.loggedIn}
-        onClick={handleClick}
+        onClick={handleMenu}
+        ref={anchorRef}
       >
         <Avatar
           className={classes.avatar}
-        >{getFirstLetters(auth.user.username).toUpperCase()}</Avatar>
+        >{getLetters(profile.firstName, profile.lastName).toUpperCase()}</Avatar>
         <Hidden smDown>
           <>
             <T className={classes.text}>{auth.user.username}</T>

@@ -5,7 +5,7 @@ import { customPalette } from '@theme'
 
 import { AuthNavigationHeader } from '@components/navigation'
 
-const useStyles = makeStyles(theme => createStyles({
+const useStyles = makeStyles(() => createStyles({
   '@global': {
     body: {
       backgroundColor: customPalette.common.background
@@ -23,11 +23,7 @@ const useStyles = makeStyles(theme => createStyles({
   },
   main: {
     flex: 1,
-    padding: theme.spacing(3),
-    backgroundColor: customPalette.common.background,
-    [theme.breakpoints.down(425)]: {
-      padding: theme.spacing(1.5)
-    }
+    backgroundColor: customPalette.common.background
   }
 }))
 
@@ -38,10 +34,7 @@ interface Props {
 const AuthNavigation = memo(({ children }: Props) => {
   const classes = useStyles()
   const { auth, revokeAuth } = useAuth()
-
-  const {
-    currentRoute
-  } = useAuthNavigation()
+  const { currentRoute } = useAuthNavigation()
 
   if (auth === null) {
     return <Fragment />

@@ -17,7 +17,7 @@ export const routePreload = (url: string) => {
         return
       }
     }
-
+    /*
     if (!route.navigation) {
       continue
     }
@@ -36,5 +36,6 @@ export const routePreload = (url: string) => {
         return
       }
     }
+    */
   }
 }

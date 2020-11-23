@@ -3,7 +3,9 @@ package fi.morabotti.skydive.dao;
 import fi.jubic.easyutils.transactional.TransactionProvider;
 import fi.jubic.easyutils.transactional.Transactional;
 import fi.morabotti.skydive.config.Configuration;
+import fi.morabotti.skydive.db.Keys;
 import fi.morabotti.skydive.model.Account;
+import fi.morabotti.skydive.model.Profile;
 import fi.morabotti.skydive.model.Session;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -18,6 +20,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 import static fi.morabotti.skydive.db.tables.Account.ACCOUNT;
+import static fi.morabotti.skydive.db.tables.Profile.PROFILE;
 import static fi.morabotti.skydive.db.tables.Session.SESSION;
 
 @Singleton
@@ -38,9 +41,13 @@ public class SessionDao {
         return Transactional.of(
                 context -> selectAccount(context)
                         .where(SESSION.ID.eq(id))
+                        .fetch()
                         .stream()
-                        .map(Session.mapper.withAccount(Account.mapper)::map)
-                        .findFirst(),
+                        .collect(
+                                Session.mapper.collectingWithAccount(
+                                        Account.mapper.collectingWithProfiles(Profile.mapper)
+                                )
+                        ),
                 transactionProvider
         );
     }
@@ -67,8 +74,11 @@ public class SessionDao {
                 .and(SESSION.VALID_UNTIL.greaterOrEqual(Timestamp.from(Instant.now())))
                 .fetch()
                 .stream()
-                .map(Session.mapper.withAccount(Account.mapper)::map)
-                .findFirst();
+                .collect(
+                        Session.mapper.collectingWithAccount(
+                                Account.mapper.collectingWithProfiles(Profile.mapper)
+                        )
+                );
     }
 
     public Optional<Session> findValidByAccountId(Long accountId) {
@@ -77,8 +87,11 @@ public class SessionDao {
                 .and(SESSION.ACCOUNT_ID.eq(accountId))
                 .fetch()
                 .stream()
-                .map(Session.mapper.withAccount(Account.mapper)::map)
-                .findFirst();
+                .collect(
+                        Session.mapper.collectingWithAccount(
+                                Account.mapper.collectingWithProfiles(Profile.mapper)
+                        )
+                );
     }
 
     public void deleteByToken(String token) {
@@ -98,9 +111,11 @@ public class SessionDao {
     private SelectJoinStep<Record> selectAccount(DSLContext context) {
         return context.select(
                 SESSION.asterisk(),
-                ACCOUNT.asterisk()
+                ACCOUNT.asterisk(),
+                PROFILE.asterisk()
         )
                 .from(SESSION)
-                .join(ACCOUNT).on(SESSION.ACCOUNT_ID.eq(ACCOUNT.ID));
+                .join(ACCOUNT).onKey(Keys.FK_SESSION_ACCOUNT)
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT);
     }
 }

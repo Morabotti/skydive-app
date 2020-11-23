@@ -68,4 +68,18 @@
     <club_account id="1" role="club" account_id="1" accepted="[now-1h]" club_id="1" created_at="[now-1d]" />
     <club_account id="2" role="user" account_id="1" accepted="[now-2h]" club_id="2" created_at="[now-2d]" />
     <club_account id="3" role="user" account_id="2" accepted="[now-2h]" club_id="1" created_at="[now-1d]" />
+
+    <activity
+            id="1"
+            type="jump"
+            title="Test activity"
+            description="Test activity description"
+            token="123ad023-cbb0-46e5-c7a2-7b58d217377d"
+            access="open"
+            visible="true"
+            start_date="[now-1d]"
+            end_date="[now-1d]"
+            created_at="[now-3d]"
+            club_id="1" />
+    <activity_participation id="1" active="true" account_id="1" activity_id="1" created_at="[now-2d]" />
 </dataset>

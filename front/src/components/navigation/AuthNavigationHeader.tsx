@@ -68,7 +68,7 @@ const useStyles = makeStyles(theme => createStyles({
     color: customPalette.header.primaryText
   },
   location: {
-    color: customPalette.header.secondaryText,
+    color: customPalette.header.primaryText,
     height: 38,
     width: 38
   },

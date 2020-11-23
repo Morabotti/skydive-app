@@ -3,6 +3,7 @@ import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
 import moment from 'moment'
 import { customPalette } from '@theme'
+import { Participation } from '@types'
 
 import {
   makeStyles,
@@ -47,6 +48,24 @@ const useStyles = makeStyles(theme => createStyles({
     cursor: 'pointer',
     border: `3px solid ${customPalette.header.primaryColor}`
   },
+  notification: {
+    width: 18,
+    height: 18,
+    position: 'absolute',
+    borderRadius: '50%',
+    zIndex: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    backgroundColor: theme.palette.secondary.main,
+    color: '#fff',
+    pointerEvents: 'none',
+    transform: 'translate(13px, -13px)'
+  },
+  notificationText: {
+    fontSize: '0.7rem'
+  },
   selected: {
     backgroundColor: customPalette.header.primaryColor,
     color: '#fff'
@@ -58,12 +77,17 @@ const useStyles = makeStyles(theme => createStyles({
   },
   customIcon: {
     width: 50,
-    height: 50
+    height: 50,
+    [theme.breakpoints.down('xs')]: {
+      width: 33,
+      height: 33
+    }
   }
 }))
 
 interface Props {
   date: string,
+  activities?: Participation[],
   onClick?: () => void,
   loading?: boolean,
   dummy?: boolean,
@@ -74,6 +98,7 @@ interface Props {
 export const CalendarDay = ({
   loading,
   date,
+  activities,
   currentDate,
   onClick,
   dummy,
@@ -134,6 +159,14 @@ export const CalendarDay = ({
             variant='body1'
             className={classes.date}
           >{moment(date).format('D')}</T>
+        </span>
+      )}
+      {activities && activities.length !== 0 && (
+        <span className={classes.notification}>
+          <T
+            variant='body1'
+            className={classes.notificationText}
+          >{activities.length}</T>
         </span>
       )}
     </div>

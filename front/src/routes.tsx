@@ -3,14 +3,13 @@ import { Route, RouterRoute, RouteComponent } from '@types'
 import { AuthRoles, RouteType } from '@enums'
 import lazy from 'react-lazy-with-preload'
 
-import {
-  Speedometer,
-  Home
-} from 'mdi-material-ui'
-
 const LoginView = lazy(() => import('@components/auth/LoginView'))
 const RegisterView = lazy(() => import('@components/auth/RegisterView'))
 const OverviewView = lazy(() => import('@components/overview/OverviewView'))
+const ActivityView = lazy(() => import('@components/activity/ActivityView'))
+const ActivitiesView = lazy(() => import('@components/activities/ActivitiesView'))
+const ClubsView = lazy(() => import('@components/clubs/ClubsView'))
+const ClubView = lazy(() => import('@components/club/ClubView'))
 const ConfigurationView = lazy(() => import('@components/configuration/ConfigurationView'))
 
 export const routesTree: Route[] = [{
@@ -27,14 +26,35 @@ export const routesTree: Route[] = [{
   access: [AuthRoles.ADMIN, AuthRoles.USER],
   type: RouteType.AUTHED_ROUTED,
   component: OverviewView,
-  path: '/dashboard',
-  icon: Home,
-  name: 'Overview'
+  path: '/dashboard'
+}, {
+  access: [AuthRoles.ADMIN, AuthRoles.USER],
+  type: RouteType.AUTHED_ROUTED,
+  component: ClubsView,
+  path: '/dashboard/clubs',
+  name: 'Clubs'
+}, {
+  access: [AuthRoles.ADMIN, AuthRoles.USER],
+  type: RouteType.AUTHED_PRIVATE,
+  component: ClubView,
+  path: '/dashboard/club/:slug',
+  name: 'Club'
+}, {
+  access: [AuthRoles.ADMIN, AuthRoles.USER],
+  type: RouteType.AUTHED_ROUTED,
+  component: ActivitiesView,
+  path: '/dashboard/activities',
+  name: 'Activities'
+}, {
+  access: [AuthRoles.ADMIN, AuthRoles.USER],
+  type: RouteType.AUTHED_PRIVATE,
+  component: ActivityView,
+  path: '/dashboard/activity/:token',
+  name: 'Activity'
 }, {
   access: [AuthRoles.ADMIN, AuthRoles.USER],
   type: RouteType.AUTHED_ROUTED,
   path: '/dashboard/configuration',
-  icon: Speedometer,
   component: ConfigurationView,
   name: 'Configuration'
 }]
@@ -48,15 +68,10 @@ export const publicRoutes = routesTree
 
 export const dashboardRoutes: RouterRoute[] = routesTree
   .filter(i => i.type !== RouteType.PUBLIC)
-  .map(i => i.navigation ? i.navigation.map(x => ({
-    path: x.path,
-    component: x.component,
-    access: x.access
-  })) : {
+  .map(i => ({
     path: i.path,
     component: i.component as RouteComponent,
     access: i.access
-  })
-  .flat()
+  }))
 
 export const authNavigation = routesTree.filter(i => i.type === RouteType.AUTHED_ROUTED)

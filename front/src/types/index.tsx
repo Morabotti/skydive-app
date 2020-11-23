@@ -29,6 +29,11 @@ export interface PaginationQuery {
   offset: number
 }
 
+export interface DateRangeQuery {
+  from: string,
+  to: string | null
+}
+
 export interface ClubQuery {
   city: string,
   isPublic: boolean
@@ -68,15 +73,7 @@ export interface Route {
   access: AuthRoles[],
   type: RouteType,
   name?: string,
-  icon?: ElementType<SvgIconProps>,
-  navigation?: PortalSubRoute[]
-}
-
-export interface PortalSubRoute {
-  path: string,
-  name: string,
-  component: RouteComponent,
-  access: AuthRoles[]
+  icon?: ElementType<SvgIconProps>
 }
 
 export interface RouterRoute {
@@ -85,15 +82,14 @@ export interface RouterRoute {
   access: AuthRoles[]
 }
 
-export interface PortalRoute {
+export interface DashboardRoute {
   path: string,
   component: RouteComponent,
   access: AuthRoles[],
   type: RouteType,
   section: string | null,
   name: string,
-  icon: ElementType<SvgIconProps>,
-  subRoutes?: PortalSubRoute[]
+  icon: ElementType<SvgIconProps>
 }
 
 export interface RegisterUser {

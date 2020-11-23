@@ -15,7 +15,8 @@ import {
   Participation,
   ClubAccount,
   PaginationQuery,
-  ClubQuery
+  ClubQuery,
+  DateRangeQuery
 } from '@types'
 
 const addAuthToken = () => ({
@@ -28,7 +29,9 @@ const searchParams = (objects: any[]) => {
 
   for (const object of objects) {
     for (const key in object) {
-      query.set(key, String(object[key]))
+      if (object[key] !== null) {
+        query.set(key, String(object[key]))
+      }
     }
   }
 
@@ -485,8 +488,11 @@ export const getPersonalClubs = (): Promise<ClubAccount[]> => fetch(
   .then(checkResponse)
   .then((res) => res.json())
 
-export const getPersonalActivities = (): Promise<Participation[]> => fetch(
-  `/api/personal/activity`,
+export const getPersonalActivities = (
+  key: string,
+  dateRange: DateRangeQuery
+): Promise<Participation[]> => fetch(
+  `/api/personal/activity?${searchParams([dateRange])}`,
   {
     method: 'GET',
     headers: {

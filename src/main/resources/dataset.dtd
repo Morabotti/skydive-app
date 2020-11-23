@@ -74,9 +74,11 @@
 <!ATTLIST activity
         id CDATA #REQUIRED
         type CDATA #REQUIRED
+        title CDATA #REQUIRED
         description CDATA #REQUIRED
         access CDATA #REQUIRED
         visible CDATA #REQUIRED
+        token CDATA #REQUIRED
         start_date CDATA #REQUIRED
         end_date CDATA #IMPLIED
         created_at CDATA #REQUIRED
@@ -90,14 +92,14 @@
         access_key CDATA #REQUIRED
         active_start_date CDATA #IMPLIED
         active_end_date CDATA #IMPLIED
-        club_activity_id CDATA #REQUIRED
+        activity_id CDATA #REQUIRED
 >
 
 <!ELEMENT pilot_activity_participation EMPTY>
 <!ATTLIST pilot_activity_participation
         id CDATA #REQUIRED
         active CDATA #REQUIRED
-        club_activity_id CDATA #REQUIRED
+        activity_id CDATA #REQUIRED
         account_id CDATA #REQUIRED
         plane_id CDATA #REQUIRED
         created_at CDATA #IMPLIED
@@ -109,7 +111,7 @@
         id CDATA #REQUIRED
         active CDATA #REQUIRED
         account_id CDATA #REQUIRED
-        club_activity_id CDATA #REQUIRED
+        activity_id CDATA #REQUIRED
         created_at CDATA #REQUIRED
         deleted_at CDATA #IMPLIED
 >
@@ -120,7 +122,7 @@
         jump_height CDATA #IMPLIED
         jump_time CDATA #IMPLIED
         account_id CDATA #REQUIRED
-        club_activity_id CDATA #REQUIRED
+        activity_id CDATA #REQUIRED
         created_at CDATA #REQUIRED
         deleted_at CDATA #IMPLIED
 >
