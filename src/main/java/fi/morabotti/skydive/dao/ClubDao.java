@@ -145,11 +145,12 @@ public class ClubDao {
     ) {
         Optional<Condition> baseConditions = Optional.of(CLUB.DELETED_AT.isNull())
                 .map(condition -> clubQuery.getCity()
-                        .map(city -> condition.and(CLUB_PROFILE.CITY.eq(city)))
+                        .map(city -> condition.and(CLUB_PROFILE.CITY.contains(city)))
                         .orElse(condition)
                 )
                 .map(condition -> clubQuery.getSearch()
                         .map(search -> condition.and(CLUB.NAME.contains(search))
+                                .or(CLUB.SLUG.contains(search))
                                 .or(CLUB_PROFILE.ZIPCODE.contains(search))
                                 .or(CLUB_PROFILE.CITY.contains(search))
                         )

@@ -1,14 +1,30 @@
 import React from 'react'
-import { DashboardContainer, DummyComponent } from '@components/common'
-import { ClubsFilterDrawer } from '@components/clubs'
-import { useClubs } from '@hooks'
+import { DashboardContainer, PaginationControls } from '@components/common'
+import { ClubsFilterDrawer, ClubsViewSelector } from '@components/clubs'
+import { useAuth, useClubs } from '@hooks'
+import { createStyles, makeStyles } from '@material-ui/core'
+
+const useStyles = makeStyles(theme => createStyles({
+  container: {
+    marginLeft: 320,
+    padding: theme.spacing(3),
+    position: 'relative',
+    [theme.breakpoints.down(425)]: {
+      padding: theme.spacing(1.5)
+    }
+  }
+}))
 
 const ClubsView = () => {
+  const classes = useStyles()
+  const { auth } = useAuth()
+
   const {
     isList,
     toggleList,
     city,
     search,
+    clubs,
     isPublic,
     toggleIsPublic,
     setCity,
@@ -27,8 +43,14 @@ const ClubsView = () => {
         setCity={setCity}
         setSearch={setSearch}
       />
-      <div style={{ marginLeft: 320 }}>
-        <DummyComponent />
+      <div className={classes.container}>
+        <ClubsViewSelector
+          clubs={clubs.data?.result || []}
+          isList={isList}
+          loading={clubs.isLoading}
+          role={auth?.user.role}
+        />
+        <PaginationControls length={clubs.data?.length || 0} />
       </div>
     </DashboardContainer>
   )

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { matchPath, useLocation } from 'react-router'
-import { authNavigation } from '@routes'
+import { routesTree } from '@routes'
 import { Route } from '@types'
 
 interface AuthNavigationContext {
@@ -14,8 +14,9 @@ export const useAuthNavigation = (): AuthNavigationContext => {
   const [settings, setSettings] = useState(false)
 
   const currentRoute = useMemo(() => {
-    const primaryRoutes = authNavigation.find(i => {
+    const primaryRoutes = routesTree.find(i => {
       const isMatch = matchPath(pathname, i.path)
+
       return isMatch?.isExact
     })
 

@@ -80,13 +80,17 @@ const useStyles = makeStyles(theme => createStyles({
 interface Props {
   clubAccount?: ClubAccount,
   loading?: boolean,
-  last?: boolean
+  last?: boolean,
+  onClick?: () => void,
+  onMouseEnter?: () => void
 }
 
 export const ClubOverviewTile = ({
   clubAccount,
   loading,
-  last
+  last,
+  onClick,
+  onMouseEnter
 }: Props) => {
   const classes = useStyles()
 
@@ -116,6 +120,8 @@ export const ClubOverviewTile = ({
     <>
       <button
         className={clsx(classes.paper, classes.button)}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
       >
         <div className={classes.avatarWrapper}>
           <Avatar variant='rounded' className={classes.rounded}>

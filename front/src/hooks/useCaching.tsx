@@ -2,11 +2,13 @@ import { useState, useCallback } from 'react'
 import { LocalStorageKeys } from '@enums'
 
 interface ApplicationCache {
-  lastUsername: string
+  lastUsername: string,
+  lastLimit: number
 }
 
 const defaultCache: ApplicationCache = ({
-  lastUsername: ''
+  lastUsername: '',
+  lastLimit: 20
 })
 
 const getInitialApplicationCache = (): ApplicationCache => {

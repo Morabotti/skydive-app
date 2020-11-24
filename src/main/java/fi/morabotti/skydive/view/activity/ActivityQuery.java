@@ -24,6 +24,10 @@ public class ActivityQuery {
     @Nullable
     private Long clubId;
 
+    @QueryParam("search")
+    @Nullable
+    private String search;
+
     public ActivityQuery() {
 
     }
@@ -32,12 +36,14 @@ public class ActivityQuery {
             @Nullable ActivityType type,
             @Nullable Boolean visible,
             @Nullable ActivityAccess access,
-            @Nullable Long clubId
+            @Nullable Long clubId,
+            @Nullable String search
     ) {
         this.type = type;
         this.visible = visible;
         this.access = access;
         this.clubId = clubId;
+        this.search = search;
     }
 
     public ActivityQuery withType(ActivityType type) {
@@ -45,7 +51,8 @@ public class ActivityQuery {
                 type,
                 this.visible,
                 this.access,
-                this.clubId
+                this.clubId,
+                this.search
         );
     }
 
@@ -54,7 +61,8 @@ public class ActivityQuery {
                 this.type,
                 visible,
                 this.access,
-                this.clubId
+                this.clubId,
+                this.search
         );
     }
 
@@ -63,7 +71,8 @@ public class ActivityQuery {
                 this.type,
                 this.visible,
                 access,
-                this.clubId
+                this.clubId,
+                this.search
         );
     }
 
@@ -72,7 +81,18 @@ public class ActivityQuery {
                 this.type,
                 this.visible,
                 this.access,
-                clubId
+                clubId,
+                this.search
+        );
+    }
+
+    public ActivityQuery withSearch(String search) {
+        return new ActivityQuery(
+                this.type,
+                this.visible,
+                this.access,
+                this.clubId,
+                search
         );
     }
 
@@ -90,5 +110,9 @@ public class ActivityQuery {
 
     public Optional<Long> getClubId() {
         return Optional.ofNullable(this.clubId);
+    }
+
+    public Optional<String> getSearch() {
+        return Optional.ofNullable(this.search);
     }
 }

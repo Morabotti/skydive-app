@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { useDebounce } from '@hooks'
+import { useDebounce, usePagination } from '@hooks'
 import { QueryResult, usePaginatedQuery } from 'react-query'
 import { Client } from '@enums'
 import { getClubs } from '@client'
@@ -18,22 +18,23 @@ interface ClubsContext {
 }
 
 export const useClubs = (): ClubsContext => {
+  const { offset, limit } = usePagination()
   const [isList, setIsList] = useState(true)
   const [search, setSearch] = useState('')
   const [city, setCity] = useState('')
   const [isPublic, setIsPublic] = useState<null | boolean>(null)
 
-  const debouncedSearch = useDebounce(search, 500)
-  const debouncedCity = useDebounce(city, 500)
+  const debouncedSearch = useDebounce(search, 300)
+  const debouncedCity = useDebounce(city, 300)
 
   const clubs = usePaginatedQuery(
     [Client.GET_CLUBS, {
-      limit: 20,
-      offset: 0
+      limit,
+      offset
     }, {
       search: debouncedSearch,
       city: debouncedCity,
-      isPublic
+      isPublic: isPublic === null ? null : !isPublic
     }],
     getClubs
   )
@@ -43,7 +44,7 @@ export const useClubs = (): ClubsContext => {
   }, [setIsList])
 
   const toggleIsPublic = useCallback(() => {
-    setIsPublic(prev => prev === null ? true : !prev)
+    setIsPublic(prev => prev === null ? true : null)
   }, [setIsPublic])
 
   return {

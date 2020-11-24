@@ -12,6 +12,8 @@ import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.activity.ActivityQuery;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
@@ -43,30 +45,26 @@ public class ActivityDao {
 
     public Long fetchActivitiesLength(
             ActivityQuery activityQuery,
-            DateRangeQuery rangeQuery
+            DateRangeQuery rangeQuery,
+            Boolean isPrivate
     ) {
         return DSL.using(jooqConfiguration)
                 .selectCount()
                 .from(ACTIVITY)
-                .where(getConditions(activityQuery, rangeQuery,true))
+                .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
+                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
+                .where(getConditions(activityQuery, rangeQuery,isPrivate))
                 .fetchOne(0, Long.class);
     }
 
     public List<Activity> fetchActivities(
             PaginationQuery paginationQuery,
             DateRangeQuery rangeQuery,
-            ActivityQuery activityQuery
+            ActivityQuery activityQuery,
+            Boolean isPrivate
     ) {
-        return DSL.using(jooqConfiguration)
-                .select(
-                        ACTIVITY.asterisk(),
-                        CLUB.asterisk(),
-                        CLUB_PROFILE.asterisk()
-                )
-                .from(ACTIVITY)
-                .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
-                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
-                .where(getConditions(activityQuery, rangeQuery, true))
+        return selectActivity(DSL.using(jooqConfiguration))
+                .where(getConditions(activityQuery, rangeQuery, isPrivate))
                 .limit(paginationQuery.getLimit().orElse(20))
                 .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
@@ -79,15 +77,7 @@ public class ActivityDao {
     }
 
     public Optional<Activity> getByToken(UUID token) {
-        return DSL.using(jooqConfiguration)
-                .select(
-                        ACTIVITY.asterisk(),
-                        CLUB.asterisk(),
-                        CLUB_PROFILE.asterisk()
-                )
-                .from(ACTIVITY)
-                .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
-                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
+        return selectActivity(DSL.using(jooqConfiguration))
                 .where(ACTIVITY.TOKEN.eq(token.toString()))
                 .and(ACTIVITY.DELETED_AT.isNull())
                 .fetch()
@@ -101,15 +91,7 @@ public class ActivityDao {
 
     public Transactional<Optional<Activity>, DSLContext> getById(Long id) {
         return Transactional.of(
-                context -> context
-                        .select(
-                                ACTIVITY.asterisk(),
-                                CLUB.asterisk(),
-                                CLUB_PROFILE.asterisk()
-                        )
-                        .from(ACTIVITY)
-                        .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
-                        .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
+                context -> selectActivity(context)
                         .where(ACTIVITY.ID.eq(id))
                         .and(ACTIVITY.DELETED_AT.isNull())
                         .fetch()
@@ -166,6 +148,17 @@ public class ActivityDao {
         ).flatMap(ignored -> getById(activity.getId()));
     }
 
+    private SelectJoinStep<Record> selectActivity(DSLContext context) {
+        return context.select(
+                ACTIVITY.asterisk(),
+                CLUB.asterisk(),
+                CLUB_PROFILE.asterisk()
+        )
+                .from(ACTIVITY)
+                .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
+                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB);
+    }
+
     private Condition getConditions(
             ActivityQuery activityQuery,
             DateRangeQuery dateRangeQuery,
@@ -183,28 +176,36 @@ public class ActivityDao {
                 )
                 .map(condition -> dateRangeQuery.getTo()
                         .map(to -> condition.and(
-                                ACTIVITY.START_DATE.lessOrEqual(
+                                ACTIVITY.END_DATE.lessOrEqual(
                                         Timestamp.from(
                                                 to.atStartOfDay().toInstant(ZoneOffset.UTC)
                                         )
                                 )
                         )).orElse(condition)
+                )
+                .map(condition -> activityQuery.getAccess()
+                        .map(access -> condition.and(ACTIVITY.ACCESS.eq(access)))
+                        .orElse(condition)
+                )
+                .map(condition -> activityQuery.getType()
+                        .map(type -> condition.and(ACTIVITY.TYPE.eq(type)))
+                        .orElse(condition)
+                )
+                .map(condition -> activityQuery.getClubId()
+                        .map(id -> condition.and(ACTIVITY.CLUB_ID.eq(id)))
+                        .orElse(condition)
+                )
+                .map(condition -> activityQuery.getSearch()
+                        .map(search -> condition.and(ACTIVITY.TITLE.contains(search))
+                                .or(CLUB.NAME.contains(search))
+                                .or(CLUB.SLUG.contains(search))
+                                .or(CLUB_PROFILE.CITY.contains(search))
+                        )
+                        .orElse(condition)
                 );
 
         if (isPrivate) {
             return baseConditions
-                    .map(condition -> activityQuery.getAccess()
-                            .map(access -> condition.and(ACTIVITY.ACCESS.eq(access)))
-                            .orElse(condition)
-                    )
-                    .map(condition -> activityQuery.getType()
-                            .map(type -> condition.and(ACTIVITY.TYPE.eq(type)))
-                            .orElse(condition)
-                    )
-                    .map(condition -> activityQuery.getClubId()
-                            .map(id -> condition.and(ACTIVITY.CLUB_ID.eq(id)))
-                            .orElse(condition)
-                    )
                     .map(condition -> activityQuery.getVisible()
                             .map(visible -> condition.and(ACTIVITY.VISIBLE.eq(visible)))
                             .orElse(condition)
@@ -212,6 +213,8 @@ public class ActivityDao {
                     .get();
         }
 
-        return baseConditions.get();
+        return baseConditions
+                .map(condition -> condition.and(ACTIVITY.VISIBLE.eq(true)))
+                .get();
     }
 }

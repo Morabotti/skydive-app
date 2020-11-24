@@ -24,18 +24,14 @@ const useStyles = makeStyles(theme => createStyles({
     width: drawerWidth
   },
   container: {
-    overflow: 'auto',
-    padding: theme.spacing(3)
+    overflow: 'auto'
   },
   title: {
     color: customPalette.header.primaryText,
     fontWeight: theme.typography.fontWeightBold
   },
-  field: {
-    marginBottom: theme.spacing(2)
-  },
   view: {
-    marginBottom: theme.spacing(2),
+    margin: theme.spacing(3, 3, 2),
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center'

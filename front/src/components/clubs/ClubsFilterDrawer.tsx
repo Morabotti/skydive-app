@@ -2,17 +2,29 @@ import React from 'react'
 import { useAuth } from '@hooks'
 import { AuthRoles } from '@enums'
 import { DashboardFilterDrawer } from '@components/common'
+import { customPalette } from '@theme'
 
 import {
   Checkbox,
   createStyles,
   FormControlLabel,
   makeStyles,
-  TextField
+  TextField,
+  Typography as T
 } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => createStyles({
   field: {
+    marginBottom: theme.spacing(2)
+  },
+  wrapper: {
+    margin: theme.spacing(0, 3, 2)
+  },
+  title: {
+    color: customPalette.header.primaryText,
+    fontWeight: theme.typography.fontWeightBold
+  },
+  titleWrapper: {
     marginBottom: theme.spacing(2)
   }
 }))
@@ -50,40 +62,47 @@ export const ClubsFilterDrawer = ({
       isList={isList}
       toggleView={toggleList}
     >
-      <div>
-        <TextField
-          label='Search'
-          type='text'
-          fullWidth
-          className={classes.field}
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        <TextField
-          label='City name'
-          type='text'
-          fullWidth
-          className={classes.field}
-          value={city}
-          onChange={e => setCity(e.target.value)}
-        />
-        {isAdmin && (
+      <>
+        <div className={classes.wrapper}>
+          <TextField
+            label='Search'
+            type='text'
+            fullWidth
+            className={classes.field}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          <TextField
+            label='City name'
+            type='text'
+            fullWidth
+            className={classes.field}
+            value={city}
+            onChange={e => setCity(e.target.value)}
+          />
           <FormControlLabel
             control={
               <Checkbox color='primary' />
             }
-            value={isPublic === null ? false : isPublic}
-            onChange={toggleIsPublic}
-            label='Show private clubs'
+            label='Show only my clubs'
           />
+        </div>
+        {isAdmin && (
+          <div className={classes.wrapper}>
+            <div>
+              <T variant='body1' className={classes.title}>Admin options</T>
+            </div>
+            <FormControlLabel
+              control={
+                <Checkbox color='primary' />
+              }
+              value={isPublic === null ? false : isPublic}
+              onChange={toggleIsPublic}
+              label='Show only private clubs'
+            />
+          </div>
         )}
-        <FormControlLabel
-          control={
-            <Checkbox color='primary' />
-          }
-          label='Show only my clubs'
-        />
-      </div>
+      </>
     </DashboardFilterDrawer>
   )
 }

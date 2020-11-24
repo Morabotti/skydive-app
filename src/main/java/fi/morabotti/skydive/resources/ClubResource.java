@@ -7,6 +7,7 @@ import fi.morabotti.skydive.model.Plane;
 import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
+import fi.morabotti.skydive.view.activity.ActivityQuery;
 import fi.morabotti.skydive.view.activity.ActivityView;
 import fi.morabotti.skydive.view.club.ClubAccountView;
 import fi.morabotti.skydive.view.club.ClubInformationRequest;
@@ -104,12 +105,16 @@ public class ClubResource {
     public PaginationResponse<ActivityView> getClubActivities(
             @BeanParam PaginationQuery paginationQuery,
             @BeanParam DateRangeQuery dateRangeQuery,
+            @BeanParam ActivityQuery activityQuery,
+            @Context Account account,
             @PathParam("clubId") Long clubId
     ) {
         return activityController.getClubActivities(
                 paginationQuery,
                 dateRangeQuery,
-                clubId
+                activityQuery,
+                clubId,
+                account
         );
     }
 

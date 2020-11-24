@@ -40,6 +40,13 @@ export interface ClubQuery {
   isPublic: boolean
 }
 
+export interface ActivityQuery {
+  search: string,
+  access: ActivityAccess,
+  visible: boolean,
+  type: ActivityType
+}
+
 export interface User {
   id: number,
   username: string,

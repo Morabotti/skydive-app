@@ -10,6 +10,7 @@ import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.activity.ActivityInformationRequest;
 import fi.morabotti.skydive.view.activity.ActivityParticipationView;
+import fi.morabotti.skydive.view.activity.ActivityQuery;
 import fi.morabotti.skydive.view.activity.ActivityView;
 
 import javax.inject.Inject;
@@ -46,11 +47,15 @@ public class ActivityResource {
     @GET
     public PaginationResponse<ActivityView> getActivities(
             @BeanParam PaginationQuery paginationQuery,
-            @BeanParam DateRangeQuery dateRangeQuery
+            @BeanParam DateRangeQuery dateRangeQuery,
+            @BeanParam ActivityQuery activityQuery,
+            @Context Account account
     ) {
         return activityController.getAllActivities(
                 paginationQuery,
-                dateRangeQuery
+                dateRangeQuery,
+                activityQuery,
+                account
         );
     }
 

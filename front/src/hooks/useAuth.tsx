@@ -2,6 +2,7 @@ import React, { useState, createContext, ReactNode, useContext, useCallback } fr
 import { LocalStorageKeys } from '@enums'
 import { AuthUser } from '@types'
 import { useHistory } from 'react-router'
+import { useQueryCache } from 'react-query'
 
 interface AuthContext {
   loading: boolean,
@@ -26,6 +27,7 @@ export const __AuthContext = createContext<AuthContext>({
 export const AuthProvider = ({ children }: Props) => {
   const [loading, setLoading] = useState(true)
   const [ auth, setStateAuth ] = useState<null | AuthUser>(null)
+  const queryCache = useQueryCache()
   const { push } = useHistory()
 
   const setAuth = useCallback((user: AuthUser) => {
@@ -36,10 +38,11 @@ export const AuthProvider = ({ children }: Props) => {
 
   const revokeAuth = useCallback(() => {
     localStorage.removeItem(LocalStorageKeys.TOKEN)
+    queryCache.clear()
     setStateAuth(null)
     push('/login')
     setLoading(false)
-  }, [setStateAuth, push, setLoading])
+  }, [setStateAuth, push, setLoading, queryCache])
 
   const stopLoading = useCallback(() => {
     setLoading(false)
