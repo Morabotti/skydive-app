@@ -1,6 +1,6 @@
 FROM adoptopenjdk/maven-openjdk11 AS builder
 
-RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - \
   && apt-get install -y nodejs git build-essential \
   && mkdir -p /opt/build/front /opt/build/lib
 
