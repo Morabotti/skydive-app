@@ -1,0 +1,7 @@
+.idea/
+target/
+.gitignore
+dependency-reduced-pom.xml
+*.iml
+front/.vscode/
+front/node_modules/
