@@ -163,6 +163,7 @@ export const AuthLoggedInAction = ({
               <Paper
                 square
                 classes={{ root: classes.rootPaper }}
+                elevation={3}
               >
                 <div className={classes.wrap}>
                   <div className={classes.top}>

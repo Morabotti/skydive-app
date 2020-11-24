@@ -35,6 +35,7 @@ export interface DateRangeQuery {
 }
 
 export interface ClubQuery {
+  search: string,
   city: string,
   isPublic: boolean
 }

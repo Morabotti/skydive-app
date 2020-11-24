@@ -29,7 +29,10 @@ const searchParams = (objects: any[]) => {
 
   for (const object of objects) {
     for (const key in object) {
-      if (object[key] !== null) {
+      if (object[key] !== null
+        && object[key] !== ''
+        && String(object[key]).trim() !== ''
+      ) {
         query.set(key, String(object[key]))
       }
     }
@@ -133,6 +136,7 @@ export const updateClub = (
   .then((res) => res.json())
 
 export const getClubs = (
+  key: string,
   pagination: PaginationQuery,
   clubQuery?: ClubQuery
 ): Promise<PaginationResult<Club>> => fetch(

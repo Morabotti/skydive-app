@@ -42,6 +42,7 @@ public class ClubDao {
         return DSL.using(jooqConfiguration)
                 .selectCount()
                 .from(CLUB)
+                .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
                 .where(getConditions(clubQuery, isPrivate))
                 .fetchOne(0, Long.class);
     }

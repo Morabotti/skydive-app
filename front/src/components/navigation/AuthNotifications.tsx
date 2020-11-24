@@ -81,6 +81,7 @@ export const AuthNotifications = () => {
               <Paper
                 square
                 classes={{ root: classes.rootPaper }}
+                elevation={3}
               >
                 <div>
                   TODO

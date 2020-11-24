@@ -109,6 +109,7 @@ export const AuthLocationNavigator = ({
               <Paper
                 square
                 classes={{ root: classes.rootPaper }}
+                elevation={3}
               >
                 <List component='nav' className={classes.list}>
                   {authNavigation.filter(i => i.access.includes(auth.user.role))
