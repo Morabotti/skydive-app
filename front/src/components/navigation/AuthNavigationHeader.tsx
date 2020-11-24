@@ -1,9 +1,7 @@
 import React, { memo } from 'react'
-import { Cog, Bell, Apps } from 'mdi-material-ui'
+import { Cog } from 'mdi-material-ui'
 import { Route, AuthUser } from '@types'
 import { customPalette } from '@theme'
-import { AuthLoggedInAction } from '@components/navigation'
-import { useInView } from 'react-intersection-observer'
 import clsx from 'clsx'
 
 import {
@@ -14,8 +12,15 @@ import {
   Grid,
   IconButton,
   Tooltip,
-  Typography as T
+  Typography as T,
+  Hidden
 } from '@material-ui/core'
+
+import {
+  AuthLoggedInAction,
+  AuthNotifications,
+  AuthLocationNavigator
+} from '@components/navigation'
 
 const useStyles = makeStyles(theme => createStyles({
   primaryBar: {
@@ -82,16 +87,17 @@ const useStyles = makeStyles(theme => createStyles({
 interface Props {
   auth: AuthUser,
   currentRoute: Route | undefined,
-  onRevokeAuth: () => void
+  onRevokeAuth: () => void,
+  onSettings: () => void
 }
 
 export const AuthNavigationHeader = memo(({
   auth,
   currentRoute,
-  onRevokeAuth
+  onRevokeAuth,
+  onSettings
 }: Props) => {
   const classes = useStyles()
-  const [ref, onTop] = useInView({ threshold: 0.99 })
 
   const onNavigateTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -107,25 +113,17 @@ export const AuthNavigationHeader = memo(({
       <Toolbar>
         <Grid container spacing={2} alignItems='center'>
           <Grid item>
-            <div className={classes.center}>
-              <button className={classes.headerButton}>
-                <Apps
-                  className={classes.location}
-                />
-              </button>
-            </div>
+            <AuthLocationNavigator
+              auth={auth}
+              currentRoute={currentRoute}
+            />
           </Grid>
-          <Grid
-            item
-            xs
-            className={classes.hiddenOverflow}
-            ref={ref}
-          >
+          <Grid item xs className={classes.hiddenOverflow}>
             <button
               className={clsx(
                 classes.headerButton,
                 classes.navigationButton, {
-                  [classes.navigateBackToTop]: !onTop
+                  [classes.navigateBackToTop]: currentRoute?.name !== undefined
                 }
               )}
               onClick={onNavigateTop}
@@ -137,29 +135,24 @@ export const AuthNavigationHeader = memo(({
             </button>
           </Grid>
           <Grid item>
-            <Tooltip title='Notifications'>
-              <IconButton
-                color='inherit'
-                className={classes.primaryText}
-                onClick={() => {}}
-              >
-                <Bell />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title='Settings'>
-              <IconButton
-                color='inherit'
-                className={classes.primaryText}
-                onClick={() => {}}
-              >
-                <Cog />
-              </IconButton>
-            </Tooltip>
+            <AuthNotifications />
+            <Hidden smDown>
+              <Tooltip title='Settings'>
+                <IconButton
+                  color='inherit'
+                  className={classes.primaryText}
+                  onClick={onSettings}
+                >
+                  <Cog />
+                </IconButton>
+              </Tooltip>
+            </Hidden>
           </Grid>
           <Grid item>
             <AuthLoggedInAction
               auth={auth}
-              revokeAuth={onRevokeAuth}
+              onRevokeAuth={onRevokeAuth}
+              onSettings={onSettings}
             />
           </Grid>
         </Grid>

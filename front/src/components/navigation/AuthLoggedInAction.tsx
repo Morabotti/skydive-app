@@ -3,6 +3,7 @@ import { MenuDown } from 'mdi-material-ui'
 import { AuthUser } from '@types'
 import { customPalette } from '@theme'
 import clsx from 'clsx'
+import { useLocation } from 'react-router-dom'
 
 import {
   createStyles,
@@ -17,7 +18,6 @@ import {
   Hidden,
   Grow
 } from '@material-ui/core'
-import { useLocation } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => createStyles({
   loggedIn: {
@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => createStyles({
     color: customPalette.header.primaryText
   },
   popper: {
-    marginTop: theme.spacing(1.5),
+    marginTop: theme.spacing(1),
     zIndex: theme.zIndex.appBar - 50
   },
   top: {
@@ -68,7 +68,9 @@ const useStyles = makeStyles(theme => createStyles({
   rootPaper: {
     borderRadius: theme.spacing(1),
     minWidth: '240px',
-    maxWidth: '240px'
+    maxWidth: '240px',
+    borderTopRightRadius: 0,
+    borderTopLeftRadius: 0
   },
   wrap: {
     padding: theme.spacing(2),
@@ -93,12 +95,14 @@ const getLetters = (firstName: string, lastName: string) => {
 
 interface Props {
   auth: AuthUser,
-  revokeAuth: () => void
+  onRevokeAuth: () => void,
+  onSettings: () => void
 }
 
 export const AuthLoggedInAction = ({
   auth,
-  revokeAuth
+  onRevokeAuth,
+  onSettings
 }: Props) => {
   const classes = useStyles()
   const { pathname } = useLocation()
@@ -109,6 +113,11 @@ export const AuthLoggedInAction = ({
 
   const handleMenu = useCallback(() => {
     setOpen(prev => !prev)
+  }, [setOpen])
+
+  const onMenuSelect = useCallback((cb: () => void) => () => {
+    setOpen(false)
+    cb()
   }, [setOpen])
 
   const handleClose = useCallback((e: React.MouseEvent<EventTarget>) => {
@@ -162,8 +171,8 @@ export const AuthLoggedInAction = ({
                     >{getLetters(profile.firstName, profile.lastName).toUpperCase()}</Avatar>
                   </div>
                   <div className={classes.bottom}>
-                    <T variant='body1'>{auth.user.username}</T>
-                    <T variant='body2' className={classes.subtext}>{auth.user.role}</T>
+                    <T variant='body1'>{profile.firstName} {profile.lastName}</T>
+                    <T variant='body2' className={classes.subtext}>{auth.user.username}</T>
                   </div>
                 </div>
                 <Divider variant='fullWidth' />
@@ -174,7 +183,7 @@ export const AuthLoggedInAction = ({
                         variant='outlined'
                         color='default'
                         fullWidth
-                        onClick={() => {}}
+                        onClick={onMenuSelect(onSettings)}
                       >Settings</Button>
                     </div>
                   </Hidden>
@@ -183,7 +192,7 @@ export const AuthLoggedInAction = ({
                       variant='outlined'
                       color='default'
                       fullWidth
-                      onClick={revokeAuth}
+                      onClick={onRevokeAuth}
                     >Logout</Button>
                   </div>
                 </div>

@@ -44,7 +44,7 @@ export const ClubsOverview = ({
         </div>
         <ClubOverviewActions
           loading={loading}
-          showClubProfile={mainClub !== undefined}
+          clubAccount={mainClub}
         />
       </div>
     </DashboardSection>

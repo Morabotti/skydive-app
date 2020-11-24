@@ -1,2 +1,5 @@
 export { AuthNavigationHeader } from './AuthNavigationHeader'
 export { AuthLoggedInAction } from './AuthLoggedInAction'
+export { SettingsDialog } from './SettingsDialog'
+export { AuthNotifications } from './AuthNotifications'
+export { AuthLocationNavigator } from './AuthLocationNavigator'

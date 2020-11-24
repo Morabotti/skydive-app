@@ -2,6 +2,8 @@ import React from 'react'
 import { Button, createStyles, makeStyles } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import { Actions } from '@components/common'
+import { useApplicationNavigation } from '@hooks'
+import { ClubAccount } from '@types'
 
 const useStyles = makeStyles(theme => createStyles({
   padding: {
@@ -11,14 +13,15 @@ const useStyles = makeStyles(theme => createStyles({
 
 interface Props {
   loading: boolean,
-  showClubProfile: boolean
+  clubAccount: ClubAccount | undefined
 }
 
 export const ClubOverviewActions = ({
   loading,
-  showClubProfile
+  clubAccount
 }: Props) => {
   const classes = useStyles()
+  const { onRoutePreload, onNavigation } = useApplicationNavigation()
 
   if (loading) {
     return (
@@ -32,13 +35,21 @@ export const ClubOverviewActions = ({
   return (
     <Actions align='right' className={classes.padding} withDivider>
       <>
-        {showClubProfile && (
-          <Button color='secondary'>
+        {clubAccount && clubAccount.club && (
+          <Button
+            color='secondary'
+            onClick={onNavigation(`/dashboard/club/${clubAccount.club.slug}`)}
+            onMouseEnter={onRoutePreload(`/dashboard/club/${clubAccount.club.slug}`)}
+          >
             Open club profile
           </Button>
         )}
       </>
-      <Button color='primary'>
+      <Button
+        color='primary'
+        onClick={onNavigation('/dashboard/clubs')}
+        onMouseEnter={onRoutePreload('/dashboard/clubs')}
+      >
         Show all clubs
       </Button>
     </Actions>

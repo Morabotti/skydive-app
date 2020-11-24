@@ -3,6 +3,13 @@ import { Route, RouterRoute, RouteComponent } from '@types'
 import { AuthRoles, RouteType } from '@enums'
 import lazy from 'react-lazy-with-preload'
 
+import {
+  AccountGroup,
+  Cogs,
+  Home,
+  MapMarkerRadius
+} from 'mdi-material-ui'
+
 const LoginView = lazy(() => import('@components/auth/LoginView'))
 const RegisterView = lazy(() => import('@components/auth/RegisterView'))
 const OverviewView = lazy(() => import('@components/overview/OverviewView'))
@@ -26,13 +33,16 @@ export const routesTree: Route[] = [{
   access: [AuthRoles.ADMIN, AuthRoles.USER],
   type: RouteType.AUTHED_ROUTED,
   component: OverviewView,
-  path: '/dashboard'
+  path: '/dashboard',
+  name: 'Overview',
+  icon: Home
 }, {
   access: [AuthRoles.ADMIN, AuthRoles.USER],
   type: RouteType.AUTHED_ROUTED,
   component: ClubsView,
   path: '/dashboard/clubs',
-  name: 'Clubs'
+  name: 'Clubs',
+  icon: AccountGroup
 }, {
   access: [AuthRoles.ADMIN, AuthRoles.USER],
   type: RouteType.AUTHED_PRIVATE,
@@ -44,7 +54,8 @@ export const routesTree: Route[] = [{
   type: RouteType.AUTHED_ROUTED,
   component: ActivitiesView,
   path: '/dashboard/activities',
-  name: 'Activities'
+  name: 'Activities',
+  icon: MapMarkerRadius
 }, {
   access: [AuthRoles.ADMIN, AuthRoles.USER],
   type: RouteType.AUTHED_PRIVATE,
@@ -52,11 +63,12 @@ export const routesTree: Route[] = [{
   path: '/dashboard/activity/:token',
   name: 'Activity'
 }, {
-  access: [AuthRoles.ADMIN, AuthRoles.USER],
+  access: [AuthRoles.ADMIN],
   type: RouteType.AUTHED_ROUTED,
   path: '/dashboard/configuration',
   component: ConfigurationView,
-  name: 'Configuration'
+  name: 'Configuration',
+  icon: Cogs
 }]
 
 export const publicRoutes = routesTree

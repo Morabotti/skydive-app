@@ -3,7 +3,10 @@ import { useAuth, useAuthNavigation } from '@hooks'
 import { createStyles, makeStyles } from '@material-ui/core'
 import { customPalette } from '@theme'
 
-import { AuthNavigationHeader } from '@components/navigation'
+import {
+  AuthNavigationHeader,
+  SettingsDialog
+} from '@components/navigation'
 
 const useStyles = makeStyles(() => createStyles({
   '@global': {
@@ -34,7 +37,12 @@ interface Props {
 const AuthNavigation = memo(({ children }: Props) => {
   const classes = useStyles()
   const { auth, revokeAuth } = useAuth()
-  const { currentRoute } = useAuthNavigation()
+
+  const {
+    settings,
+    currentRoute,
+    toggleSettings
+  } = useAuthNavigation()
 
   if (auth === null) {
     return <Fragment />
@@ -47,11 +55,16 @@ const AuthNavigation = memo(({ children }: Props) => {
           auth={auth}
           currentRoute={currentRoute}
           onRevokeAuth={revokeAuth}
+          onSettings={toggleSettings(true)}
         />
         <main className={classes.main}>
           {children}
         </main>
       </div>
+      <SettingsDialog
+        open={settings}
+        onClose={toggleSettings(false)}
+      />
     </div>
   )
 })

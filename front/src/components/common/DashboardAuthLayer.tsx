@@ -28,7 +28,7 @@ export const DashboardAuthLayer = memo(({ children }: Props) => {
   if (!loading && auth === null) {
     return (
       <Redirect
-        to={`/login${pathname !== '/dashboard' ? `?search=${pathname}` : ''}`}
+        to={`/login${pathname !== '/dashboard' ? `?redirect=${pathname}` : ''}`}
       />
     )
   }

@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, makeStyles } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import { Actions } from '@components/common'
+import { useApplicationNavigation } from '@hooks'
 
 interface Props {
   loading: boolean
@@ -17,6 +18,7 @@ export const ActivityActions = ({
   loading
 }: Props) => {
   const classes = useStyles()
+  const { onRoutePreload, onNavigation } = useApplicationNavigation()
 
   if (loading) {
     return (
@@ -28,7 +30,11 @@ export const ActivityActions = ({
 
   return (
     <Actions align='right' withDivider className={classes.padding}>
-      <Button color='primary'>
+      <Button
+        color='primary'
+        onClick={onNavigation('/dashboard/activities')}
+        onMouseEnter={onRoutePreload('/dashboard/activities')}
+      >
         Search activities
       </Button>
     </Actions>

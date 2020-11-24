@@ -15,6 +15,7 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "react-hot-loader": "^4.13.0",
+    "react-query-devtools": "^2.6.3",
     "webpack-bundle-analyzer": "^3.9.0",
     "webpack-dev-server": "^3.11.0"
   },
