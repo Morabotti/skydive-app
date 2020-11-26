@@ -1,5 +1,5 @@
 import React from 'react'
-import { Participation } from '@types'
+import { Activity, Participation } from '@types'
 import { createStyles, makeStyles } from '@material-ui/core'
 import moment from 'moment'
 import { CenterMessage } from '@components/common'
@@ -14,12 +14,14 @@ const useStyles = makeStyles(theme => createStyles({
 
 interface Props {
   loading: boolean,
-  activities?: Participation[],
+  participation: Participation[],
+  activities: Activity[],
   selected: string
 }
 
 export const DayActivities = ({
   loading,
+  participation,
   activities,
   selected
 }: Props) => {
@@ -33,7 +35,7 @@ export const DayActivities = ({
     )
   }
 
-  if (activities?.length === 0) {
+  if (participation.length === 0 && activities.length === 0) {
     return (
       <div className={classes.wrapping}>
         <CenterMessage

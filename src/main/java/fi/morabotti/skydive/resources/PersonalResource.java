@@ -4,7 +4,7 @@ import fi.morabotti.skydive.controller.ActivityController;
 import fi.morabotti.skydive.controller.ClubController;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.view.DateRangeQuery;
-import fi.morabotti.skydive.view.activity.ActivityParticipationView;
+import fi.morabotti.skydive.view.activity.PersonalActivityView;
 import fi.morabotti.skydive.view.club.ClubAccountView;
 
 import javax.inject.Inject;
@@ -46,7 +46,7 @@ public class PersonalResource {
 
     @GET
     @Path("/activity")
-    public List<ActivityParticipationView> getMyActivities(
+    public PersonalActivityView getMyActivities(
             @BeanParam DateRangeQuery rangeQuery,
             @Context Account account
     ) {

@@ -28,6 +28,11 @@ public class ActivityQuery {
     @Nullable
     private String search;
 
+    @QueryParam("accountId")
+    @Nullable
+    private Long accountId;
+
+
     public ActivityQuery() {
 
     }
@@ -37,13 +42,15 @@ public class ActivityQuery {
             @Nullable Boolean visible,
             @Nullable ActivityAccess access,
             @Nullable Long clubId,
-            @Nullable String search
+            @Nullable String search,
+            @Nullable Long accountId
     ) {
         this.type = type;
         this.visible = visible;
         this.access = access;
         this.clubId = clubId;
         this.search = search;
+        this.accountId = accountId;
     }
 
     public ActivityQuery withType(ActivityType type) {
@@ -52,7 +59,8 @@ public class ActivityQuery {
                 this.visible,
                 this.access,
                 this.clubId,
-                this.search
+                this.search,
+                this.accountId
         );
     }
 
@@ -62,7 +70,8 @@ public class ActivityQuery {
                 visible,
                 this.access,
                 this.clubId,
-                this.search
+                this.search,
+                this.accountId
         );
     }
 
@@ -72,7 +81,8 @@ public class ActivityQuery {
                 this.visible,
                 access,
                 this.clubId,
-                this.search
+                this.search,
+                this.accountId
         );
     }
 
@@ -82,7 +92,8 @@ public class ActivityQuery {
                 this.visible,
                 this.access,
                 clubId,
-                this.search
+                this.search,
+                this.accountId
         );
     }
 
@@ -92,9 +103,22 @@ public class ActivityQuery {
                 this.visible,
                 this.access,
                 this.clubId,
-                search
+                search,
+                this.accountId
         );
     }
+
+    public ActivityQuery withAccountId(Long accountId) {
+        return new ActivityQuery(
+                this.type,
+                this.visible,
+                this.access,
+                this.clubId,
+                this.search,
+                accountId
+        );
+    }
+
 
     public Optional<ActivityType> getType() {
         return Optional.ofNullable(this.type);
@@ -114,5 +138,9 @@ public class ActivityQuery {
 
     public Optional<String> getSearch() {
         return Optional.ofNullable(this.search);
+    }
+
+    public Optional<Long> getAccountId() {
+        return Optional.ofNullable(this.accountId);
     }
 }

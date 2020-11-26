@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { Participation } from '@types'
+import { Activity, Participation } from '@types'
 import { createStyles, makeStyles } from '@material-ui/core'
 import { CenterMessage } from '@components/common'
 import { Cancel } from 'mdi-material-ui'
@@ -18,17 +18,18 @@ const useStyles = makeStyles(theme => createStyles({
 
 interface Props {
   loading: boolean,
-  activities?: Participation[]
+  participation?: Participation[],
+  activities?: Activity[]
 }
 
 export const MonthActivityList = memo(({
   loading,
+  participation,
   activities
 }: Props) => {
   const classes = useStyles()
-  console.log(activities)
 
-  if (loading) {
+  if (loading || !activities || !participation) {
     return (
       <div className={classes.fullHeight}>
         <div className={classes.wrapping}>

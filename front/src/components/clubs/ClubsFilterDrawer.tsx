@@ -84,6 +84,7 @@ export const ClubsFilterDrawer = ({
             control={
               <Checkbox color='primary' />
             }
+            disabled
             label='Show only my clubs'
           />
         </div>

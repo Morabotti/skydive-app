@@ -1,10 +1,11 @@
 import React from 'react'
-import { Participation } from '@types'
+import { Activity, Participation } from '@types'
 import { ActivityCalendar, MonthActivityList } from '@components/overview'
 
 interface Props {
   loading: boolean,
-  activities?: Participation[],
+  participation?: Participation[],
+  activities?: Activity[],
   showCalendar: boolean,
   date: string,
   selected: string,
@@ -13,6 +14,7 @@ interface Props {
 
 export const ActivityViewSelector = ({
   loading,
+  participation,
   activities,
   showCalendar,
   date,
@@ -23,6 +25,7 @@ export const ActivityViewSelector = ({
     return (
       <MonthActivityList
         loading={loading}
+        participation={participation}
         activities={activities}
       />
     )
@@ -33,6 +36,7 @@ export const ActivityViewSelector = ({
       date={date}
       loading={loading}
       selected={selected}
+      participation={participation}
       activities={activities}
       onChangeSelectedDate={onChangeSelectedDate}
     />

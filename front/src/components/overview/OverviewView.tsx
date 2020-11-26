@@ -42,7 +42,7 @@ const OverviewView = () => {
   const classes = useStyles()
   const {
     clubs,
-    activities,
+    myActivities,
     mainClub,
     showCalendar,
     date,
@@ -72,8 +72,9 @@ const OverviewView = () => {
         <Grid container spacing={2} className={classes.container}>
           <Grid item xs={12} className={classes.full}>
             <ActivityOverview
-              loading={activities.isLoading}
-              activities={activities.data}
+              loading={myActivities.isLoading}
+              participation={myActivities.data?.participation}
+              activities={myActivities.data?.activities}
               showCalendar={showCalendar}
               date={date}
               selected={selected}

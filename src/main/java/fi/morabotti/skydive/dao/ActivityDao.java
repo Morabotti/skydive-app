@@ -26,8 +26,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static fi.morabotti.skydive.db.tables.Activity.ACTIVITY;
+import static fi.morabotti.skydive.db.tables.ActivityParticipation.ACTIVITY_PARTICIPATION;
 import static fi.morabotti.skydive.db.tables.Club.CLUB;
+import static fi.morabotti.skydive.db.tables.ClubAccount.CLUB_ACCOUNT;
 import static fi.morabotti.skydive.db.tables.ClubProfile.CLUB_PROFILE;
+import static fi.morabotti.skydive.db.tables.PilotActivityParticipation.PILOT_ACTIVITY_PARTICIPATION;
 
 @Singleton
 public class ActivityDao {
@@ -46,14 +49,15 @@ public class ActivityDao {
     public Long fetchActivitiesLength(
             ActivityQuery activityQuery,
             DateRangeQuery rangeQuery,
-            Boolean isPrivate
+            Boolean isPrivate,
+            Boolean filterParticipated
     ) {
         return DSL.using(jooqConfiguration)
                 .selectCount()
                 .from(ACTIVITY)
                 .join(CLUB).onKey(Keys.FK_ACTIVITY_CLUB_ID)
                 .join(CLUB_PROFILE).onKey(Keys.FK_CLUB_PROFILE_CLUB)
-                .where(getConditions(activityQuery, rangeQuery,isPrivate))
+                .where(getConditions(activityQuery, rangeQuery,isPrivate, filterParticipated))
                 .fetchOne(0, Long.class);
     }
 
@@ -61,10 +65,11 @@ public class ActivityDao {
             PaginationQuery paginationQuery,
             DateRangeQuery rangeQuery,
             ActivityQuery activityQuery,
-            Boolean isPrivate
+            Boolean isPrivate,
+            Boolean filterParticipated
     ) {
         return selectActivity(DSL.using(jooqConfiguration))
-                .where(getConditions(activityQuery, rangeQuery, isPrivate))
+                .where(getConditions(activityQuery, rangeQuery, isPrivate, filterParticipated))
                 .limit(paginationQuery.getLimit().orElse(20))
                 .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
@@ -162,7 +167,8 @@ public class ActivityDao {
     private Condition getConditions(
             ActivityQuery activityQuery,
             DateRangeQuery dateRangeQuery,
-            Boolean isPrivate
+            Boolean isPrivate,
+            Boolean filterParticipated
     ) {
         Optional<Condition> baseConditions = Optional.of(ACTIVITY.DELETED_AT.isNull())
                 .map(condition -> dateRangeQuery.getFrom()
@@ -195,6 +201,14 @@ public class ActivityDao {
                         .map(id -> condition.and(ACTIVITY.CLUB_ID.eq(id)))
                         .orElse(condition)
                 )
+                .map(condition -> activityQuery.getAccountId()
+                        .map(accountId -> condition.and(ACTIVITY.CLUB_ID.in(
+                                DSL.select(CLUB_ACCOUNT.CLUB_ID)
+                                        .from(CLUB_ACCOUNT)
+                                        .where(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId))
+                        )))
+                        .orElse(condition)
+                )
                 .map(condition -> activityQuery.getSearch()
                         .map(search -> condition.and(ACTIVITY.TITLE.contains(search))
                                 .or(CLUB.NAME.contains(search))
@@ -213,8 +227,30 @@ public class ActivityDao {
                     .get();
         }
 
-        return baseConditions
+        Condition nonPrivateConditions = baseConditions
                 .map(condition -> condition.and(ACTIVITY.VISIBLE.eq(true)))
                 .get();
+
+        if (filterParticipated && activityQuery.getAccountId().isPresent()) {
+            return nonPrivateConditions.and(
+                    ACTIVITY.ID.notIn(
+                            DSL.select(ACTIVITY_PARTICIPATION.ACTIVITY_ID)
+                                    .from(ACTIVITY_PARTICIPATION)
+                                    .where(ACTIVITY_PARTICIPATION.ACCOUNT_ID.eq(
+                                            activityQuery.getAccountId().get()
+                                    ))
+                    )
+            ).and(
+                    ACTIVITY.ID.notIn(
+                            DSL.select(PILOT_ACTIVITY_PARTICIPATION.ACTIVITY_ID)
+                                    .from(PILOT_ACTIVITY_PARTICIPATION)
+                                    .where(PILOT_ACTIVITY_PARTICIPATION.ACCOUNT_ID.eq(
+                                            activityQuery.getAccountId().get()
+                                    ))
+                    )
+            );
+        }
+
+        return nonPrivateConditions;
     }
 }

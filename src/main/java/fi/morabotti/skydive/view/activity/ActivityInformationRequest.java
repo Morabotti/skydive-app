@@ -23,6 +23,8 @@ public abstract class ActivityInformationRequest {
 
     public abstract Boolean getVisibility();
 
+    public abstract Boolean getClubOnly();
+
     public abstract LocalDate getStartDate();
 
     public abstract LocalDate getEndDate();

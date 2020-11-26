@@ -1,5 +1,5 @@
 import React from 'react'
-import { Participation } from '@types'
+import { Activity, Participation } from '@types'
 import { DashboardSection } from '@components/common'
 import { makeStyles, createStyles } from '@material-ui/core'
 
@@ -21,7 +21,8 @@ const useStyles = makeStyles(() => createStyles({
 
 interface Props {
   loading: boolean,
-  activities?: Participation[],
+  participation?: Participation[],
+  activities?: Activity[],
   showCalendar: boolean,
   date: string,
   selected: string,
@@ -32,6 +33,7 @@ interface Props {
 
 export const ActivityOverview = ({
   loading,
+  participation,
   activities,
   showCalendar,
   date,
@@ -66,6 +68,7 @@ export const ActivityOverview = ({
           date={date}
           selected={selected}
           showCalendar={showCalendar}
+          participation={participation}
           activities={activities}
           onChangeSelectedDate={onChangeSelectedDate}
         />

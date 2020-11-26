@@ -23,6 +23,7 @@ import fi.morabotti.skydive.view.activity.ActivityParticipationQuery;
 import fi.morabotti.skydive.view.activity.ActivityParticipationView;
 import fi.morabotti.skydive.view.activity.ActivityQuery;
 import fi.morabotti.skydive.view.activity.ActivityView;
+import fi.morabotti.skydive.view.activity.PersonalActivityView;
 import fi.morabotti.skydive.view.club.ClubAccountQuery;
 
 import javax.annotation.Nullable;
@@ -252,30 +253,43 @@ public class ActivityController {
 
     /**
      * Fetches activities for certain account id.
+     * @param rangeQuery DateRangeQuery of activity start & end date
      * @param accountId Long id of the account
-     * @return List of ActivityParticipationView with activity data
+     * @return PersonalActivityView with activity data
      * */
-    public List<ActivityParticipationView> getAccountsActivities(
+    public PersonalActivityView getAccountsActivities(
             DateRangeQuery rangeQuery,
             Long accountId
     ) {
         ActivityParticipationQuery query = new ActivityParticipationQuery()
                 .withAccountId(accountId);
 
-        return Stream.concat(
-                participationDao.getParticipates(
-                        query,
-                        rangeQuery
+        return PersonalActivityView.of(
+                activityDao.fetchActivities(
+                        new PaginationQuery(512, 0),
+                        rangeQuery,
+                        new ActivityQuery().withAccountId(accountId),
+                        false,
+                        true
                 )
                         .stream()
-                        .map(ActivityParticipationView::of),
-                participationDao.getPilotParticipates(
-                        query,
-                        rangeQuery
-                )
-                        .stream()
-                        .map(ActivityParticipationView::of)
-        ).collect(Collectors.toList());
+                        .map(ActivityView::of)
+                        .collect(Collectors.toList()),
+                Stream.concat(
+                        participationDao.getParticipates(
+                                query,
+                                rangeQuery
+                        )
+                                .stream()
+                                .map(ActivityParticipationView::of),
+                        participationDao.getPilotParticipates(
+                                query,
+                                rangeQuery
+                        )
+                                .stream()
+                                .map(ActivityParticipationView::of)
+                ).collect(Collectors.toList())
+        );
     }
 
     /**
@@ -418,7 +432,7 @@ public class ActivityController {
     }
 
     /**
-     * Fetches activities based on queries.
+     * Fetches activities based on queries. Always returns based on current Account.
      * @param paginationQuery PaginationQuery used to paginate response
      * @param dateRangeQuery DateRangeQuery used to define range
      * @param activityQuery ActivityQuery used to define selection
@@ -435,15 +449,17 @@ public class ActivityController {
                 activityDao.fetchActivities(
                         paginationQuery,
                         dateRangeQuery,
-                        activityQuery,
-                        account.getAccountRole().equals(AccountRole.admin)
+                        activityQuery.withAccountId(account.getId()),
+                        account.getAccountRole().equals(AccountRole.admin),
+                        false
                 ).stream()
                         .map(ActivityView::of)
                         .collect(Collectors.toList()),
                 activityDao.fetchActivitiesLength(
-                        activityQuery,
+                        activityQuery.withAccountId(account.getId()),
                         dateRangeQuery,
-                        account.getAccountRole().equals(AccountRole.admin)
+                        account.getAccountRole().equals(AccountRole.admin),
+                        false
                 )
         );
     }

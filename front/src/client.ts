@@ -16,7 +16,8 @@ import {
   ClubAccount,
   PaginationQuery,
   ClubQuery,
-  DateRangeQuery
+  DateRangeQuery,
+  MyActivities
 } from '@types'
 
 const addAuthToken = () => ({
@@ -495,7 +496,7 @@ export const getPersonalClubs = (): Promise<ClubAccount[]> => fetch(
 export const getPersonalActivities = (
   key: string,
   dateRange: DateRangeQuery
-): Promise<Participation[]> => fetch(
+): Promise<MyActivities> => fetch(
   `/api/personal/activity?${searchParams([dateRange])}`,
   {
     method: 'GET',

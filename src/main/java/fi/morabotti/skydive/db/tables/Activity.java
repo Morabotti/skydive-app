@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Activity extends TableImpl<ActivityRecord> {
 
-    private static final long serialVersionUID = -648340981;
+    private static final long serialVersionUID = 1489681215;
 
     /**
      * The reference instance of <code>activity</code>
@@ -87,7 +87,12 @@ public class Activity extends TableImpl<ActivityRecord> {
     /**
      * The column <code>activity.access</code>.
      */
-    public final TableField<ActivityRecord, ActivityAccess> ACCESS = createField("access", org.jooq.impl.SQLDataType.VARCHAR(10).nullable(false).asEnumDataType(fi.morabotti.skydive.db.enums.ActivityAccess.class), this, "");
+    public final TableField<ActivityRecord, ActivityAccess> ACCESS = createField("access", org.jooq.impl.SQLDataType.VARCHAR(6).nullable(false).asEnumDataType(fi.morabotti.skydive.db.enums.ActivityAccess.class), this, "");
+
+    /**
+     * The column <code>activity.club_only</code>.
+     */
+    public final TableField<ActivityRecord, Boolean> CLUB_ONLY = createField("club_only", org.jooq.impl.SQLDataType.BIT.nullable(false).defaultValue(org.jooq.impl.DSL.inline("b'1'", org.jooq.impl.SQLDataType.BIT)), this, "");
 
     /**
      * The column <code>activity.visible</code>.

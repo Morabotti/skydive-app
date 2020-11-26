@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import { ClubAccount, Participation } from '@types'
+import { ClubAccount, MyActivities } from '@types'
 import { QueryResult, usePaginatedQuery, useQuery } from 'react-query'
 import { Client } from '@enums'
 import { getPersonalActivities, getPersonalClubs } from '@client'
@@ -7,7 +7,7 @@ import moment from 'moment'
 
 interface OverviewContext {
   clubs: QueryResult<ClubAccount[]>,
-  activities: QueryResult<Participation[]>,
+  myActivities: QueryResult<MyActivities>,
   mainClub: ClubAccount | undefined,
   showCalendar: boolean,
   date: string,
@@ -23,7 +23,7 @@ export const useOverview = (): OverviewContext => {
   const [selected, setSelected] = useState(() => moment().toISOString())
 
   const clubs = useQuery(Client.MY_CLUBS, getPersonalClubs)
-  const activities = usePaginatedQuery(
+  const myActivities = usePaginatedQuery(
     [Client.MY_ACTIVITIES, {
       from: moment(date).startOf('month').format('YYYY-MM-DD'),
       to: moment(date).endOf('month').format('YYYY-MM-DD')
@@ -61,7 +61,7 @@ export const useOverview = (): OverviewContext => {
 
   return {
     clubs,
-    activities,
+    myActivities,
     mainClub,
     showCalendar,
     date,

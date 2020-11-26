@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Skeleton } from '@material-ui/lab'
 import clsx from 'clsx'
 import moment from 'moment'
 import { customPalette } from '@theme'
-import { Participation } from '@types'
+import { Activity, Participation } from '@types'
 
 import {
   makeStyles,
   createStyles,
   Typography as T,
-  IconButton
+  IconButton,
+  colors
 } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -58,10 +59,17 @@ const useStyles = makeStyles(theme => createStyles({
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
+    pointerEvents: 'none'
+  },
+  participation: {
     backgroundColor: theme.palette.secondary.main,
-    color: '#fff',
-    pointerEvents: 'none',
-    transform: 'translate(13px, -13px)'
+    transform: 'translate(13px, -13px)',
+    color: '#fff'
+  },
+  activities: {
+    backgroundColor: colors.deepPurple[600],
+    transform: 'translate(-13px, -13px)',
+    color: '#fff'
   },
   notificationText: {
     fontSize: '0.7rem'
@@ -87,7 +95,8 @@ const useStyles = makeStyles(theme => createStyles({
 
 interface Props {
   date: string,
-  activities?: Participation[],
+  participation?: Participation[],
+  activities?: Activity[],
   onClick?: () => void,
   loading?: boolean,
   dummy?: boolean,
@@ -95,9 +104,10 @@ interface Props {
   selectedDate?: boolean
 }
 
-export const CalendarDay = ({
+export const CalendarDay = memo(({
   loading,
   date,
+  participation,
   activities,
   currentDate,
   onClick,
@@ -161,8 +171,16 @@ export const CalendarDay = ({
           >{moment(date).format('D')}</T>
         </span>
       )}
+      {participation && participation.length !== 0 && (
+        <span className={clsx(classes.notification, classes.participation)}>
+          <T
+            variant='body1'
+            className={classes.notificationText}
+          >{participation.length}</T>
+        </span>
+      )}
       {activities && activities.length !== 0 && (
-        <span className={classes.notification}>
+        <span className={clsx(classes.notification, classes.activities)}>
           <T
             variant='body1'
             className={classes.notificationText}
@@ -171,4 +189,4 @@ export const CalendarDay = ({
       )}
     </div>
   )
-}
+})

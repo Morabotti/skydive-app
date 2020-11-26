@@ -208,3 +208,8 @@ export interface ClubAccount {
   club: Club | null,
   account: Account | null
 }
+
+export interface MyActivities {
+  activities: Activity[],
+  participation: Participation[]
+}

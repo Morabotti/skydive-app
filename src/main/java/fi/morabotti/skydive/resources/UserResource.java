@@ -7,7 +7,7 @@ import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
-import fi.morabotti.skydive.view.activity.ActivityParticipationView;
+import fi.morabotti.skydive.view.activity.PersonalActivityView;
 import fi.morabotti.skydive.view.auth.UpdateRequest;
 import fi.morabotti.skydive.view.club.ClubAccountView;
 
@@ -82,7 +82,7 @@ public class UserResource {
 
     @GET
     @Path("/{accountId}/activity")
-    public List<ActivityParticipationView> getUserActivities(
+    public PersonalActivityView getUserActivities(
             @BeanParam DateRangeQuery rangeQuery,
             @PathParam("accountId") Long accountId
     ) {

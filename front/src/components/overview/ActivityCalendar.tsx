@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from 'react'
-import { Participation } from '@types'
+import { Activity, Participation } from '@types'
 import { createStyles, makeStyles } from '@material-ui/core'
 import moment from 'moment'
 
@@ -30,7 +30,8 @@ const useStyles = makeStyles(theme => createStyles({
 
 interface Props {
   loading: boolean,
-  activities?: Participation[],
+  participation?: Participation[],
+  activities?: Activity[],
   date: string,
   selected: string,
   onChangeSelectedDate: (date: string) => () => void
@@ -38,6 +39,7 @@ interface Props {
 
 export const ActivityCalendar = memo(({
   loading,
+  participation,
   activities,
   date,
   selected,
@@ -68,14 +70,20 @@ export const ActivityCalendar = memo(({
   }, [date])
 
   const filterd = useMemo(() => {
-    if (!activities) {
-      return []
+    if (!participation || !activities) {
+      return {
+        participation: [],
+        activities: []
+      }
     }
 
-    return activities.filter(i =>
-      moment(i.activity?.startDate).isSame(selected, 'day')
-    )
-  }, [activities, selected])
+    return {
+      participation: participation.filter(i =>
+        moment(i.activity?.startDate).isSame(selected, 'day')
+      ),
+      activities: activities?.filter(i => moment(i.startDate).isSame(selected, 'day'))
+    }
+  }, [participation, activities, selected])
 
   return (
     <div className={classes.fullHeight}>
@@ -103,8 +111,13 @@ export const ActivityCalendar = memo(({
           ))}
           {[...Array(dates.month)].map((e, i) => {
             const date = moment(dates.first).add(i, 'day')
-            const dayActivities = activities?.filter(i =>
+
+            const dayParticipation = participation?.filter(i =>
               i.activity?.startDate && moment(i.activity.startDate).isSame(date, 'day')
+            )
+
+            const dayActivities = activities?.filter(i =>
+              i.startDate && moment(i.startDate).isSame(date, 'day')
             )
 
             return (
@@ -115,6 +128,7 @@ export const ActivityCalendar = memo(({
                 onClick={onChangeSelectedDate(date.toISOString())}
                 selectedDate={date.isSame(selected, 'day')}
                 currentDate={date.isSame(moment(), 'day')}
+                participation={dayParticipation}
                 activities={dayActivities}
               />
             )
@@ -131,7 +145,8 @@ export const ActivityCalendar = memo(({
       </div>
       <DayActivities
         loading={loading}
-        activities={filterd}
+        activities={filterd.activities}
+        participation={filterd.participation}
         selected={selected}
       />
     </div>

@@ -175,7 +175,10 @@
             <column name="description" type="text">
                 <constraints nullable="false" />
             </column>
-            <column name="access" type="enum('open', 'club-only', 'invite', 'pilot-only', 'user-only')">
+            <column name="access" type="enum('open', 'invite')">
+                <constraints nullable="false" />
+            </column>
+            <column name="club_only" type="boolean" defaultValueBoolean="true">
                 <constraints nullable="false" />
             </column>
             <column name="visible" type="boolean" defaultValueBoolean="false">
