@@ -77,7 +77,6 @@
         title CDATA #REQUIRED
         description CDATA #REQUIRED
         access CDATA #REQUIRED
-        club_only CDATA #REQUIRED
         visible CDATA #REQUIRED
         token CDATA #REQUIRED
         start_date CDATA #REQUIRED

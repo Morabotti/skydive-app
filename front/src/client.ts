@@ -17,7 +17,8 @@ import {
   PaginationQuery,
   ClubQuery,
   DateRangeQuery,
-  MyActivities
+  MyActivities,
+  ActivityQuery
 } from '@types'
 
 const addAuthToken = () => ({
@@ -382,8 +383,12 @@ export const declineClubMemberRequest = (
 )
   .then(checkResponse)
 
-export const getActivities = (): Promise<PaginationResult<Activity>> => fetch(
-  `/api/activity`,
+export const getActivities = (
+  pagination: PaginationQuery,
+  dateRange: DateRangeQuery,
+  activityQuery: ActivityQuery
+): Promise<PaginationResult<Activity>> => fetch(
+  `/api/activity?${searchParams([pagination, dateRange, activityQuery])}`,
   {
     method: 'GET',
     headers: {

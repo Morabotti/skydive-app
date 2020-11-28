@@ -28,8 +28,6 @@ public abstract class Activity {
 
     public abstract ActivityAccess getAccess();
 
-    public abstract Boolean getClubOnly();
-
     public abstract Boolean getVisible();
 
     public abstract Instant getStartDate();
@@ -64,7 +62,6 @@ public abstract class Activity {
             .setTypeAccessor(ACTIVITY.TYPE)
             .setAccessAccessor(ACTIVITY.ACCESS)
             .setVisibleAccessor(ACTIVITY.VISIBLE)
-            .setClubOnlyAccessor(ACTIVITY.CLUB_ONLY)
             .setTokenAccessor(
                     ACTIVITY.TOKEN,
                     UUID::toString,

@@ -128,7 +128,7 @@ public class ClubResource {
 
     @GET
     @Path("/{clubId}/plane/{planeId}")
-    public Plane getPlanes(
+    public Plane getPlane(
             @PathParam("clubId") Long clubId,
             @PathParam("planeId") Long planeId
     ) {

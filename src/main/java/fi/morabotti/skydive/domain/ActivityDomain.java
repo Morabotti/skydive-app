@@ -62,7 +62,6 @@ public class ActivityDomain {
                 .setTitle(informationRequest.getTitle())
                 .setDescription(informationRequest.getDescription())
                 .setVisible(informationRequest.getVisibility())
-                .setClubOnly(informationRequest.getClubOnly())
                 .setStartDate(informationRequest
                         .getStartDate()
                         .atStartOfDay()
@@ -85,7 +84,6 @@ public class ActivityDomain {
                 .setTitle(informationRequest.getTitle())
                 .setDescription(informationRequest.getDescription())
                 .setVisible(informationRequest.getVisibility())
-                .setClubOnly(informationRequest.getClubOnly())
                 .setClub(clubDomain.viewToClub(informationRequest.getClub()))
                 .setStartDate(informationRequest
                         .getStartDate()

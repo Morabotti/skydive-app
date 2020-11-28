@@ -64,10 +64,7 @@ export enum ActivityType {
 
 export enum ActivityAccess {
   OPEN = 'open',
-  CLUB_ONLY = 'club-only',
-  INVITE = 'invite',
-  PILOT_ONLY = 'pilot-only',
-  USER_ONLY = 'user-only'
+  INVITE = 'invite'
 }
 
 export enum ClubRole {

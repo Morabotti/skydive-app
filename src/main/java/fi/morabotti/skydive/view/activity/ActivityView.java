@@ -25,8 +25,6 @@ public abstract class ActivityView {
 
     public abstract ActivityAccess getAccess();
 
-    public abstract Boolean getClubOnly();
-
     public abstract Boolean getVisible();
 
     public abstract UUID getToken();
@@ -62,7 +60,6 @@ public abstract class ActivityView {
                 .setAccess(activity.getAccess())
                 .setVisible(activity.getVisible())
                 .setToken(activity.getToken())
-                .setClubOnly(activity.getClubOnly())
                 .setClub(Optional.ofNullable(activity.getClub())
                         .map(ClubView::of)
                         .orElse(null)
