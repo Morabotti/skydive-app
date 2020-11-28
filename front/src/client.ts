@@ -384,6 +384,7 @@ export const declineClubMemberRequest = (
   .then(checkResponse)
 
 export const getActivities = (
+  key: string,
   pagination: PaginationQuery,
   dateRange: DateRangeQuery,
   activityQuery: ActivityQuery

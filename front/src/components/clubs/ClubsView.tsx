@@ -26,9 +26,10 @@ const ClubsView = () => {
     search,
     clubs,
     isPublic,
-    toggleIsPublic,
+    setIsPublic,
     setCity,
-    setSearch
+    setSearch,
+    onResetFilters
   } = useClubs()
 
   return (
@@ -39,7 +40,7 @@ const ClubsView = () => {
         isPublic={isPublic}
         search={search}
         toggleList={toggleList}
-        toggleIsPublic={toggleIsPublic}
+        setIsPublic={setIsPublic}
         setCity={setCity}
         setSearch={setSearch}
       />
@@ -49,6 +50,7 @@ const ClubsView = () => {
           isList={isList}
           loading={clubs.isLoading}
           role={auth?.user.role}
+          onResetFilters={onResetFilters}
         />
         <PaginationControls length={clubs.data?.length || 0} />
       </div>

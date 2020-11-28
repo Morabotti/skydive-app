@@ -5,7 +5,8 @@ import {
   Typography as T,
   makeStyles,
   createStyles,
-  SvgIconTypeMap
+  SvgIconTypeMap,
+  Button
 } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -39,12 +40,18 @@ const useStyles = makeStyles(theme => createStyles({
 
 interface Props {
   icon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>,
-  text: string
+  text: string,
+  buttonText?: string,
+  onClick?: () => void,
+  onMouseEnter?: () => void
 }
 
 export const CenterMessage = ({
   icon: Icon,
-  text
+  text,
+  buttonText,
+  onClick,
+  onMouseEnter
 }: Props) => {
   const classes = useStyles()
 
@@ -55,6 +62,17 @@ export const CenterMessage = ({
         <T variant='body2' className={classes.text}>
           {text}
         </T>
+        {onClick && (
+          <Button
+            variant='contained'
+            color='primary'
+            disableElevation
+            onClick={onClick}
+            onMouseEnter={onMouseEnter}
+          >
+            {buttonText}
+          </Button>
+        )}
       </div>
     </div>
   )

@@ -21,15 +21,16 @@ interface ActivitiesContext {
   setType: (set: ActivityType) => void,
   setTo: (set: string) => void,
   setFrom: (set: string) => void,
-  toggleIsVisible: () => void
+  setIsVisible: (set: boolean | null) => void,
+  onResetFilters: () => void
 }
 
 export const useActivities = (): ActivitiesContext => {
   const { offset, limit } = usePagination()
   const [isList, setIsList] = useState(true)
   const [search, setSearch] = useState('')
-  const [access, setAccess] = useState<ActivityAccess>(ActivityAccess.OPEN)
-  const [type, setType] = useState<ActivityType>(ActivityType.JUMP)
+  const [access, setAccess] = useState<ActivityAccess>(ActivityAccess.UNSET)
+  const [type, setType] = useState<ActivityType>(ActivityType.UNSET)
   const [from, setFrom] = useState(() => moment().startOf('month').toISOString())
   const [to, setTo] = useState(() => moment().endOf('month').toISOString())
   const [isVisible, setIsVisible] = useState<null | boolean>(null)
@@ -39,11 +40,11 @@ export const useActivities = (): ActivitiesContext => {
   const activities = usePaginatedQuery(
     [Client.GET_ACTIVITES, { limit, offset }, {
       from: moment(from).format('YYYY-MM-DD'),
-      to: moment(from).format('YYYY-MM-DD')
+      to: moment(to).format('YYYY-MM-DD')
     }, {
       search: debouncedSearch,
-      access,
-      type,
+      access: access === ActivityAccess.UNSET ? null : access,
+      type: type === ActivityType.UNSET ? null : type,
       visible: isVisible === null ? null : !isVisible
     }],
     getActivities
@@ -53,9 +54,14 @@ export const useActivities = (): ActivitiesContext => {
     setIsList(set)
   }, [setIsList])
 
-  const toggleIsVisible = useCallback(() => {
-    setIsVisible(prev => prev === null ? true : null)
-  }, [setIsVisible])
+  const onResetFilters = useCallback(() => {
+    setAccess(ActivityAccess.UNSET)
+    setSearch('')
+    setType(ActivityType.UNSET)
+    setFrom(moment().startOf('month').toISOString())
+    setTo(moment().endOf('month').toISOString())
+    setIsVisible(null)
+  }, [])
 
   return {
     isList,
@@ -65,13 +71,14 @@ export const useActivities = (): ActivitiesContext => {
     access,
     search,
     isVisible,
-    toggleIsVisible,
     to,
     from,
+    setIsVisible,
     setType,
     setFrom,
     setTo,
     setAccess,
-    setSearch
+    setSearch,
+    onResetFilters
   }
 }

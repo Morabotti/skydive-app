@@ -1,9 +1,24 @@
 import React from 'react'
-import { DashboardContainer } from '@components/common'
-import { ActivitiesFilterDrawer } from '@components/activities'
-import { useActivities } from '@hooks'
+import { DashboardContainer, PaginationControls } from '@components/common'
+import { ActivitiesFilterDrawer, ActivitiesViewSelector } from '@components/activities'
+import { useActivities, useAuth } from '@hooks'
+import { createStyles, makeStyles } from '@material-ui/core'
+
+const useStyles = makeStyles(theme => createStyles({
+  container: {
+    marginLeft: 320,
+    padding: theme.spacing(3),
+    position: 'relative',
+    [theme.breakpoints.down(425)]: {
+      padding: theme.spacing(1.5)
+    }
+  }
+}))
 
 const ActivitiesView = () => {
+  const classes = useStyles()
+  const { auth } = useAuth()
+
   const {
     access,
     activities,
@@ -18,11 +33,10 @@ const ActivitiesView = () => {
     setSearch,
     setTo,
     setType,
-    toggleIsVisible,
-    toggleList
+    setIsVisible,
+    toggleList,
+    onResetFilters
   } = useActivities()
-
-  console.log(activities)
 
   return (
     <DashboardContainer variant='no-max-width'>
@@ -39,11 +53,18 @@ const ActivitiesView = () => {
         setType={setType}
         setFrom={setFrom}
         setTo={setTo}
-        toggleIsVisible={toggleIsVisible}
+        setIsVisible={setIsVisible}
         toggleList={toggleList}
       />
-      <div>
-        activities
+      <div className={classes.container}>
+        <ActivitiesViewSelector
+          activities={activities.data?.result || []}
+          isList={isList}
+          loading={activities.isLoading}
+          role={auth?.user.role}
+          onResetFilters={onResetFilters}
+        />
+        <PaginationControls length={activities.data?.length || 0} />
       </div>
     </DashboardContainer>
   )

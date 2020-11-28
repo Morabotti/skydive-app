@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
-import { ClubListView } from '@components/clubs'
-import { Club } from '@types'
+import { ActivityListView } from '@components/activities'
+import { Activity } from '@types'
 import { AuthRoles, Client } from '@enums'
 import { useQueryCache } from 'react-query'
 import { useHistory } from 'react-router-dom'
@@ -11,14 +11,14 @@ import { TableCancel } from 'mdi-material-ui'
 interface Props {
   isList: boolean,
   loading: boolean,
-  clubs: Club[],
+  activities: Activity[],
   role?: AuthRoles,
   onResetFilters: () => void
 }
 
-export const ClubsViewSelector = ({
+export const ActivitiesViewSelector = ({
   isList,
-  clubs,
+  activities,
   loading,
   role,
   onResetFilters
@@ -27,16 +27,16 @@ export const ClubsViewSelector = ({
   const { onRoutePreload } = useApplicationNavigation()
   const { push } = useHistory()
 
-  const onClubSelect = useCallback((set: Club) => () => {
-    queryCache.setQueryData([Client.GET_CLUB_BY_SLUG, set.slug], set)
-    push(`/dashboard/club/${set.slug}`)
+  const onActivitySelect = useCallback((set: Activity) => () => {
+    queryCache.setQueryData([Client.GET_ACTIVITY_BY_TOKEN, set.token], set)
+    push(`/dashboard/activity/${set.token}`)
   }, [push, queryCache])
 
-  if (clubs.length === 0 && !loading) {
+  if (activities.length === 0 && !loading) {
     return (
       <CenterMessage
         icon={TableCancel}
-        text='No clubs found with selected filters.'
+        text='No activities found with selected filters.'
         onClick={onResetFilters}
         buttonText='Reset filters'
       />
@@ -45,12 +45,12 @@ export const ClubsViewSelector = ({
 
   if (isList) {
     return (
-      <ClubListView
+      <ActivityListView
         loading={loading}
-        clubs={clubs}
+        activities={activities}
         role={role}
         onRoutePreload={onRoutePreload}
-        onClubSelect={onClubSelect}
+        onActivitySelect={onActivitySelect}
       />
     )
   }

@@ -100,6 +100,12 @@ export const PaginationControls = ({
     )
   }
 
+  if (length === 0) {
+    return (
+      <React.Fragment />
+    )
+  }
+
   return (
     <div className={classes.fixed}>
       <div className={classes.buttonGroup}>

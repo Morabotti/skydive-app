@@ -59,12 +59,14 @@ export enum NotificationType {
 
 export enum ActivityType {
   JUMP = 'jump',
-  MISC = 'misc'
+  MISC = 'misc',
+  UNSET = 'unset' // Used only in filter views, not in actual api
 }
 
 export enum ActivityAccess {
   OPEN = 'open',
-  INVITE = 'invite'
+  INVITE = 'invite',
+  UNSET = 'unset' // Used only in filter views, not in actual api
 }
 
 export enum ClubRole {

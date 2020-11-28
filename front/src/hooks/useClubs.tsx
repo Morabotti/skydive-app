@@ -14,7 +14,8 @@ interface ClubsContext {
   toggleList: (set: boolean) => () => void,
   setSearch: (set: string) => void,
   setCity: (set: string) => void,
-  toggleIsPublic: () => void
+  setIsPublic: (set: null | boolean) => void,
+  onResetFilters: () => void
 }
 
 export const useClubs = (): ClubsContext => {
@@ -43,9 +44,11 @@ export const useClubs = (): ClubsContext => {
     setIsList(set)
   }, [setIsList])
 
-  const toggleIsPublic = useCallback(() => {
-    setIsPublic(prev => prev === null ? true : null)
-  }, [setIsPublic])
+  const onResetFilters = useCallback(() => {
+    setSearch('')
+    setCity('')
+    setIsPublic(null)
+  }, [])
 
   return {
     isList,
@@ -54,8 +57,9 @@ export const useClubs = (): ClubsContext => {
     city,
     search,
     isPublic,
-    toggleIsPublic,
+    setIsPublic,
     setCity,
-    setSearch
+    setSearch,
+    onResetFilters
   }
 }

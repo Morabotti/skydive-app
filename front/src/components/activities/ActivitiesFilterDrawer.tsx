@@ -1,16 +1,14 @@
 import React from 'react'
 import { useAuth } from '@hooks'
 import { ActivityAccess, ActivityType, AuthRoles } from '@enums'
-import { DashboardFilterDrawer } from '@components/common'
+import { BooleanFilterSelect, DashboardFilterDrawer } from '@components/common'
 import { customPalette } from '@theme'
 import { DatePicker } from '@material-ui/pickers'
 import moment from 'moment'
 
 import {
-  Checkbox,
   createStyles,
   FormControl,
-  FormControlLabel,
   InputLabel,
   makeStyles,
   MenuItem,
@@ -29,7 +27,8 @@ const useStyles = makeStyles(theme => createStyles({
   },
   title: {
     color: customPalette.header.primaryText,
-    fontWeight: theme.typography.fontWeightBold
+    fontWeight: theme.typography.fontWeightBold,
+    marginBottom: theme.spacing(2)
   }
 }))
 
@@ -46,7 +45,7 @@ interface Props {
   setTo: (set: string) => void,
   setType: (set: ActivityType) => void,
   setAccess: (set: ActivityAccess) => void,
-  toggleIsVisible: () => void,
+  setIsVisible: (set: boolean | null) => void,
   toggleList: (set: boolean) => () => void
 }
 
@@ -63,8 +62,8 @@ export const ActivitiesFilterDrawer = ({
   setAccess,
   setFrom,
   setTo,
-  toggleList,
-  toggleIsVisible
+  setIsVisible,
+  toggleList
 }: Props) => {
   const classes = useStyles()
   const { auth } = useAuth()
@@ -114,6 +113,7 @@ export const ActivitiesFilterDrawer = ({
               onChange={e => setType(e.target.value as ActivityType)}
               fullWidth
             >
+              <MenuItem value={ActivityType.UNSET}>Unset</MenuItem>
               <MenuItem value={ActivityType.JUMP}>Jump Activity</MenuItem>
               <MenuItem value={ActivityType.MISC}>Misc Activity</MenuItem>
             </Select>
@@ -126,7 +126,8 @@ export const ActivitiesFilterDrawer = ({
               onChange={e => setAccess(e.target.value as ActivityAccess)}
               fullWidth
             >
-              <MenuItem value={ActivityAccess.OPEN}>Open</MenuItem>
+              <MenuItem value={ActivityType.UNSET}>Unset</MenuItem>
+              <MenuItem value={ActivityAccess.OPEN}>Open only</MenuItem>
               <MenuItem value={ActivityAccess.INVITE}>Invite only</MenuItem>
             </Select>
           </FormControl>
@@ -136,13 +137,13 @@ export const ActivitiesFilterDrawer = ({
             <div>
               <T variant='body1' className={classes.title}>Admin options</T>
             </div>
-            <FormControlLabel
-              control={
-                <Checkbox color='primary' />
-              }
-              value={isVisible === null ? false : isVisible}
-              onChange={toggleIsVisible}
-              label='Show only invisible activites'
+            <BooleanFilterSelect
+              className={classes.field}
+              label='Filter by visibility'
+              setValue={setIsVisible}
+              value={isVisible}
+              falseLabel='Show only visible activites'
+              trueLabel='Show only invisible activities'
             />
           </div>
         )}

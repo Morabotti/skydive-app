@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAuth } from '@hooks'
 import { AuthRoles } from '@enums'
-import { DashboardFilterDrawer } from '@components/common'
+import { BooleanFilterSelect, DashboardFilterDrawer } from '@components/common'
 import { customPalette } from '@theme'
 
 import {
@@ -22,7 +22,8 @@ const useStyles = makeStyles(theme => createStyles({
   },
   title: {
     color: customPalette.header.primaryText,
-    fontWeight: theme.typography.fontWeightBold
+    fontWeight: theme.typography.fontWeightBold,
+    marginBottom: theme.spacing(2)
   },
   titleWrapper: {
     marginBottom: theme.spacing(2)
@@ -36,8 +37,8 @@ interface Props {
   isPublic: boolean | null,
   setSearch: (set: string) => void,
   setCity: (set: string) => void,
-  toggleList: (set: boolean) => () => void,
-  toggleIsPublic: () => void
+  setIsPublic: (set: null | boolean) => void,
+  toggleList: (set: boolean) => () => void
 }
 
 export const ClubsFilterDrawer = ({
@@ -47,8 +48,8 @@ export const ClubsFilterDrawer = ({
   isPublic,
   setCity,
   setSearch,
-  toggleList,
-  toggleIsPublic
+  setIsPublic,
+  toggleList
 }: Props) => {
   const classes = useStyles()
   const { auth } = useAuth()
@@ -93,13 +94,13 @@ export const ClubsFilterDrawer = ({
             <div>
               <T variant='body1' className={classes.title}>Admin options</T>
             </div>
-            <FormControlLabel
-              control={
-                <Checkbox color='primary' />
-              }
-              value={isPublic === null ? false : isPublic}
-              onChange={toggleIsPublic}
-              label='Show only private clubs'
+            <BooleanFilterSelect
+              className={classes.field}
+              label='Filter by public'
+              setValue={setIsPublic}
+              value={isPublic}
+              falseLabel='Show only public clubs'
+              trueLabel='Show only private clubs'
             />
           </div>
         )}
