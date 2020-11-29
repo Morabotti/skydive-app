@@ -1,9 +1,19 @@
 import React from 'react'
-import { ConfirmationDialog, DashboardContainer, PaginationControls } from '@components/common'
-import { UsersFilterDrawer, UsersViewSelector } from '@components/users'
 import { useUsers } from '@hooks'
 import { createStyles, makeStyles, Menu, MenuItem } from '@material-ui/core'
 import clsx from 'clsx'
+
+import {
+  ConfirmationDialog,
+  DashboardContainer,
+  PaginationControls
+} from '@components/common'
+
+import {
+  UsersFilterDrawer,
+  UsersViewSelector,
+  CreateUserDialog
+} from '@components/users'
 
 const useStyles = makeStyles(theme => createStyles({
   container: {
@@ -31,6 +41,7 @@ const UsersView = () => {
     role,
     anchor,
     select,
+    creating,
     deleting,
     setSearch,
     setRole,
@@ -38,12 +49,14 @@ const UsersView = () => {
     setShowDeleted,
     toggleList,
     toggleDeleteDialog,
+    toggleCreateDialog,
     toggleExtended,
     onResetFilters,
     onCloseMenu,
     onSelectSettings,
     onNavigation,
-    onDelete
+    onDelete,
+    onCreate
   } = useUsers()
 
   return (
@@ -61,6 +74,7 @@ const UsersView = () => {
         setShowDeleted={setShowDeleted}
         toggleList={toggleList}
         toggleExtended={toggleExtended}
+        onCreate={toggleCreateDialog(true)}
       />
       <div className={clsx(classes.container, { [classes.extended]: extended })}>
         <UsersViewSelector
@@ -90,6 +104,11 @@ const UsersView = () => {
         open={deleting !== null}
         title='Confirm Action'
         children={`Are you sure that you want to delete ${select?.username} account?`}
+      />
+      <CreateUserDialog
+        onClose={toggleCreateDialog(false)}
+        onConfirm={onCreate}
+        open={creating}
       />
     </DashboardContainer>
   )

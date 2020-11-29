@@ -11,7 +11,7 @@ interface Props {
   onCreate: () => void
 }
 
-export const UsersActions = ({
+export const ClubsAdminActions = ({
   onCreate
 }: Props) => {
   const classes = useStyles()
@@ -24,7 +24,7 @@ export const UsersActions = ({
         fullWidth
         color='primary'
       >
-        Create new user
+        Create new club
       </Button>
     </div>
   )

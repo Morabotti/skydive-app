@@ -1,7 +1,8 @@
 import React from 'react'
-import { useAuth } from '@hooks'
+import { useApplicationNavigation, useAuth } from '@hooks'
 import { AuthRoles } from '@enums'
 import { BooleanFilterSelect, DashboardFilterDrawer } from '@components/common'
+import { ClubsAdminActions } from '@components/clubs'
 import { customPalette } from '@theme'
 
 import {
@@ -57,6 +58,7 @@ export const ClubsFilterDrawer = ({
 }: Props) => {
   const classes = useStyles()
   const { auth } = useAuth()
+  const { onNavigation } = useApplicationNavigation()
 
   const isAdmin = auth && auth.user && auth.user.role === AuthRoles.ADMIN
 
@@ -68,6 +70,11 @@ export const ClubsFilterDrawer = ({
       toggleView={toggleList}
       extended={extended}
       toggleExtended={toggleExtended}
+      actionsTitle='Admin Actions'
+      actions={isAdmin
+        ? <ClubsAdminActions onCreate={onNavigation('/dashboard/configuration/club')} />
+        : undefined
+      }
     >
       <>
         <div className={classes.wrapper}>

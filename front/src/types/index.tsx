@@ -122,6 +122,15 @@ export interface RegisterUser {
 
 export type UpdateUser = Omit<RegisterUser, 'username' | 'password'>
 
+export interface CreateUser extends RegisterUser {
+  role: AuthRoles
+}
+
+export interface CreateUserForm extends CreateUser {
+  rePassword: string,
+  showPassword: boolean
+}
+
 export interface RegisterUserForm extends RegisterUser {
   rePassword: string,
   showPassword: boolean

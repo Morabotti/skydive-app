@@ -35,7 +35,8 @@ interface Props {
   setLocation: (set: string) => void,
   setRole: (set: AuthRoles) => void,
   toggleList: (set: boolean) => () => void,
-  toggleExtended: (set: boolean) => () => void
+  toggleExtended: (set: boolean) => () => void,
+  onCreate: () => void
 }
 
 export const UsersFilterDrawer = ({
@@ -50,7 +51,8 @@ export const UsersFilterDrawer = ({
   setLocation,
   setRole,
   toggleList,
-  toggleExtended
+  toggleExtended,
+  onCreate
 }: Props) => {
   const classes = useStyles()
 
@@ -65,7 +67,7 @@ export const UsersFilterDrawer = ({
       actionsTitle='Actions'
       actions={(
         <UsersActions
-          onNewUser={() => {}}
+          onCreate={onCreate}
         />
       )}
     >

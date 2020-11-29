@@ -31,4 +31,17 @@ public abstract class RegisterRequest {
     public static class Builder extends EasyValue_RegisterRequest.Builder {
 
     }
+
+    public static RegisterRequest of(CreateAccountRequest accountRequest) {
+        return RegisterRequest.builder()
+                .setUsername(accountRequest.getUsername())
+                .setPassword(accountRequest.getPassword())
+                .setAddress(accountRequest.getAddress())
+                .setCity(accountRequest.getCity())
+                .setFirstName(accountRequest.getFirstName())
+                .setLastName(accountRequest.getLastName())
+                .setPhone(accountRequest.getPhone())
+                .setZipCode(accountRequest.getZipCode())
+                .build();
+    }
 }

@@ -13,6 +13,7 @@ import {
   Paper,
   Typography as T
 } from '@material-ui/core'
+import { Skeleton } from '@material-ui/lab'
 
 const useStyles = makeStyles(theme => createStyles({
   button: {
@@ -88,7 +89,19 @@ export const UserBlock = ({
   if (loading || !user) {
     return (
       <Paper square className={classes.button}>
-        LMAO
+        <div className={classes.wrap}>
+          <div className={classes.top}>
+            <Skeleton variant='circle' width={120} height={120} />
+          </div>
+          <div>
+            <Skeleton variant='text' width='40%' height={24} />
+            <Skeleton variant='text' width='70%' height={24} />
+            <Skeleton variant='text' width='40%' height={20} />
+          </div>
+        </div>
+        <div className={classes.actions}>
+          <Skeleton variant='circle' width={48} height={48} />
+        </div>
       </Paper>
     )
   }

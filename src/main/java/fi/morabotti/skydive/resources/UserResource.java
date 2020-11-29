@@ -8,6 +8,7 @@ import fi.morabotti.skydive.view.DateRangeQuery;
 import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.activity.PersonalActivityView;
+import fi.morabotti.skydive.view.auth.CreateAccountRequest;
 import fi.morabotti.skydive.view.auth.UpdateRequest;
 import fi.morabotti.skydive.view.auth.UserQuery;
 import fi.morabotti.skydive.view.club.ClubAccountView;
@@ -19,6 +20,7 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -46,6 +48,11 @@ public class UserResource {
         this.accountController = accountController;
         this.clubController = clubController;
         this.activityController = activityController;
+    }
+
+    @POST
+    public AccountView createUser(CreateAccountRequest createAccountRequest) {
+        return accountController.createAccount(createAccountRequest);
     }
 
     @GET

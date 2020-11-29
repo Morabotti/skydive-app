@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => createStyles({
   },
   popper: {
     marginTop: theme.spacing(1),
-    zIndex: theme.zIndex.appBar - 50
+    zIndex: theme.zIndex.appBar - 10
   },
   rootPaper: {
     borderRadius: theme.spacing(1),

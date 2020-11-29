@@ -1,6 +1,7 @@
 package fi.morabotti.skydive.resources;
 
 import fi.morabotti.skydive.controller.AccountController;
+import fi.morabotti.skydive.db.enums.AccountRole;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.view.AccountView;
 import fi.morabotti.skydive.view.TokenResponse;
@@ -64,7 +65,7 @@ public class AuthenticationResource {
     public AccountView registerUser(
             RegisterRequest registerRequest
     ) {
-        return accountController.createUser(registerRequest);
+        return accountController.createAccount(registerRequest, AccountRole.user);
     }
 
     @PUT

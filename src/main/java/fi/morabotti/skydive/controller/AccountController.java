@@ -4,6 +4,7 @@ import fi.morabotti.skydive.dao.AccountDao;
 import fi.morabotti.skydive.dao.ClubAccountDao;
 import fi.morabotti.skydive.dao.ProfileDao;
 import fi.morabotti.skydive.dao.SessionDao;
+import fi.morabotti.skydive.db.enums.AccountRole;
 import fi.morabotti.skydive.domain.AccountDomain;
 import fi.morabotti.skydive.exception.AuthenticationException;
 import fi.morabotti.skydive.exception.NotFoundException;
@@ -14,6 +15,7 @@ import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.TokenResponse;
 import fi.morabotti.skydive.view.auth.ChangePasswordRequest;
+import fi.morabotti.skydive.view.auth.CreateAccountRequest;
 import fi.morabotti.skydive.view.auth.RegisterRequest;
 import fi.morabotti.skydive.view.auth.UpdateRequest;
 import fi.morabotti.skydive.view.auth.UserQuery;
@@ -210,19 +212,34 @@ public class AccountController {
     }
 
     /**
-     * Creates new normal user.
-     * @param registerRequest RegisterRequest used for information of account
+     * Creates new user. Meant for admin.
+     * @param createAccountRequest CreateAccountRequest used for information of account
      * @return Account that is created
      * @throws BadRequestException if account is not created
      * */
-    public AccountView createUser(RegisterRequest registerRequest) {
+    public AccountView createAccount(CreateAccountRequest createAccountRequest) {
+        return createAccount(
+                RegisterRequest.of(createAccountRequest),
+                createAccountRequest.getRole()
+        );
+    }
+
+    /**
+     * Creates new user.
+     * @param registerRequest RegisterRequest used for information of account
+     * @param accountRole AccountRole of the account
+     * @return Account that is created
+     * @throws BadRequestException if account is not created
+     * */
+    public AccountView createAccount(RegisterRequest registerRequest, AccountRole accountRole) {
         return AccountView.of(
                 accountDao.create(
                         accountDomain.createAccount(
                                 registerRequest.getUsername(),
                                 accountDomain.generatePassword(
                                         registerRequest.getPassword()
-                                )
+                                ),
+                                accountRole
                         )
                 )
                         .flatMap(account -> profileDao.create(

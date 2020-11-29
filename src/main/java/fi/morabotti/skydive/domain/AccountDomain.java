@@ -43,14 +43,14 @@ public class AccountDomain {
                 .build();
     }
 
-    public Account createAccount(String username, Password password) {
+    public Account createAccount(String username, Password password, AccountRole accountRole) {
         return Account.builder()
                 .setId(0L)
                 .setDeletedAt(null)
                 .setUsername(username)
                 .setPasswordHash(password.getHash())
                 .setPasswordSalt(password.getSalt())
-                .setAccountRole(AccountRole.user)
+                .setAccountRole(accountRole)
                 .build();
     }
 

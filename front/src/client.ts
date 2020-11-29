@@ -21,7 +21,8 @@ import {
   ActivityQuery,
   User,
   UpdateUser,
-  UserQuery
+  UserQuery,
+  CreateUser
 } from '@types'
 
 const addAuthToken = () => ({
@@ -168,7 +169,10 @@ export const getClubById = (clubId: number): Promise<Club> => fetch(
   .then(checkResponse)
   .then((res) => res.json())
 
-export const getClubBySlug = (slug: string): Promise<Club> => fetch(
+export const getClubBySlug = (
+  key: string,
+  slug: string
+): Promise<Club> => fetch(
   `/api/club/slug/${slug}`,
   {
     method: 'GET',
@@ -653,6 +657,21 @@ export const getUsersClubs = (
   `/api/user/${id}/club`,
   {
     method: 'GET',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())
+
+export const createUser = (
+  user: CreateUser
+): Promise<User> => fetch(
+  `/api/user`,
+  {
+    method: 'POST',
+    body: JSON.stringify(user),
     headers: {
       'Content-Type': 'application/json', ...addAuthToken()
     }

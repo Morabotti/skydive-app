@@ -87,3 +87,10 @@ export enum ParticipationRole {
   USER = 'user',
   PILOT = 'pilot'
 }
+
+export enum ClubTab {
+  MAIN = '',
+  USERS = 'users',
+  ACTIVITY = 'activites',
+  CONFIG = 'configuration'
+}
