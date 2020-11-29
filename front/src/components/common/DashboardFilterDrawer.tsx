@@ -1,9 +1,10 @@
 import React from 'react'
 import { customPalette } from '@theme'
-import { FormatListBulletedSquare, ViewList } from 'mdi-material-ui'
+import { ChevronLeft, ChevronRight, FormatListBulletedSquare, ViewList } from 'mdi-material-ui'
 import clsx from 'clsx'
 
 import {
+  Button,
   createStyles,
   Drawer,
   IconButton,
@@ -17,14 +18,23 @@ const drawerWidth = 320
 
 const useStyles = makeStyles(theme => createStyles({
   drawer: {
-    width: drawerWidth,
-    flexShrink: 0
+    flexShrink: 0,
+    position: 'relative'
   },
   drawerPaper: {
+    overflow: 'visible'
+  },
+  notExtended: {
+    width: 0
+  },
+  extended: {
     width: drawerWidth
   },
   container: {
-    overflow: 'auto'
+    overflow: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
   },
   title: {
     color: customPalette.header.primaryText,
@@ -44,32 +54,64 @@ const useStyles = makeStyles(theme => createStyles({
   active: {
     color: customPalette.header.primaryColor,
     cursor: 'default'
+  },
+  closeOpen: {
+    position: 'absolute',
+    bottom: theme.spacing(3),
+    right: -(theme.spacing(3) + 32),
+    [theme.breakpoints.down(425)]: {
+      bottom: theme.spacing(1.5),
+      right: -(theme.spacing(1.5) + 32)
+    }
+  },
+  button: {
+    margin: theme.spacing(0),
+    padding: '3px',
+    backgroundColor: theme.palette.background.paper,
+    minWidth: 32
+  },
+  fullHeight: {
+    flexGrow: 1
   }
 }))
 
 interface Props {
   title?: string,
   children: JSX.Element | JSX.Element[],
+  actions?: JSX.Element | JSX.Element[],
+  actionsTitle?: string,
   showViewChanger?: boolean,
   isList?: boolean,
-  toggleView?: (set: boolean) => () => void
+  extended: boolean,
+  toggleView?: (set: boolean) => () => void,
+  toggleExtended: (set: boolean) => () => void
 }
 
 export const DashboardFilterDrawer = ({
   title,
   children,
   showViewChanger,
+  actions,
+  actionsTitle,
   isList,
-  toggleView
+  extended,
+  toggleView,
+  toggleExtended
 }: Props) => {
   const classes = useStyles()
 
   return (
     <Drawer
-      className={classes.drawer}
+      className={clsx(classes.drawer, {
+        [classes.extended]: extended,
+        [classes.notExtended]: !extended
+      })}
       variant='permanent'
       classes={{
-        paper: classes.drawerPaper
+        paper: clsx(classes.drawerPaper, {
+          [classes.extended]: extended,
+          [classes.notExtended]: !extended
+        })
       }}
     >
       <Toolbar />
@@ -101,7 +143,29 @@ export const DashboardFilterDrawer = ({
             )}
           </div>
         )}
-        {children}
+        <div className={classes.fullHeight}>
+          {children}
+        </div>
+        {actions && (
+          <div>
+            {actionsTitle && (
+              <div className={classes.view}>
+                <T variant='body1' className={classes.title}>{actionsTitle}</T>
+              </div>
+            )}
+            {actions}
+          </div>
+        )}
+      </div>
+      <div className={classes.closeOpen}>
+        <Button
+          variant='outlined'
+          className={classes.button}
+          onClick={toggleExtended(!extended)}
+          size='small'
+        >
+          {extended ? <ChevronLeft /> : <ChevronRight />}
+        </Button>
       </div>
     </Drawer>
   )

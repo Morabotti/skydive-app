@@ -35,10 +35,12 @@ interface Props {
   search: string,
   city: string,
   isPublic: boolean | null,
+  extended: boolean,
   setSearch: (set: string) => void,
   setCity: (set: string) => void,
   setIsPublic: (set: null | boolean) => void,
-  toggleList: (set: boolean) => () => void
+  toggleList: (set: boolean) => () => void,
+  toggleExtended: (set: boolean) => () => void
 }
 
 export const ClubsFilterDrawer = ({
@@ -46,10 +48,12 @@ export const ClubsFilterDrawer = ({
   city,
   search,
   isPublic,
+  extended,
   setCity,
   setSearch,
   setIsPublic,
-  toggleList
+  toggleList,
+  toggleExtended
 }: Props) => {
   const classes = useStyles()
   const { auth } = useAuth()
@@ -62,6 +66,8 @@ export const ClubsFilterDrawer = ({
       showViewChanger
       isList={isList}
       toggleView={toggleList}
+      extended={extended}
+      toggleExtended={toggleExtended}
     >
       <>
         <div className={classes.wrapper}>

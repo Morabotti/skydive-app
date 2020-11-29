@@ -3,15 +3,18 @@ import { ConfirmationDialog, DashboardContainer, PaginationControls } from '@com
 import { UsersFilterDrawer, UsersViewSelector } from '@components/users'
 import { useUsers } from '@hooks'
 import { createStyles, makeStyles, Menu, MenuItem } from '@material-ui/core'
+import clsx from 'clsx'
 
 const useStyles = makeStyles(theme => createStyles({
   container: {
-    marginLeft: 320,
     padding: theme.spacing(3),
     position: 'relative',
     [theme.breakpoints.down(425)]: {
       padding: theme.spacing(1.5)
     }
+  },
+  extended: {
+    marginLeft: 320
   }
 }))
 
@@ -20,6 +23,7 @@ const UsersView = () => {
 
   const {
     users,
+    extended,
     isList,
     search,
     location,
@@ -34,6 +38,7 @@ const UsersView = () => {
     setShowDeleted,
     toggleList,
     toggleDeleteDialog,
+    toggleExtended,
     onResetFilters,
     onCloseMenu,
     onSelectSettings,
@@ -45,6 +50,7 @@ const UsersView = () => {
     <DashboardContainer variant='no-max-width'>
       <UsersFilterDrawer
         isList={isList}
+        extended={extended}
         search={search}
         location={location}
         showDeleted={showDeleted}
@@ -54,8 +60,9 @@ const UsersView = () => {
         setRole={setRole}
         setShowDeleted={setShowDeleted}
         toggleList={toggleList}
+        toggleExtended={toggleExtended}
       />
-      <div className={classes.container}>
+      <div className={clsx(classes.container, { [classes.extended]: extended })}>
         <UsersViewSelector
           users={users.data?.result || []}
           isList={isList}

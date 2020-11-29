@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom'
 
 interface UsersContext {
   isList: boolean,
+  extended: boolean,
   users: QueryResult<PaginationResult<User>>,
   search: string,
   location: string,
@@ -18,6 +19,7 @@ interface UsersContext {
   deleting: User | null,
   anchor: HTMLButtonElement | null,
 
+  toggleExtended: (set: boolean) => () => void,
   toggleList: (set: boolean) => () => void,
   toggleDeleteDialog: (set: null | User) => () => void,
   setSearch: (set: string) => void,
@@ -34,11 +36,12 @@ interface UsersContext {
 export const useUsers = (): UsersContext => {
   const { offset, limit } = usePagination()
   const { getCacheItem, setCacheItem } = useCaching()
-  const { createNotification } = useDashboard()
+  const { createNotification, setLoading } = useDashboard()
   const { push } = useHistory()
   const queryCache = useQueryCache()
 
   const [isList, setIsList] = useState(getCacheItem<boolean>('usersInList'))
+  const [extended, setExtended] = useState(getCacheItem<boolean>('extendedLists'))
   const [search, setSearch] = useState('')
   const [location, setLocation] = useState('')
   const [role, setRole] = useState<AuthRoles>(AuthRoles.UNSET)
@@ -89,6 +92,7 @@ export const useUsers = (): UsersContext => {
     setRole(AuthRoles.UNSET)
     setSearch('')
     setLocation('')
+    setShowDeleted(null)
   }, [])
 
   const onNavigation = useCallback(() => {
@@ -106,6 +110,7 @@ export const useUsers = (): UsersContext => {
       return
     }
 
+    setLoading(true)
     try {
       await deleteMutation(deleting.id)
       createNotification('Successfully deleted user', NotificationType.INFO)
@@ -114,7 +119,8 @@ export const useUsers = (): UsersContext => {
       createNotification('Failed to delete user', NotificationType.ERROR)
     }
     setDeleting(null)
-  }, [deleting, setDeleting, createNotification, deleteMutation])
+    setLoading(false)
+  }, [deleting, setDeleting, createNotification, deleteMutation, setLoading])
 
   const toggleList = useCallback((set: boolean) => () => {
     setIsList(set)
@@ -126,8 +132,15 @@ export const useUsers = (): UsersContext => {
     onCloseMenu()
   }, [setDeleting, onCloseMenu])
 
+  const toggleExtended = useCallback((set: boolean) => () => {
+    setExtended(set)
+    setCacheItem('extendedLists', set)
+  }, [setExtended, setCacheItem])
+
   return {
     isList,
+    extended,
+    toggleExtended,
     toggleList,
     toggleDeleteDialog,
     users,

@@ -7,11 +7,13 @@ import { Club, PaginationResult } from '@types'
 
 interface ClubsContext {
   isList: boolean,
+  extended: boolean,
   clubs: QueryResult<PaginationResult<Club>>,
   search: string,
   city: string,
   isPublic: boolean | null,
   toggleList: (set: boolean) => () => void,
+  toggleExtended: (set: boolean) => () => void,
   setSearch: (set: string) => void,
   setCity: (set: string) => void,
   setIsPublic: (set: null | boolean) => void,
@@ -23,6 +25,7 @@ export const useClubs = (): ClubsContext => {
   const { getCacheItem, setCacheItem } = useCaching()
 
   const [isList, setIsList] = useState(getCacheItem<boolean>('clubsInList'))
+  const [extended, setExtended] = useState(getCacheItem<boolean>('extendedLists'))
   const [search, setSearch] = useState('')
   const [city, setCity] = useState('')
   const [isPublic, setIsPublic] = useState<null | boolean>(null)
@@ -47,6 +50,11 @@ export const useClubs = (): ClubsContext => {
     setCacheItem('clubsInList', set)
   }, [setIsList, setCacheItem])
 
+  const toggleExtended = useCallback((set: boolean) => () => {
+    setExtended(set)
+    setCacheItem('extendedLists', set)
+  }, [setExtended, setCacheItem])
+
   const onResetFilters = useCallback(() => {
     setSearch('')
     setCity('')
@@ -55,7 +63,9 @@ export const useClubs = (): ClubsContext => {
 
   return {
     isList,
+    extended,
     toggleList,
+    toggleExtended,
     clubs,
     city,
     search,

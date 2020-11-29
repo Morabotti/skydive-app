@@ -7,7 +7,8 @@ interface ApplicationCache {
   usersInList: boolean,
   clubsInList: boolean,
   activitiesInList: boolean,
-  showLanderCalendar: boolean
+  showLanderCalendar: boolean,
+  extendedLists: boolean
 }
 
 const defaultCache: ApplicationCache = ({
@@ -16,7 +17,8 @@ const defaultCache: ApplicationCache = ({
   usersInList: true,
   clubsInList: true,
   activitiesInList: true,
-  showLanderCalendar: true
+  showLanderCalendar: true,
+  extendedLists: true
 })
 
 const getInitialApplicationCache = (): ApplicationCache => {

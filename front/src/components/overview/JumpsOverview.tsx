@@ -1,11 +1,12 @@
 import React from 'react'
-import { Actions, DashboardSection } from '@components/common'
+import { Actions, CenterMessage, DashboardSection } from '@components/common'
 
 import {
   makeStyles,
   createStyles,
   Button
 } from '@material-ui/core'
+import { Cancel } from 'mdi-material-ui'
 
 const useStyles = makeStyles(theme => createStyles({
   wrapper: {
@@ -37,7 +38,12 @@ export const JumpsOverview = ({
       variant='no-padding'
     >
       <div className={classes.wrapper}>
-        <div className={classes.fullHeight} />
+        <div className={classes.fullHeight}>
+          <CenterMessage
+            text='Not implemented'
+            icon={Cancel}
+          />
+        </div>
         <Actions align='right' withDivider className={classes.padding}>
           <Button color='primary'>
             Show my jumps

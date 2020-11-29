@@ -3,7 +3,7 @@ import { hot } from 'react-hot-loader'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { publicRoutes, dashboardRoutes } from '@routes'
 import { AuthProvider, DashboardProvider, StateContextProvider } from '@hooks'
-import { ReactQueryDevtools } from 'react-query-devtools'
+// import { ReactQueryDevtools } from 'react-query-devtools'
 
 import {
   DashboardAuthLayer,
@@ -62,7 +62,7 @@ const Application: FC = () => (
         </Suspense>
       </AuthProvider>
     </BrowserRouter>
-    <ReactQueryDevtools initialIsOpen={false} />
+    {/* <ReactQueryDevtools initialIsOpen={false} /> */}
   </ApplicationProviders>
 )
 

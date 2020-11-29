@@ -42,7 +42,10 @@ const useStyles = makeStyles(theme => createStyles({
     margin: theme.spacing('auto', 1)
   },
   button: {
-    margin: theme.spacing(0, 0.5)
+    margin: theme.spacing(0, 0.5),
+    [theme.breakpoints.down(425)]: {
+      minWidth: 40
+    }
   },
   last: {
     marginRight: theme.spacing(0)

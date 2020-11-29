@@ -6,7 +6,7 @@ import { useQueryCache } from 'react-query'
 import { useHistory } from 'react-router-dom'
 import { useApplicationNavigation } from '@hooks'
 import { CenterMessage } from '@components/common'
-import { TableCancel } from 'mdi-material-ui'
+import { Cancel, TableCancel } from 'mdi-material-ui'
 
 interface Props {
   isList: boolean,
@@ -57,6 +57,9 @@ export const ClubsViewSelector = ({
   }
 
   return (
-    <div />
+    <CenterMessage
+      text='Not implemented'
+      icon={Cancel}
+    />
   )
 }

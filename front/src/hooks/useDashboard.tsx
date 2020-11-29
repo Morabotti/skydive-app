@@ -2,13 +2,16 @@ import React, {
   createContext,
   ReactNode,
   useContext,
-  useCallback
+  useCallback,
+  useState
 } from 'react'
 
 import { useSnackbar } from 'notistack'
 import { NotificationType } from '@enums'
 
 interface DashboardContext {
+  loading: boolean,
+  setLoading: (set: boolean) => void,
   createNotification: (message: string, type?: NotificationType) => void
 }
 
@@ -17,10 +20,13 @@ interface Props {
 }
 
 export const __DashboardContext = createContext<DashboardContext>({
-  createNotification: () => {}
+  loading: false,
+  createNotification: () => {},
+  setLoading: () => {}
 })
 
 export const DashboardProvider = ({ children }: Props) => {
+  const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
   const createNotification = useCallback((message: string, type?: NotificationType) => {
@@ -30,7 +36,9 @@ export const DashboardProvider = ({ children }: Props) => {
   return (
     <__DashboardContext.Provider
       value={{
-        createNotification
+        createNotification,
+        loading,
+        setLoading
       }}
     >
       {children}

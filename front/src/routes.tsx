@@ -11,6 +11,7 @@ import {
 } from 'mdi-material-ui'
 
 const LoginView = lazy(() => import('@components/auth/LoginView'))
+const LanderView = lazy(() => import('@components/lander/LanderView'))
 const RegisterView = lazy(() => import('@components/auth/RegisterView'))
 const OverviewView = lazy(() => import('@components/overview/OverviewView'))
 const ActivityView = lazy(() => import('@components/activity/ActivityView'))
@@ -22,6 +23,11 @@ const CreateClubView = lazy(() => import('@components/configuration/create-club/
 const UsersView = lazy(() => import('@components/users/UsersView'))
 
 export const routesTree: Route[] = [{
+  access: [],
+  type: RouteType.PUBLIC,
+  component: LanderView,
+  path: '/'
+}, {
   access: [],
   type: RouteType.PUBLIC,
   component: LoginView,

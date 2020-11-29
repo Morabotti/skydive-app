@@ -3,15 +3,18 @@ import { DashboardContainer, PaginationControls } from '@components/common'
 import { ActivitiesFilterDrawer, ActivitiesViewSelector } from '@components/activities'
 import { useActivities, useAuth } from '@hooks'
 import { createStyles, makeStyles } from '@material-ui/core'
+import clsx from 'clsx'
 
 const useStyles = makeStyles(theme => createStyles({
   container: {
-    marginLeft: 320,
     padding: theme.spacing(3),
     position: 'relative',
     [theme.breakpoints.down(425)]: {
       padding: theme.spacing(1.5)
     }
+  },
+  extended: {
+    marginLeft: 320
   }
 }))
 
@@ -22,6 +25,7 @@ const ActivitiesView = () => {
   const {
     access,
     activities,
+    extended,
     from,
     to,
     isList,
@@ -35,6 +39,7 @@ const ActivitiesView = () => {
     setType,
     setIsVisible,
     toggleList,
+    toggleExtended,
     onResetFilters
   } = useActivities()
 
@@ -42,6 +47,7 @@ const ActivitiesView = () => {
     <DashboardContainer variant='no-max-width'>
       <ActivitiesFilterDrawer
         access={access}
+        extended={extended}
         from={from}
         to={to}
         isList={isList}
@@ -55,8 +61,9 @@ const ActivitiesView = () => {
         setTo={setTo}
         setIsVisible={setIsVisible}
         toggleList={toggleList}
+        toggleExtended={toggleExtended}
       />
-      <div className={classes.container}>
+      <div className={clsx(classes.container, { [classes.extended]: extended })}>
         <ActivitiesViewSelector
           activities={activities.data?.result || []}
           isList={isList}

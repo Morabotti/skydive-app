@@ -8,6 +8,7 @@ import moment from 'moment'
 
 interface ActivitiesContext {
   isList: boolean,
+  extended: boolean,
   activities: QueryResult<PaginationResult<Activity>>,
   search: string,
   access: ActivityAccess,
@@ -16,6 +17,7 @@ interface ActivitiesContext {
   to: string,
   isVisible: boolean | null,
   toggleList: (set: boolean) => () => void,
+  toggleExtended: (set: boolean) => () => void,
   setSearch: (set: string) => void,
   setAccess: (set: ActivityAccess) => void,
   setType: (set: ActivityType) => void,
@@ -30,6 +32,7 @@ export const useActivities = (): ActivitiesContext => {
   const { getCacheItem, setCacheItem } = useCaching()
 
   const [isList, setIsList] = useState(getCacheItem<boolean>('activitiesInList'))
+  const [extended, setExtended] = useState(getCacheItem<boolean>('extendedLists'))
   const [search, setSearch] = useState('')
   const [access, setAccess] = useState<ActivityAccess>(ActivityAccess.UNSET)
   const [type, setType] = useState<ActivityType>(ActivityType.UNSET)
@@ -57,6 +60,11 @@ export const useActivities = (): ActivitiesContext => {
     setCacheItem('activitiesInList', set)
   }, [setIsList, setCacheItem])
 
+  const toggleExtended = useCallback((set: boolean) => () => {
+    setExtended(set)
+    setCacheItem('extendedLists', set)
+  }, [setExtended, setCacheItem])
+
   const onResetFilters = useCallback(() => {
     setAccess(ActivityAccess.UNSET)
     setSearch('')
@@ -68,6 +76,8 @@ export const useActivities = (): ActivitiesContext => {
 
   return {
     isList,
+    extended,
+    toggleExtended,
     toggleList,
     activities,
     type,

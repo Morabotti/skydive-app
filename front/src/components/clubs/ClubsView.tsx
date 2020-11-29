@@ -3,15 +3,18 @@ import { DashboardContainer, PaginationControls } from '@components/common'
 import { ClubsFilterDrawer, ClubsViewSelector } from '@components/clubs'
 import { useAuth, useClubs } from '@hooks'
 import { createStyles, makeStyles } from '@material-ui/core'
+import clsx from 'clsx'
 
 const useStyles = makeStyles(theme => createStyles({
   container: {
-    marginLeft: 320,
     padding: theme.spacing(3),
     position: 'relative',
     [theme.breakpoints.down(425)]: {
       padding: theme.spacing(1.5)
     }
+  },
+  extended: {
+    marginLeft: 320
   }
 }))
 
@@ -21,7 +24,9 @@ const ClubsView = () => {
 
   const {
     isList,
+    extended,
     toggleList,
+    toggleExtended,
     city,
     search,
     clubs,
@@ -39,12 +44,14 @@ const ClubsView = () => {
         city={city}
         isPublic={isPublic}
         search={search}
+        extended={extended}
         toggleList={toggleList}
+        toggleExtended={toggleExtended}
         setIsPublic={setIsPublic}
         setCity={setCity}
         setSearch={setSearch}
       />
-      <div className={classes.container}>
+      <div className={clsx(classes.container, { [classes.extended]: extended })}>
         <ClubsViewSelector
           clubs={clubs.data?.result || []}
           isList={isList}

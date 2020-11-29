@@ -1,6 +1,7 @@
 import React from 'react'
 import { AuthRoles } from '@enums'
 import { BooleanFilterSelect, DashboardFilterDrawer } from '@components/common'
+import { UsersActions } from '@components/users'
 
 import {
   createStyles,
@@ -24,6 +25,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 interface Props {
   isList: boolean,
+  extended: boolean,
   search: string,
   location: string,
   role: AuthRoles,
@@ -32,11 +34,13 @@ interface Props {
   setSearch: (set: string) => void,
   setLocation: (set: string) => void,
   setRole: (set: AuthRoles) => void,
-  toggleList: (set: boolean) => () => void
+  toggleList: (set: boolean) => () => void,
+  toggleExtended: (set: boolean) => () => void
 }
 
 export const UsersFilterDrawer = ({
   isList,
+  extended,
   search,
   location,
   role,
@@ -45,7 +49,8 @@ export const UsersFilterDrawer = ({
   setSearch,
   setLocation,
   setRole,
-  toggleList
+  toggleList,
+  toggleExtended
 }: Props) => {
   const classes = useStyles()
 
@@ -54,7 +59,15 @@ export const UsersFilterDrawer = ({
       title='Search activites'
       showViewChanger
       isList={isList}
+      extended={extended}
       toggleView={toggleList}
+      toggleExtended={toggleExtended}
+      actionsTitle='Actions'
+      actions={(
+        <UsersActions
+          onNewUser={() => {}}
+        />
+      )}
     >
       <div className={classes.wrapper}>
         <TextField

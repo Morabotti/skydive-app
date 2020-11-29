@@ -13,7 +13,8 @@ import {
   IconButton,
   Tooltip,
   Typography as T,
-  Hidden
+  Hidden,
+  LinearProgress
 } from '@material-ui/core'
 
 import {
@@ -21,6 +22,7 @@ import {
   AuthNotifications,
   AuthLocationNavigator
 } from '@components/navigation'
+import { useDashboard } from '@hooks'
 
 const useStyles = makeStyles(theme => createStyles({
   primaryBar: {
@@ -81,6 +83,25 @@ const useStyles = makeStyles(theme => createStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center'
+  },
+  loading: {
+    position: 'absolute',
+    zIndex: theme.zIndex.appBar - 1,
+    top: 64,
+    left: 0,
+    width: '100%',
+    animation: `$loadingAnimation 400ms ${theme.transitions.easing.easeInOut}`,
+    [theme.breakpoints.down('xs')]: {
+      top: 56
+    }
+  },
+  '@keyframes loadingAnimation': {
+    'from': {
+      opacity: 0
+    },
+    'to': {
+      opacity: 1
+    }
   }
 }))
 
@@ -98,65 +119,71 @@ export const AuthNavigationHeader = memo(({
   onSettings
 }: Props) => {
   const classes = useStyles()
+  const { loading } = useDashboard()
 
   const onNavigateTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
-    <AppBar
-      color='transparent'
-      position='sticky'
-      elevation={3}
-      className={classes.primaryBar}
-    >
-      <Toolbar>
-        <Grid container spacing={2} alignItems='center'>
-          <Grid item>
-            <AuthLocationNavigator
-              auth={auth}
-              currentRoute={currentRoute}
-            />
+    <>
+      <AppBar
+        color='transparent'
+        position='sticky'
+        elevation={3}
+        className={classes.primaryBar}
+      >
+        <Toolbar>
+          <Grid container spacing={2} alignItems='center'>
+            <Grid item>
+              <AuthLocationNavigator
+                auth={auth}
+                currentRoute={currentRoute}
+              />
+            </Grid>
+            <Grid item xs className={classes.hiddenOverflow}>
+              <button
+                className={clsx(
+                  classes.headerButton,
+                  classes.navigationButton, {
+                    [classes.navigateBackToTop]: currentRoute?.name !== undefined
+                  }
+                )}
+                onClick={onNavigateTop}
+              >
+                <T
+                  variant='body1'
+                  className={classes.navigationText}
+                >{currentRoute?.name}</T>
+              </button>
+            </Grid>
+            <Grid item>
+              <AuthNotifications />
+              <Hidden smDown>
+                <Tooltip title='Settings'>
+                  <IconButton
+                    color='inherit'
+                    className={classes.primaryText}
+                    onClick={onSettings}
+                  >
+                    <Cog />
+                  </IconButton>
+                </Tooltip>
+              </Hidden>
+            </Grid>
+            <Grid item>
+              <AuthLoggedInAction
+                auth={auth}
+                onRevokeAuth={onRevokeAuth}
+                onSettings={onSettings}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs className={classes.hiddenOverflow}>
-            <button
-              className={clsx(
-                classes.headerButton,
-                classes.navigationButton, {
-                  [classes.navigateBackToTop]: currentRoute?.name !== undefined
-                }
-              )}
-              onClick={onNavigateTop}
-            >
-              <T
-                variant='body1'
-                className={classes.navigationText}
-              >{currentRoute?.name}</T>
-            </button>
-          </Grid>
-          <Grid item>
-            <AuthNotifications />
-            <Hidden smDown>
-              <Tooltip title='Settings'>
-                <IconButton
-                  color='inherit'
-                  className={classes.primaryText}
-                  onClick={onSettings}
-                >
-                  <Cog />
-                </IconButton>
-              </Tooltip>
-            </Hidden>
-          </Grid>
-          <Grid item>
-            <AuthLoggedInAction
-              auth={auth}
-              onRevokeAuth={onRevokeAuth}
-              onSettings={onSettings}
-            />
-          </Grid>
-        </Grid>
-      </Toolbar>
-    </AppBar>
+        </Toolbar>
+      </AppBar>
+      {loading && (
+        <LinearProgress className={classes.loading} />
+      )}
+    </>
   )
 })

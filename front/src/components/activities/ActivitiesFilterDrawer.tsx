@@ -34,6 +34,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 interface Props {
   isList: boolean,
+  extended: boolean,
   search: string,
   to: string,
   from: string,
@@ -46,11 +47,13 @@ interface Props {
   setType: (set: ActivityType) => void,
   setAccess: (set: ActivityAccess) => void,
   setIsVisible: (set: boolean | null) => void,
-  toggleList: (set: boolean) => () => void
+  toggleList: (set: boolean) => () => void,
+  toggleExtended: (set: boolean) => () => void
 }
 
 export const ActivitiesFilterDrawer = ({
   isList,
+  extended,
   search,
   type,
   access,
@@ -63,7 +66,8 @@ export const ActivitiesFilterDrawer = ({
   setFrom,
   setTo,
   setIsVisible,
-  toggleList
+  toggleList,
+  toggleExtended
 }: Props) => {
   const classes = useStyles()
   const { auth } = useAuth()
@@ -75,7 +79,9 @@ export const ActivitiesFilterDrawer = ({
       title='Search activites'
       showViewChanger
       isList={isList}
+      extended={extended}
       toggleView={toggleList}
+      toggleExtended={toggleExtended}
     >
       <>
         <div className={classes.wrapper}>
