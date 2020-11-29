@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { useDebounce, usePagination } from '@hooks'
+import { useDebounce, usePagination, useCaching } from '@hooks'
 import { QueryResult, usePaginatedQuery } from 'react-query'
 import { ActivityAccess, ActivityType, Client } from '@enums'
 import { getActivities } from '@client'
@@ -27,7 +27,9 @@ interface ActivitiesContext {
 
 export const useActivities = (): ActivitiesContext => {
   const { offset, limit } = usePagination()
-  const [isList, setIsList] = useState(true)
+  const { getCacheItem, setCacheItem } = useCaching()
+
+  const [isList, setIsList] = useState(getCacheItem<boolean>('activitiesInList'))
   const [search, setSearch] = useState('')
   const [access, setAccess] = useState<ActivityAccess>(ActivityAccess.UNSET)
   const [type, setType] = useState<ActivityType>(ActivityType.UNSET)
@@ -52,7 +54,8 @@ export const useActivities = (): ActivitiesContext => {
 
   const toggleList = useCallback((set: boolean) => () => {
     setIsList(set)
-  }, [setIsList])
+    setCacheItem('activitiesInList', set)
+  }, [setIsList, setCacheItem])
 
   const onResetFilters = useCallback(() => {
     setAccess(ActivityAccess.UNSET)

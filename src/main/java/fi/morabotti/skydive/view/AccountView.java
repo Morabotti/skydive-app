@@ -7,6 +7,7 @@ import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Profile;
 
 import javax.annotation.Nullable;
+import java.time.Instant;
 
 @EasyValue
 @JsonDeserialize(builder = AccountView.Builder.class)
@@ -19,6 +20,9 @@ public abstract class AccountView {
 
     @Nullable
     public abstract Profile getProfile();
+
+    @Nullable
+    public abstract Instant getDeletedAt();
 
     public abstract Builder toBuilder();
 
@@ -35,6 +39,7 @@ public abstract class AccountView {
                 .setUsername(account.getUsername())
                 .setRole(account.getAccountRole())
                 .setProfile(account.getProfile().orElse(null))
+                .setDeletedAt(account.getDeletedAt())
                 .build();
     }
 }

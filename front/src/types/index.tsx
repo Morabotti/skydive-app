@@ -37,7 +37,14 @@ export interface DateRangeQuery {
 export interface ClubQuery {
   search: string,
   city: string,
-  isPublic: boolean
+  isPublic: boolean | null
+}
+
+export interface UserQuery {
+  search: string,
+  location: string,
+  role: AuthRoles,
+  showDeleted: null | boolean
 }
 
 export interface ActivityQuery {
@@ -51,7 +58,8 @@ export interface User {
   id: number,
   username: string,
   role: AuthRoles,
-  profile: null | UserProfile
+  profile: null | UserProfile,
+  deletedAt: string | null
 }
 
 export interface UserProfile {
@@ -60,6 +68,7 @@ export interface UserProfile {
   lastName: string,
   address: string,
   zipCode: string,
+  city: string,
   phone: string,
   deletedAt: null | string
 }

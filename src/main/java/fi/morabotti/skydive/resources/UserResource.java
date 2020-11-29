@@ -9,6 +9,7 @@ import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.activity.PersonalActivityView;
 import fi.morabotti.skydive.view.auth.UpdateRequest;
+import fi.morabotti.skydive.view.auth.UserQuery;
 import fi.morabotti.skydive.view.club.ClubAccountView;
 
 import javax.annotation.security.RolesAllowed;
@@ -49,9 +50,10 @@ public class UserResource {
 
     @GET
     public PaginationResponse<AccountView> getUsers(
-            @BeanParam PaginationQuery paginationQuery
+            @BeanParam PaginationQuery paginationQuery,
+            @BeanParam UserQuery userQuery
     ) {
-        return accountController.getAccounts(paginationQuery);
+        return accountController.getAccounts(paginationQuery, userQuery);
     }
 
     @GET

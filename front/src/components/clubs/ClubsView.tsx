@@ -52,7 +52,10 @@ const ClubsView = () => {
           role={auth?.user.role}
           onResetFilters={onResetFilters}
         />
-        <PaginationControls length={clubs.data?.length || 0} />
+        <PaginationControls
+          length={clubs.data?.length || 0}
+          loading={clubs.isLoading}
+        />
       </div>
     </DashboardContainer>
   )

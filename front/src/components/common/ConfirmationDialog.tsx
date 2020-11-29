@@ -67,7 +67,7 @@ export const ConfirmationDialog = memo(({
           onClick={onClose}
           color='secondary'
           disableElevation
-          variant='contained'
+          variant='outlined'
         >
           Close
         </Button>
@@ -76,7 +76,7 @@ export const ConfirmationDialog = memo(({
           color='primary'
           autoFocus
           disableElevation
-          variant='contained'
+          variant='outlined'
         >
           Confirm
         </Button>

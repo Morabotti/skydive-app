@@ -64,7 +64,10 @@ const ActivitiesView = () => {
           role={auth?.user.role}
           onResetFilters={onResetFilters}
         />
-        <PaginationControls length={activities.data?.length || 0} />
+        <PaginationControls
+          length={activities.data?.length || 0}
+          loading={activities.isLoading}
+        />
       </div>
     </DashboardContainer>
   )

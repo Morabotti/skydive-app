@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { ClubAccount, MyActivities } from '@types'
 import { QueryResult, usePaginatedQuery, useQuery } from 'react-query'
+import { useCaching } from '@hooks'
 import { Client } from '@enums'
 import { getPersonalActivities, getPersonalClubs } from '@client'
 import moment from 'moment'
@@ -18,7 +19,9 @@ interface OverviewContext {
 }
 
 export const useOverview = (): OverviewContext => {
-  const [showCalendar, setShowCalendar] = useState(true)
+  const { getCacheItem, setCacheItem } = useCaching()
+
+  const [showCalendar, setShowCalendar] = useState(getCacheItem<boolean>('showLanderCalendar'))
   const [date, setDate] = useState(() => moment().toISOString())
   const [selected, setSelected] = useState(() => moment().toISOString())
 
@@ -57,7 +60,8 @@ export const useOverview = (): OverviewContext => {
 
   const toggleShowCalendar = useCallback((set: boolean) => () => {
     setShowCalendar(set)
-  }, [setShowCalendar])
+    setCacheItem('showLanderCalendar', set)
+  }, [setShowCalendar, setCacheItem])
 
   return {
     clubs,

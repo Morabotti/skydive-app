@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { useDebounce, usePagination } from '@hooks'
+import { useDebounce, usePagination, useCaching } from '@hooks'
 import { QueryResult, usePaginatedQuery } from 'react-query'
 import { Client } from '@enums'
 import { getClubs } from '@client'
@@ -20,7 +20,9 @@ interface ClubsContext {
 
 export const useClubs = (): ClubsContext => {
   const { offset, limit } = usePagination()
-  const [isList, setIsList] = useState(true)
+  const { getCacheItem, setCacheItem } = useCaching()
+
+  const [isList, setIsList] = useState(getCacheItem<boolean>('clubsInList'))
   const [search, setSearch] = useState('')
   const [city, setCity] = useState('')
   const [isPublic, setIsPublic] = useState<null | boolean>(null)
@@ -42,7 +44,8 @@ export const useClubs = (): ClubsContext => {
 
   const toggleList = useCallback((set: boolean) => () => {
     setIsList(set)
-  }, [setIsList])
+    setCacheItem('clubsInList', set)
+  }, [setIsList, setCacheItem])
 
   const onResetFilters = useCallback(() => {
     setSearch('')

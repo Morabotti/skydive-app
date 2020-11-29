@@ -29,6 +29,7 @@ export const ActivitiesViewSelector = ({
 
   const onActivitySelect = useCallback((set: Activity) => () => {
     queryCache.setQueryData([Client.GET_ACTIVITY_BY_TOKEN, set.token], set)
+    queryCache.setQueryData([Client.GET_ACTIVITY_BY_ID, set.id], set)
     push(`/dashboard/activity/${set.token}`)
   }, [push, queryCache])
 

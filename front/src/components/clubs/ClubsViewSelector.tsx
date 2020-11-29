@@ -29,6 +29,7 @@ export const ClubsViewSelector = ({
 
   const onClubSelect = useCallback((set: Club) => () => {
     queryCache.setQueryData([Client.GET_CLUB_BY_SLUG, set.slug], set)
+    queryCache.setQueryData([Client.GET_CLUB_BY_ID, set.id], set)
     push(`/dashboard/club/${set.slug}`)
   }, [push, queryCache])
 

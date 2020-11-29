@@ -48,7 +48,8 @@ export enum RouteType {
 
 export enum AuthRoles {
   ADMIN = 'admin',
-  USER = 'user'
+  USER = 'user',
+  UNSET = 'unset' // Used only in filter views, not in actual api
 }
 
 export enum LocalStorageKeys {

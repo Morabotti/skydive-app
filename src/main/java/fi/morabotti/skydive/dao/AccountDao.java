@@ -9,6 +9,8 @@ import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Profile;
 import fi.morabotti.skydive.security.Password;
 import fi.morabotti.skydive.view.PaginationQuery;
+import fi.morabotti.skydive.view.auth.UserQuery;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
@@ -36,21 +38,24 @@ public class AccountDao {
         this.transactionProvider = transactionProvider;
     }
 
-    public Long fetchAccountsLength() {
+    public Long fetchAccountsLength(UserQuery userQuery) {
         return DSL.using(jooqConfiguration)
                 .selectCount()
                 .from(ACCOUNT)
-                .where(ACCOUNT.DELETED_AT.isNull())
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
+                .where(getConditions(userQuery))
                 .fetchOne(0, Long.class);
     }
 
-    public List<Account> fetchAccounts(PaginationQuery paginationQuery) {
+    public List<Account> fetchAccounts(
+            PaginationQuery paginationQuery,
+            UserQuery userQuery
+    ) {
         return DSL.using(jooqConfiguration)
                 .select()
                 .from(ACCOUNT)
                 .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
-                .where(ACCOUNT.DELETED_AT.isNull())
-                .and(PROFILE.DELETED_AT.isNull())
+                .where(getConditions(userQuery))
                 .limit(paginationQuery.getLimit().orElse(20))
                 .offset(paginationQuery.getOffset().orElse(0))
                 .fetch()
@@ -64,6 +69,7 @@ public class AccountDao {
                 .from(ACCOUNT)
                 .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
                 .where(ACCOUNT.ID.eq(accountId))
+                .and(ACCOUNT.DELETED_AT.isNull())
                 .fetch()
                 .stream()
                 .collect(Account.mapper.collectingWithProfiles(Profile.mapper));
@@ -78,6 +84,7 @@ public class AccountDao {
                 .from(ACCOUNT)
                 .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
                 .where(ACCOUNT.USERNAME.eq(username))
+                .and(ACCOUNT.DELETED_AT.isNull())
                 .fetch()
                 .stream()
                 .collect(Account.mapper.collectingWithProfiles(Profile.mapper));
@@ -90,6 +97,7 @@ public class AccountDao {
                         .from(ACCOUNT)
                         .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
                         .where(ACCOUNT.ID.eq(id))
+                        .and(ACCOUNT.DELETED_AT.isNull())
                         .fetch()
                         .stream()
                         .collect(Account.mapper.collectingWithProfiles(Profile.mapper)),
@@ -151,5 +159,42 @@ public class AccountDao {
                         .execute(),
                 transactionProvider
         ).flatMap(ignored -> getById(account.getId()));
+    }
+
+    private Condition getConditions(UserQuery userQuery) {
+        return Optional.of(ACCOUNT.ID.isNotNull())
+                .map(condition -> userQuery.getSearch()
+                        .map(search ->
+                                condition.and(
+                                        ACCOUNT.USERNAME.contains(search)
+                                                .or(PROFILE.FIRST_NAME.contains(search))
+                                                .or(PROFILE.LAST_NAME.contains(search))
+                                                .or(PROFILE.PHONE.contains(search))
+                                )
+                        )
+                        .orElse(condition)
+                )
+                .map(condition -> userQuery.getLocation()
+                        .map(location ->
+                                condition.and(
+                                        PROFILE.CITY.contains(location)
+                                                .or(PROFILE.ADDRESS.contains(location))
+                                                .or(PROFILE.ZIPCODE.contains(location))
+                                )
+                        )
+                        .orElse(condition)
+                )
+                .map(condition -> userQuery.getShowDeleted()
+                        .map(deleted -> condition.and(deleted
+                                ? ACCOUNT.DELETED_AT.isNotNull()
+                                : ACCOUNT.DELETED_AT.isNull()
+                        ))
+                        .orElse(condition)
+                )
+                .map(condition -> userQuery.getRole()
+                        .map(role -> condition.and(ACCOUNT.ROLE.eq(role)))
+                        .orElse(condition)
+                )
+                .get();
     }
 }

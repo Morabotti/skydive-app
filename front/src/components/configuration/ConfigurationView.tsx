@@ -38,8 +38,8 @@ const ConfigurationView = () => {
               icon={AccountGroup}
               primaryText='Users In Platform'
               secondaryText='Open Users Management'
-              onClick={onNavigation('/dashboard/configuration/users')}
-              onMouseEnter={onRoutePreload('/dashboard/configuration/users')}
+              onClick={onNavigation('/dashboard/users')}
+              onMouseEnter={onRoutePreload('/dashboard/users')}
             />
           </DashboardSection>
         </Grid>

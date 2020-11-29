@@ -16,6 +16,7 @@ import fi.morabotti.skydive.view.TokenResponse;
 import fi.morabotti.skydive.view.auth.ChangePasswordRequest;
 import fi.morabotti.skydive.view.auth.RegisterRequest;
 import fi.morabotti.skydive.view.auth.UpdateRequest;
+import fi.morabotti.skydive.view.auth.UserQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -63,17 +64,19 @@ public class AccountController {
     /**
      * Returns accounts on platform.
      * @param paginationQuery PaginationQuery to define range
+     * @param userQuery UserQuery to used to filter results
      * @return PaginationResponse of AccountView
      * */
     public PaginationResponse<AccountView> getAccounts(
-            PaginationQuery paginationQuery
+            PaginationQuery paginationQuery,
+            UserQuery userQuery
     ) {
         return PaginationResponse.create(
-                accountDao.fetchAccounts(paginationQuery)
+                accountDao.fetchAccounts(paginationQuery, userQuery)
                         .stream()
                         .map(AccountView::of)
                         .collect(Collectors.toList()),
-                accountDao.fetchAccountsLength()
+                accountDao.fetchAccountsLength(userQuery)
         );
     }
 

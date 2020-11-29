@@ -3,12 +3,20 @@ import { LocalStorageKeys } from '@enums'
 
 interface ApplicationCache {
   lastUsername: string,
-  lastLimit: number
+  lastLimit: number,
+  usersInList: boolean,
+  clubsInList: boolean,
+  activitiesInList: boolean,
+  showLanderCalendar: boolean
 }
 
 const defaultCache: ApplicationCache = ({
   lastUsername: '',
-  lastLimit: 20
+  lastLimit: 20,
+  usersInList: true,
+  clubsInList: true,
+  activitiesInList: true,
+  showLanderCalendar: true
 })
 
 const getInitialApplicationCache = (): ApplicationCache => {

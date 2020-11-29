@@ -20,7 +20,8 @@ import {
   MyActivities,
   ActivityQuery,
   User,
-  UpdateUser
+  UpdateUser,
+  UserQuery
 } from '@types'
 
 const addAuthToken = () => ({
@@ -575,9 +576,10 @@ export const removeParticipationAsPilot = (
 
 export const getUsers = (
   key: string,
-  pagination: PaginationQuery
+  pagination: PaginationQuery,
+  userQuery: UserQuery
 ): Promise<PaginationResult<User>> => fetch(
-  `/api/user?${searchParams([pagination])}`,
+  `/api/user?${searchParams([pagination, userQuery])}`,
   {
     method: 'GET',
     headers: {
