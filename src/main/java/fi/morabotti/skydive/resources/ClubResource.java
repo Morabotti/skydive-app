@@ -86,17 +86,19 @@ public class ClubResource {
     @Path("{clubId}")
     public ClubView updateClub(
             @PathParam("clubId") Long clubId,
+            @Context Account account,
             ClubInformationRequest informationRequest
     ) {
-        return clubController.updateClub(clubId, informationRequest);
+        return clubController.updateClub(clubId, informationRequest, account);
     }
 
     @DELETE
     @Path("{clubId}")
     public Response deleteClub(
-            @PathParam("clubId") Long clubId
+            @PathParam("clubId") Long clubId,
+            @Context Account account
     ) {
-        clubController.deleteClub(clubId);
+        clubController.deleteClub(clubId, account);
         return Response.ok().build();
     }
 
@@ -121,27 +123,30 @@ public class ClubResource {
     @GET
     @Path("/{clubId}/plane")
     public List<Plane> getPlanes(
-            @PathParam("clubId") Long clubId
+            @PathParam("clubId") Long clubId,
+            @Context Account account
     ) {
-        return clubController.getPlanes(clubId);
+        return clubController.getPlanes(clubId, account);
     }
 
     @GET
     @Path("/{clubId}/plane/{planeId}")
     public Plane getPlane(
             @PathParam("clubId") Long clubId,
-            @PathParam("planeId") Long planeId
+            @PathParam("planeId") Long planeId,
+            @Context Account account
     ) {
-        return clubController.getPlane(planeId);
+        return clubController.getPlane(planeId, clubId, account);
     }
 
     @POST
     @Path("/{clubId}/plane")
     public Plane createPlane(
             @PathParam("clubId") Long clubId,
+            @Context Account account,
             Plane plane
     ) {
-        return clubController.createPlane(clubId, plane);
+        return clubController.createPlane(clubId, account, plane);
     }
 
     @PUT
@@ -149,18 +154,20 @@ public class ClubResource {
     public Plane updatePlane(
             @PathParam("clubId") Long clubId,
             @PathParam("planeId") Long planeId,
+            @Context Account account,
             Plane plane
     ) {
-        return clubController.updatePlane(clubId, plane);
+        return clubController.updatePlane(clubId, account, plane);
     }
 
     @DELETE
     @Path("/{clubId}/plane/{planeId}")
     public Response deletePlane(
             @PathParam("clubId") Long clubId,
-            @PathParam("planeId") Long planeId
+            @PathParam("planeId") Long planeId,
+            @Context Account account
     ) {
-        clubController.deletePlane(planeId);
+        clubController.deletePlane(planeId, clubId, account);
         return Response.ok().build();
     }
 
@@ -168,11 +175,13 @@ public class ClubResource {
     @Path("/{clubId}/member")
     public PaginationResponse<ClubAccountView> getClubMembers(
             @PathParam("clubId") Long clubId,
-            @BeanParam PaginationQuery paginationQuery
+            @BeanParam PaginationQuery paginationQuery,
+            @Context Account account
     ) {
         return clubController.getMembers(
                 paginationQuery,
-                clubId
+                clubId,
+                account
         );
     }
 
@@ -180,9 +189,10 @@ public class ClubResource {
     @Path("/{clubId}/member/{accountId}")
     public ClubAccountView getClubMemberInformation(
             @PathParam("clubId") Long clubId,
-            @PathParam("accountId") Long accountId
+            @PathParam("accountId") Long accountId,
+            @Context Account account
     ) {
-        return clubController.getMember(clubId, accountId);
+        return clubController.getMember(clubId, accountId, account);
     }
 
     @DELETE
@@ -192,7 +202,7 @@ public class ClubResource {
             @PathParam("accountId") Long accountId,
             @Context Account account
     ) {
-        clubController.removeMemberFromClub(clubId, accountId, true);
+        clubController.removeMemberFromClub(clubId, accountId, account, true);
         return Response.ok().build();
     }
 
@@ -228,7 +238,7 @@ public class ClubResource {
             @PathParam("accountId") Long accountId,
             @Context Account account
     ) {
-        return clubController.acceptMemberToClub(clubId, accountId);
+        return clubController.acceptMemberToClub(clubId, accountId, account);
     }
 
     @PUT
@@ -238,7 +248,7 @@ public class ClubResource {
             @PathParam("accountId") Long accountId,
             @Context Account account
     ) {
-        clubController.removeMemberFromClub(clubId, accountId, false);
+        clubController.removeMemberFromClub(clubId, accountId, account, false);
         return Response.ok().build();
     }
 }

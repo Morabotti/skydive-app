@@ -100,6 +100,10 @@ public class ActivityController {
             Long clubId,
             Account account
     ) {
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(clubId, account.getId(), false);
+        }
+
         return getActivitiesWithQueries(
                 paginationQuery,
                 dateRangeQuery,

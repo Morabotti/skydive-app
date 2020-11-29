@@ -20,6 +20,8 @@ import org.jooq.impl.DSL;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotAuthorizedException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -219,6 +221,50 @@ public class ClubAccountDao {
                 },
                 transactionProvider
         );
+    }
+
+    public ClubAccount checkRole(
+            Long clubId,
+            Long accountId,
+            Boolean shouldBeOwner
+    ) {
+        ClubAccount account = this.findAccount(
+                ClubAccountQuery.of(clubId, accountId).withAccepted(true)
+        )
+                .get()
+                .orElseThrow(() -> new NotAuthorizedException("Account is not member."));
+
+        if (account.getRole() != ClubAccountRole.club && shouldBeOwner) {
+            throw new NotAuthorizedException("Account is not a owner of this club");
+        }
+
+        return account;
+    }
+
+    public Void getClubMembership(
+            Club club,
+            Long accountId,
+            Boolean shouldBeMember,
+            Boolean shouldBeAccepted
+    ) {
+        Optional<ClubAccount> account = this.findAccount(
+                ClubAccountQuery.of(club.getId(), accountId)
+        ).get();
+
+        if (!account.isPresent() && shouldBeMember) {
+            throw new BadRequestException("Account is not member.");
+        }
+        else if (account.isPresent() && account.get().getAccepted() == null && shouldBeAccepted) {
+            throw new BadRequestException("Account is not accepted into club yet.");
+        }
+        else if (account.isPresent() && account.get().getAccepted() != null && !shouldBeAccepted) {
+            throw new BadRequestException("Account is already accepted to club.");
+        }
+        else if (account.isPresent() && !shouldBeMember) {
+            throw new BadRequestException("Account is already a member.");
+        }
+
+        return null;
     }
 
     private SelectJoinStep<Record> selectClubAccount(DSLContext context) {

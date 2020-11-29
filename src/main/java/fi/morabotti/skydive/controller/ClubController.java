@@ -9,7 +9,6 @@ import fi.morabotti.skydive.db.enums.ClubAccountRole;
 import fi.morabotti.skydive.domain.ClubDomain;
 import fi.morabotti.skydive.model.Account;
 import fi.morabotti.skydive.model.Club;
-import fi.morabotti.skydive.model.ClubAccount;
 import fi.morabotti.skydive.model.ClubProfile;
 import fi.morabotti.skydive.model.Plane;
 import fi.morabotti.skydive.view.PaginationQuery;
@@ -28,7 +27,6 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -103,14 +101,24 @@ public class ClubController {
      * Fetches club member.
      * @param clubId Long slug for club
      * @param accountId Long target account id
+     * @param account Account of the requester
      * @return ClubAccountView of account if member
      * @throws NotFoundException if club not found
+     * @throws NotAuthorizedException if user is not authorized to do this
      * */
     public ClubAccountView getMember(
             Long clubId,
-            Long accountId
+            Long accountId,
+            Account account
     ) {
-        getClubMembership(clubId, accountId, true, true);
+        Club club = clubDao.getById(clubId).get()
+                .orElseThrow(NotFoundException::new);
+
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(clubId, account.getId(), false);
+        }
+
+        clubAccountDao.getClubMembership(club, accountId, true, true);
 
         return ClubAccountView.of(
                 clubAccountDao.findAccount(
@@ -124,16 +132,23 @@ public class ClubController {
     /**
      * Fetches clubs member.
      * @param paginationQuery PaginationQuery used to paginate response
-     * @param clubId Long identifies wanted club
+     * @param clubId Long identifies wanted
+     * @param account Account of the requester
      * @return PaginationResponse of ClubAccountView
      * @throws NotFoundException if club not found
+     * @throws NotAuthorizedException if user is not authorized to do this
      * */
     public PaginationResponse<ClubAccountView> getMembers(
             PaginationQuery paginationQuery,
-            Long clubId
+            Long clubId,
+            Account account
     ) {
         Club club = clubDao.getById(clubId).get()
                 .orElseThrow(NotFoundException::new);
+
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(clubId, account.getId(), false);
+        }
 
         ClubAccountQuery query = new ClubAccountQuery()
                 .withClubId(club.getId());
@@ -178,31 +193,50 @@ public class ClubController {
     /**
      * Fetch plane by plane Id.
      * @param clubId Long identifies clubs
+     * @param account Account of the requester
      * @return List of Plane
+     * @throws NotAuthorizedException if user is not authorized to do this
      * */
-    public List<Plane> getPlanes(Long clubId) {
+    public List<Plane> getPlanes(Long clubId, Account account) {
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(clubId, account.getId(), false);
+        }
+
         return planeDao.fetchPlanes(clubId);
     }
 
     /**
      * Fetch plane by plane Id.
-     * @param id Long identifies wanted plane
+     * @param planeId Long identifies wanted plane
+     * @param clubId Long club in question
+     * @param account Account of the requester
      * @return Plane
      * @throws NotFoundException if plane not found
+     * @throws NotAuthorizedException if user is not authorized to do this
      * */
-    public Plane getPlane(Long id) {
-        return planeDao.getById(id).get()
+    public Plane getPlane(Long planeId, Long clubId, Account account) {
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(clubId, account.getId(), false);
+        }
+
+        return planeDao.getById(planeId).get()
                 .orElseThrow(NotFoundException::new);
     }
 
     /**
      * Creates new plane for club.
      * @param clubId Long identifies club.
+     * @param account Account of the requester
      * @param plane Plane to be created
      * @return newly created Plane
      * @throws InternalServerErrorException if something went wrong
+     * @throws NotAuthorizedException if user is not authorized to do this
      * */
-    public Plane createPlane(Long clubId, Plane plane) {
+    public Plane createPlane(Long clubId, Account account, Plane plane) {
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(clubId, account.getId(), true);
+        }
+
         return planeDao.create(clubId, plane)
                 .flatMap(planeDao::getById)
                 .get()
@@ -212,11 +246,17 @@ public class ClubController {
     /**
      * Updates plane.
      * @param clubId Long identifies club.
+     * @param account Account of the requester
      * @param plane Plane to be updated
      * @return updated Plane
      * @throws InternalServerErrorException if something went wrong
+     * @throws NotAuthorizedException if user is not authorized to do this
      * */
-    public Plane updatePlane(Long clubId, Plane plane) {
+    public Plane updatePlane(Long clubId, Account account, Plane plane) {
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(clubId, account.getId(), true);
+        }
+
         return planeDao.update(clubId, plane).get()
                 .orElseThrow(InternalServerErrorException::new);
     }
@@ -224,9 +264,15 @@ public class ClubController {
     /**
      * Removes plane by Id.
      * @param planeId Long identifies plane.
+     * @param account Account of the requester
      * @return Void
+     * @throws NotAuthorizedException if user is not authorized to do this
      * */
-    public Void deletePlane(Long planeId) {
+    public Void deletePlane(Long planeId, Long clubId, Account account) {
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(clubId, account.getId(), true);
+        }
+
         return planeDao.delete(planeId).get();
     }
 
@@ -257,16 +303,23 @@ public class ClubController {
      * Updates existing club.
      * @param clubId Long id of the club
      * @param informationRequest ClubInformationRequest used for information of club
+     * @param account Account of the requester
      * @return ClubView of updated club
      * @throws BadRequestException if club is not created
      * @throws NotFoundException if club is not found
+     * @throws NotAuthorizedException if user is not authorized to do this
      * */
     public ClubView updateClub(
             Long clubId,
-            ClubInformationRequest informationRequest
+            ClubInformationRequest informationRequest,
+            Account account
     ) {
         Club club = clubDao.getById(clubId).get()
                 .orElseThrow(NotFoundException::new);
+
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(club.getId(), account.getId(), true);
+        }
 
         ClubProfile clubProfile = club.getClubProfile().isPresent()
                 ? club.getClubProfile().get()
@@ -293,11 +346,17 @@ public class ClubController {
     /**
      * Deletes club, its profile, clears planes and accounts.
      * @param clubId Long id for club
-     * @throws NotFoundException if club is not found with slug
+     * @param account Account of the requester
+     * @throws NotFoundException if club is not found with id
+     * @throws NotAuthorizedException if user is not authorized to do this
      * */
-    public Void deleteClub(Long clubId) {
+    public Void deleteClub(Long clubId, Account account) {
         Club club = clubDao.getById(clubId).get()
                 .orElseThrow(NotFoundException::new);
+
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(club.getId(), account.getId(), true);
+        }
 
         return clubAccountDao.deleteByClubId(club.getId())
                 .flatMap(ignored -> planeDao.deleteByClub(club.getId()))
@@ -324,7 +383,10 @@ public class ClubController {
             Long accountId,
             ClubMemberRequest clubMemberRequest
     ) {
-        getClubMembership(clubId, accountId, false, false);
+        Club club = clubDao.getById(clubId).get()
+                .orElseThrow(NotFoundException::new);
+
+        clubAccountDao.getClubMembership(club, accountId, false, false);
 
         return ClubAccountView.of(
                 clubAccountDao.create(
@@ -352,7 +414,10 @@ public class ClubController {
             Account account,
             ClubMemberRequest memberRequest
     ) {
-        getClubMembership(clubId, account.getId(), false, false);
+        Club club = clubDao.getById(clubId).get()
+                .orElseThrow(NotFoundException::new);
+
+        clubAccountDao.getClubMembership(club, account.getId(), false, false);
 
         if (!account.getAccountRole().equals(AccountRole.admin)
                 && memberRequest.getRole().equals(ClubAccountRole.club)
@@ -382,9 +447,17 @@ public class ClubController {
      * */
     public ClubAccountView acceptMemberToClub(
             Long clubId,
-            Long accountId
+            Long accountId,
+            Account account
     ) {
-        Club club = getClubMembership(clubId, accountId, true, false);
+        Club club = clubDao.getById(clubId).get()
+                .orElseThrow(NotFoundException::new);
+
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(clubId, account.getId(), true);
+        }
+
+        clubAccountDao.getClubMembership(club, accountId, true, false);
 
         return ClubAccountView.of(
                 clubAccountDao.updateStatus(
@@ -404,41 +477,27 @@ public class ClubController {
      * Removes member from club.
      * @param clubId Long id for club
      * @param accountId Integer account id
+     * @param accepted Boolean whether account to remove or cancel
+     * @param account Account of the requester
      * @return Void
      * @throws BadRequestException if club slug is not valid or account is member already
+     * @throws NotAuthorizedException if user is not authorized to do this
      * */
-    public Void removeMemberFromClub(Long clubId, Long accountId, Boolean accepted) {
-        getClubMembership(clubId, accountId, true, accepted);
-
-        return clubAccountDao.delete(clubId, accountId).get();
-    }
-
-    private Club getClubMembership(
+    public Void removeMemberFromClub(
             Long clubId,
             Long accountId,
-            Boolean shouldBeMember,
-            Boolean shouldBeAccepted
+            Account account,
+            Boolean accepted
     ) {
         Club club = clubDao.getById(clubId).get()
                 .orElseThrow(NotFoundException::new);
 
-        Optional<ClubAccount> account = clubAccountDao.findAccount(
-                ClubAccountQuery.of(clubId, accountId)
-        ).get();
-
-        if (!account.isPresent() && shouldBeMember) {
-            throw new BadRequestException("Account is not member.");
-        }
-        else if (account.isPresent() && account.get().getAccepted() == null && shouldBeAccepted) {
-            throw new BadRequestException("Account is not accepted into club yet.");
-        }
-        else if (account.isPresent() && account.get().getAccepted() != null && !shouldBeAccepted) {
-            throw new BadRequestException("Account is already accepted to club.");
-        }
-        else if (account.isPresent() && !shouldBeMember) {
-            throw new BadRequestException("Account is already a member.");
+        if (account.getAccountRole() != AccountRole.admin) {
+            clubAccountDao.checkRole(clubId, account.getId(), true);
         }
 
-        return club;
+        clubAccountDao.getClubMembership(club, accountId, true, accepted);
+
+        return clubAccountDao.delete(clubId, accountId).get();
     }
 }
