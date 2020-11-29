@@ -65,14 +65,6 @@ const useStyles = makeStyles(theme => createStyles({
   },
   error: {
     animation: `$startUpAnimation 400ms ${theme.transitions.easing.easeInOut}`
-  },
-  '@keyframes popUp': {
-    'from': {
-      opacity: 0
-    },
-    'to': {
-      opacity: 1
-    }
   }
 }))
 

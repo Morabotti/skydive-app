@@ -23,8 +23,23 @@ export const baseUserSchema = Yup.object().shape({
     .required('Enter zip code')
     .matches(zipCodeRegex, 'Entered zip code is not in correct format'),
   phone: Yup.string()
-    .required('Enter phone numbere')
+    .required('Enter phone number')
     .matches(phoneRegex, 'Entered phone number is not in correct format')
+})
+
+export const clubUpdateSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(5, 'Name is too short')
+    .max(255, 'Name is too long')
+    .required('Name is required'),
+  isPublic: Yup.boolean(),
+  description: Yup.string(),
+  zipCode: Yup.string()
+    .matches(zipCodeRegex, 'Entered zip code is not in correct format'),
+  phone: Yup.string()
+    .matches(phoneRegex, 'Entered phone number is not in correct format'),
+  city: Yup.string().max(255, 'City name is too long'),
+  address: Yup.string().max(255, 'Address is too long')
 })
 
 export const userRegisterSchema = Yup.object().concat(baseUserSchema).shape({

@@ -111,6 +111,8 @@ export interface RegisterUser {
   username: string
 }
 
+export type UpdateUser = Omit<RegisterUser, 'username' | 'password'>
+
 export interface RegisterUserForm extends RegisterUser {
   rePassword: string,
   showPassword: boolean

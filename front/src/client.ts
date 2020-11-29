@@ -18,7 +18,9 @@ import {
   ClubQuery,
   DateRangeQuery,
   MyActivities,
-  ActivityQuery
+  ActivityQuery,
+  User,
+  UpdateUser
 } from '@types'
 
 const addAuthToken = () => ({
@@ -570,3 +572,89 @@ export const removeParticipationAsPilot = (
   }
 )
   .then(checkResponse)
+
+export const getUsers = (
+  key: string,
+  pagination: PaginationQuery
+): Promise<PaginationResult<User>> => fetch(
+  `/api/user?${searchParams([pagination])}`,
+  {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())
+
+export const getUserById = (
+  id: number
+): Promise<User> => fetch(
+  `/api/user/${id}`,
+  {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())
+
+export const updateUser = (
+  id: number,
+  update: UpdateUser
+): Promise<User> => fetch(
+  `/api/user/${id}`,
+  {
+    method: 'PUT',
+    body: JSON.stringify(update),
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())
+
+export const deleteUser = (
+  id: number
+): Promise<Response> => fetch(
+  `/api/user/${id}`,
+  {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+
+export const getUsersActivities = (
+  id: number
+): Promise<MyActivities> => fetch(
+  `/api/user/${id}/activity`,
+  {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())
+
+export const getUsersClubs = (
+  id: number
+): Promise<ClubAccount[]> => fetch(
+  `/api/user/${id}/club`,
+  {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+  .then((res) => res.json())

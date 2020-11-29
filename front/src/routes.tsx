@@ -18,6 +18,7 @@ const ActivitiesView = lazy(() => import('@components/activities/ActivitiesView'
 const ClubsView = lazy(() => import('@components/clubs/ClubsView'))
 const ClubView = lazy(() => import('@components/club/ClubView'))
 const ConfigurationView = lazy(() => import('@components/configuration/ConfigurationView'))
+const CreateClubView = lazy(() => import('@components/configuration/create-club/CreateClubView'))
 
 export const routesTree: Route[] = [{
   access: [],
@@ -69,6 +70,12 @@ export const routesTree: Route[] = [{
   component: ConfigurationView,
   name: 'Configuration',
   icon: Cogs
+}, {
+  access: [AuthRoles.ADMIN],
+  type: RouteType.AUTHED_PRIVATE,
+  path: '/dashboard/configuration/club',
+  component: CreateClubView,
+  name: 'Create Club'
 }]
 
 export const publicRoutes = routesTree

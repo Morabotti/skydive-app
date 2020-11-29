@@ -22,10 +22,6 @@ const useStyles = makeStyles(theme => createStyles({
       height: 'auto'
     }
   },
-  paper: {
-    width: '100%',
-    height: '100%'
-  },
   grid: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
