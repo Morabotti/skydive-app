@@ -9,7 +9,7 @@
     "build": "webpack --mode production --config webpack.config.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "eslint \"src/**/*.{ts,tsx}\" --fix",
-    "test": "npm run lint"
+    "test": "npm run lint && npm run types"
   },
   "author": "Jesse Batman",
   "license": "UNLICENSED",

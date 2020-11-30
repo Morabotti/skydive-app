@@ -38,7 +38,7 @@ export const useClub = (): ClubContext => {
   const { push } = useHistory()
   const queryCache = useQueryCache()
 
-  const club = useQuery([Client.GET_CLUB_BY_ID, slug], getClubBySlug)
+  const club = useQuery([Client.GET_CLUB_BY_SLUG, slug], getClubBySlug)
   const myClubs = useQuery(Client.MY_CLUBS, getPersonalClubs)
 
   const [joinRequest] = useMutation(requestToJoinClub, {

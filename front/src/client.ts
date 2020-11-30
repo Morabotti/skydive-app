@@ -439,6 +439,7 @@ export const getActivityById = (
   .then((res) => res.json())
 
 export const getActivityByToken = (
+  key: string,
   token: string
 ): Promise<Activity> => fetch(
   `/api/activity/token/${token}`,

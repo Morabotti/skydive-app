@@ -6,11 +6,10 @@ import clsx from 'clsx'
 import {
   Paper,
   makeStyles,
-  createStyles,
   Typography as T
 } from '@material-ui/core'
 
-const useStyles = makeStyles(theme => createStyles({
+const useStyles = makeStyles(theme => ({
   padding: {
     padding: theme.spacing(2),
     [theme.breakpoints.down(425)]: {
