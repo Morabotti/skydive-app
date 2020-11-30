@@ -9,6 +9,7 @@ import fi.morabotti.skydive.view.PaginationQuery;
 import fi.morabotti.skydive.view.PaginationResponse;
 import fi.morabotti.skydive.view.activity.ActivityQuery;
 import fi.morabotti.skydive.view.activity.ActivityView;
+import fi.morabotti.skydive.view.club.ClubAccountQuery;
 import fi.morabotti.skydive.view.club.ClubAccountView;
 import fi.morabotti.skydive.view.club.ClubInformationRequest;
 import fi.morabotti.skydive.view.club.ClubMemberRequest;
@@ -176,10 +177,12 @@ public class ClubResource {
     public PaginationResponse<ClubAccountView> getClubMembers(
             @PathParam("clubId") Long clubId,
             @BeanParam PaginationQuery paginationQuery,
+            @BeanParam ClubAccountQuery clubAccountQuery,
             @Context Account account
     ) {
         return clubController.getMembers(
                 paginationQuery,
+                clubAccountQuery,
                 clubId,
                 account
         );
@@ -229,6 +232,16 @@ public class ClubResource {
                 account,
                 clubMemberRequest
         );
+    }
+
+    @POST
+    @Path("/{clubId}/member/leave")
+    public Response leaveClub(
+            @PathParam("clubId") Long clubId,
+            @Context Account account
+    ) {
+        clubController.leaveClub(clubId, account);
+        return Response.ok().build();
     }
 
     @PUT

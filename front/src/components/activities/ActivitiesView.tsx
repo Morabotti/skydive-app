@@ -73,7 +73,7 @@ const ActivitiesView = () => {
         />
         <PaginationControls
           length={activities.data?.length || 0}
-          loading={activities.isLoading}
+          fetching={activities.isLoading}
         />
       </div>
     </DashboardContainer>

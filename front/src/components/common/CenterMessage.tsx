@@ -8,6 +8,7 @@ import {
   SvgIconTypeMap,
   Button
 } from '@material-ui/core'
+import clsx from 'clsx'
 
 const useStyles = makeStyles(theme => createStyles({
   container: {
@@ -42,6 +43,7 @@ interface Props {
   icon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>,
   text: string,
   buttonText?: string,
+  className?: string,
   onClick?: () => void,
   onMouseEnter?: () => void
 }
@@ -50,13 +52,14 @@ export const CenterMessage = ({
   icon: Icon,
   text,
   buttonText,
+  className,
   onClick,
   onMouseEnter
 }: Props) => {
   const classes = useStyles()
 
   return (
-    <div className={classes.container}>
+    <div className={clsx(classes.container, className)}>
       <div className={classes.wrapper}>
         <Icon className={classes.icon} />
         <T variant='body2' className={classes.text}>

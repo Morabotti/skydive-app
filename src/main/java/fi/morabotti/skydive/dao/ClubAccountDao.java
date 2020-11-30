@@ -18,6 +18,7 @@ import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.BadRequestException;
@@ -51,6 +52,8 @@ public class ClubAccountDao {
         return DSL.using(jooqConfiguration)
                 .selectCount()
                 .from(CLUB_ACCOUNT)
+                .join(ACCOUNT).onKey(Keys.FK_CLUB_ACCOUNT_ACCOUNT_ID)
+                .join(PROFILE).onKey(Keys.FK_PROFILE_ACCOUNT)
                 .where(getConditions(clubQuery))
                 .fetchOne(0, Long.class);
     }
@@ -245,7 +248,7 @@ public class ClubAccountDao {
             Club club,
             Long accountId,
             Boolean shouldBeMember,
-            Boolean shouldBeAccepted
+            @Nullable Boolean shouldBeAccepted
     ) {
         Optional<ClubAccount> account = this.findAccount(
                 ClubAccountQuery.of(club.getId(), accountId)
@@ -254,15 +257,21 @@ public class ClubAccountDao {
         if (!account.isPresent() && shouldBeMember) {
             throw new BadRequestException("Account is not member.");
         }
-        else if (account.isPresent() && account.get().getAccepted() == null && shouldBeAccepted) {
-            throw new BadRequestException("Account is not accepted into club yet.");
-        }
-        else if (account.isPresent() && account.get().getAccepted() != null && !shouldBeAccepted) {
-            throw new BadRequestException("Account is already accepted to club.");
+        else if (shouldBeAccepted != null) {
+            if (account.isPresent() && account.get().getAccepted() == null && shouldBeAccepted) {
+                throw new BadRequestException("Account is not accepted into club yet.");
+            }
+            else if (account.isPresent()
+                    && account.get().getAccepted() != null
+                    && !shouldBeAccepted
+            ) {
+                throw new BadRequestException("Account is already accepted to club.");
+            }
         }
         else if (account.isPresent() && !shouldBeMember) {
             throw new BadRequestException("Account is already a member.");
         }
+
 
         return null;
     }
@@ -290,6 +299,17 @@ public class ClubAccountDao {
                 )
                 .map(condition -> accountQuery.getAccountId()
                         .map(accountId -> condition.and(CLUB_ACCOUNT.ACCOUNT_ID.eq(accountId)))
+                        .orElse(condition)
+                )
+                .map(condition -> accountQuery.getSearch()
+                        .map(search ->
+                                condition.and(
+                                        ACCOUNT.USERNAME.contains(search)
+                                        .or(PROFILE.FIRST_NAME.contains(search))
+                                        .or(PROFILE.LAST_NAME.contains(search))
+                                        .or(PROFILE.CITY.contains(search))
+                                )
+                        )
                         .orElse(condition)
                 )
                 .map(condition -> accountQuery.getAccepted()

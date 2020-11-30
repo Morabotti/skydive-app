@@ -22,7 +22,8 @@ import {
   User,
   UpdateUser,
   UserQuery,
-  CreateUser
+  CreateUser,
+  ClubAccountQuery
 } from '@types'
 
 const addAuthToken = () => ({
@@ -286,9 +287,12 @@ export const createPlane = (
   .then((res) => res.json())
 
 export const getClubMembers = (
-  clubId: number
+  key: string,
+  clubId: number,
+  pagination: PaginationQuery,
+  clubAccountQuery: ClubAccountQuery
 ): Promise<PaginationResult<ClubAccount>> => fetch(
-  `/api/club/${clubId}/member`,
+  `/api/club/${clubId}/member?${searchParams([pagination, clubAccountQuery])}`,
   {
     method: 'GET',
     headers: {
@@ -314,10 +318,10 @@ export const getClubMemberById = (
   .then(checkResponse)
   .then((res) => res.json())
 
-export const deleteClubMember = (
-  clubId: number,
-  memberId: number
-): Promise<Response> => fetch(
+export const deleteClubMember = ([
+  clubId,
+  memberId
+]: [number, number]): Promise<Response> => fetch(
   `/api/club/${clubId}/member/${memberId}`,
   {
     method: 'DELETE',
@@ -345,10 +349,10 @@ export const addClubMember = (
   .then(checkResponse)
   .then((res) => res.json())
 
-export const requestToJoinClub = (
-  clubId: number,
-  clubMemberRequest: ClubMemberRequest
-): Promise<ClubAccount> => fetch(
+export const requestToJoinClub = ([
+  clubId,
+  clubMemberRequest
+]: [number, ClubMemberRequest]): Promise<ClubAccount> => fetch(
   `/api/club/${clubId}/member/request`,
   {
     method: 'POST',
@@ -361,10 +365,23 @@ export const requestToJoinClub = (
   .then(checkResponse)
   .then((res) => res.json())
 
-export const acceptClubMemberRequest = (
-  clubId: number,
-  memberId: number
-): Promise<ClubAccount> => fetch(
+export const leaveClub = (
+  clubId: number
+): Promise<Response> => fetch(
+  `/api/club/${clubId}/member/leave`,
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json', ...addAuthToken()
+    }
+  }
+)
+  .then(checkResponse)
+
+export const acceptClubMemberRequest = ([
+  clubId,
+  memberId
+]: [number, number]): Promise<ClubAccount> => fetch(
   `/api/club/${clubId}/accept/${memberId}`,
   {
     method: 'PUT',
@@ -376,10 +393,10 @@ export const acceptClubMemberRequest = (
   .then(checkResponse)
   .then((res) => res.json())
 
-export const declineClubMemberRequest = (
-  clubId: number,
-  memberId: number
-): Promise<Response> => fetch(
+export const declineClubMemberRequest = ([
+  clubId,
+  memberId
+]: [number, number]): Promise<Response> => fetch(
   `/api/club/${clubId}/decline/${memberId}`,
   {
     method: 'PUT',

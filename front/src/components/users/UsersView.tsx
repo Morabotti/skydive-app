@@ -86,7 +86,7 @@ const UsersView = () => {
         />
         <PaginationControls
           length={users.data?.length || 0}
-          loading={users.isLoading}
+          fetching={users.isLoading}
         />
       </div>
       <Menu

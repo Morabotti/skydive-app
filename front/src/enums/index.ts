@@ -80,7 +80,8 @@ export enum ActivityAccess {
 export enum ClubRole {
   CLUB = 'club',
   PILOT = 'pilot',
-  USER = 'user'
+  USER = 'user',
+  UNSET = 'unset' // Used only in filter views, not in actual api
 }
 
 export enum ParticipationRole {

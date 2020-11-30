@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { customPalette } from '@theme'
 import { Club } from '@types'
-import { AuthRoles, ClubTab } from '@enums'
+import { AuthRoles, ClubRole, ClubTab } from '@enums'
 import { useAuth } from '@hooks'
 
 import {
@@ -74,7 +74,9 @@ interface Props {
   tab: ClubTab,
   onChangeTab: (set: ClubTab) => void,
   isOwner: boolean,
-  isMember: boolean
+  isMember: boolean,
+  accepted: boolean,
+  clubRole?: ClubRole
 }
 
 export const ClubNavigation = ({
@@ -83,7 +85,9 @@ export const ClubNavigation = ({
   tab,
   onChangeTab,
   isOwner,
-  isMember
+  isMember,
+  accepted,
+  clubRole
 }: Props) => {
   const classes = useStyles()
   const theme = useTheme()
@@ -96,7 +100,7 @@ export const ClubNavigation = ({
 
   if (!club || loading) {
     return (
-      <React.Fragment />
+      <Toolbar className={classes.minHeight} />
     )
   }
 
@@ -111,7 +115,7 @@ export const ClubNavigation = ({
         <Toolbar className={classes.minHeight}>
           <div className={classes.grid}>
             <Hidden smDown>
-              <T variant='h5' className={classes.name}>{club.name}</T>
+              <T variant='body1' className={classes.name}>{club.name}</T>
             </Hidden>
             <Tabs
               value={tab}
@@ -132,14 +136,14 @@ export const ClubNavigation = ({
                 className={classes.root}
                 value={ClubTab.ACTIVITY}
                 icon={mobile ? <MapMarkerRadius /> : undefined}
-                disabled={!(isMember || auth?.user.role === AuthRoles.ADMIN)}
+                disabled={!(isMember || auth?.user.role === AuthRoles.ADMIN) || !accepted}
                 label={!mobile ? 'Activities' : undefined}
               />
               <Tab
                 className={classes.root}
                 value={ClubTab.USERS}
                 icon={mobile ? <AccountMultiple /> : undefined}
-                disabled={!(isMember || auth?.user.role === AuthRoles.ADMIN)}
+                disabled={!(isMember || auth?.user.role === AuthRoles.ADMIN) || !accepted}
                 label={!mobile ? 'Users' : undefined}
               />
               {(isOwner || auth?.user.role === AuthRoles.ADMIN) && (
@@ -151,6 +155,13 @@ export const ClubNavigation = ({
                 />
               )}
             </Tabs>
+            {clubRole && (
+              <Hidden smDown>
+                <T variant='body1' align='right' className={classes.name}>
+                  {clubRole === ClubRole.CLUB ? 'OWNER' : accepted ? 'MEMBER' : 'PENDING'}
+                </T>
+              </Hidden>
+            )}
           </div>
         </Toolbar>
       </AppBar>

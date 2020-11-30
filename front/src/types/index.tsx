@@ -29,6 +29,12 @@ export interface PaginationQuery {
   offset: number
 }
 
+export interface ClubAccountQuery {
+  search: string,
+  role: ClubRole,
+  accepted: boolean
+}
+
 export interface DateRangeQuery {
   from: string,
   to: string | null
@@ -226,7 +232,7 @@ export interface ClubAccount {
   accepted: string | null,
   createdAt: string,
   club: Club | null,
-  account: Account | null
+  account: User | null
 }
 
 export interface MyActivities {

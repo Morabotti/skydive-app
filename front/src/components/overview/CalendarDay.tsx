@@ -64,11 +64,13 @@ const useStyles = makeStyles(theme => createStyles({
   participation: {
     backgroundColor: theme.palette.secondary.main,
     transform: 'translate(13px, -13px)',
+    animation: `$startAnimationParticipation 300ms ${theme.transitions.easing.easeInOut}`,
     color: '#fff'
   },
   activities: {
     backgroundColor: colors.deepPurple[600],
     transform: 'translate(-13px, -13px)',
+    animation: `$startAnimationActivity 300ms ${theme.transitions.easing.easeInOut}`,
     color: '#fff'
   },
   notificationText: {
@@ -89,6 +91,22 @@ const useStyles = makeStyles(theme => createStyles({
     [theme.breakpoints.down('xs')]: {
       width: 33,
       height: 33
+    }
+  },
+  '@keyframes startAnimationParticipation': {
+    'from': {
+      transform: 'scale(0) translate(0px, 0px)'
+    },
+    'to': {
+      transform: 'scale(1) translate(13px, -13px)'
+    }
+  },
+  '@keyframes startAnimationActivity': {
+    'from': {
+      transform: 'scale(0) translate(0px, 0px)'
+    },
+    'to': {
+      transform: 'scale(1) translate(-13px, -13px)'
     }
   }
 }))

@@ -23,6 +23,10 @@ public class ClubAccountQuery {
     @Nullable
     private Boolean accepted;
 
+    @QueryParam("search")
+    @Nullable
+    private String search;
+
     public ClubAccountQuery() {
 
     }
@@ -31,12 +35,14 @@ public class ClubAccountQuery {
             @Nullable Long clubId,
             @Nullable Long accountId,
             @Nullable ClubAccountRole role,
-            @Nullable Boolean accepted
+            @Nullable Boolean accepted,
+            @Nullable String search
     ) {
         this.clubId = clubId;
         this.accountId = accountId;
         this.role = role;
         this.accepted = accepted;
+        this.search = search;
     }
 
     public ClubAccountQuery withClubId(Long clubId) {
@@ -44,7 +50,8 @@ public class ClubAccountQuery {
                 clubId,
                 this.accountId,
                 this.role,
-                this.accepted
+                this.accepted,
+                this.search
         );
     }
 
@@ -53,7 +60,8 @@ public class ClubAccountQuery {
                 this.clubId,
                 accountId,
                 this.role,
-                this.accepted
+                this.accepted,
+                this.search
         );
     }
 
@@ -62,7 +70,8 @@ public class ClubAccountQuery {
                 this.clubId,
                 this.accountId,
                 clubAccountRole,
-                this.accepted
+                this.accepted,
+                this.search
         );
     }
 
@@ -71,7 +80,18 @@ public class ClubAccountQuery {
                 this.clubId,
                 this.accountId,
                 this.role,
-                accepted
+                accepted,
+                this.search
+        );
+    }
+
+    public ClubAccountQuery withSearch(String search) {
+        return new ClubAccountQuery(
+                this.clubId,
+                this.accountId,
+                this.role,
+                this.accepted,
+                search
         );
     }
 
@@ -89,6 +109,10 @@ public class ClubAccountQuery {
 
     public Optional<Boolean> getAccepted() {
         return Optional.ofNullable(this.accepted);
+    }
+
+    public Optional<String> getSearch() {
+        return Optional.ofNullable(this.search);
     }
 
     public static ClubAccountQuery of(Long clubId, Long accountId) {

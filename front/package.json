@@ -9,7 +9,7 @@
     "build": "webpack --mode production --config webpack.config.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "eslint \"src/**/*.{ts,tsx}\" --fix",
-    "test": "npm run lint && npm run types"
+    "test": "npm run lint"
   },
   "author": "Jesse Batman",
   "license": "UNLICENSED",
@@ -64,7 +64,7 @@
     "react-lazy-with-preload": "^2.0.0",
     "react-query": "^2.26.2",
     "react-router-dom": "^5.2.0",
-    "typescript": "^3.9.7",
+    "typescript": "^4.1.2",
     "webpack": "4.41.5",
     "webpack-cli": "3.3.10",
     "yup": "^0.29.3"

@@ -61,7 +61,7 @@ const ClubsView = () => {
         />
         <PaginationControls
           length={clubs.data?.length || 0}
-          loading={clubs.isLoading}
+          fetching={clubs.isLoading}
         />
       </div>
     </DashboardContainer>

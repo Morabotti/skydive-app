@@ -132,6 +132,7 @@ public class ClubController {
     /**
      * Fetches clubs member.
      * @param paginationQuery PaginationQuery used to paginate response
+     * @param clubAccountQuery ClubAccountQuery used to filter result
      * @param clubId Long identifies wanted
      * @param account Account of the requester
      * @return PaginationResponse of ClubAccountView
@@ -140,6 +141,7 @@ public class ClubController {
      * */
     public PaginationResponse<ClubAccountView> getMembers(
             PaginationQuery paginationQuery,
+            ClubAccountQuery clubAccountQuery,
             Long clubId,
             Account account
     ) {
@@ -150,17 +152,16 @@ public class ClubController {
             clubAccountDao.checkRole(clubId, account.getId(), false);
         }
 
-        ClubAccountQuery query = new ClubAccountQuery()
-                .withClubId(club.getId());
+        ;
 
         return PaginationResponse.create(
                 clubAccountDao.fetchClubAccounts(
                         paginationQuery,
-                        query
+                        clubAccountQuery.withClubId(club.getId())
                 ).stream()
                         .map(ClubAccountView::of)
                         .collect(Collectors.toList()),
-                clubAccountDao.fetchClubMembersLength(query)
+                clubAccountDao.fetchClubMembersLength(clubAccountQuery.withClubId(club.getId()))
         );
     }
 
@@ -402,12 +403,28 @@ public class ClubController {
     }
 
     /**
+     * Leaves club. Also used to cancel requests to join.
+     * @param clubId Long id for club
+     * @param account Account of the requester
+     * @return Void
+     * @throws BadRequestException if club slug is not valid or account is member already
+     * @throws NotAuthorizedException if not authorized
+     * */
+    public Void leaveClub(Long clubId, Account account) {
+        Club club = clubDao.getById(clubId).get().orElseThrow(NotFoundException::new);
+        clubAccountDao.getClubMembership(club, account.getId(), true, null);
+
+        return clubAccountDao.delete(clubId, account.getId()).get();
+    }
+
+    /**
      * Creates request to join club.
      * @param clubId Long id for club
      * @param account Account of the requester
      * @param memberRequest ClubMemberRequest requested role
      * @return ClubAccountView that is created
      * @throws BadRequestException if club slug is not valid or account is member already
+     * @throws NotAuthorizedException if not authorized
      * */
     public ClubAccountView requestMemberToClub(
             Long clubId,

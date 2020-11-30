@@ -18,6 +18,9 @@ const queryCache = new QueryCache({
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000,
       cacheTime: 5 * 60 * 1000
+    },
+    mutations: {
+      throwOnError: true
     }
   }
 })

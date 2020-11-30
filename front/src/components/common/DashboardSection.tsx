@@ -45,8 +45,9 @@ interface Props {
   paper?: boolean,
   title?: string,
   loading?: boolean,
+  className?: string,
   actions?: JSX.Element | JSX.Element[],
-  children: JSX.Element | JSX.Element[]
+  children?: JSX.Element | JSX.Element[]
 }
 
 export const DashboardSection = memo(({
@@ -55,12 +56,13 @@ export const DashboardSection = memo(({
   loading = false,
   title,
   actions,
+  className,
   children
 }: Props) => {
   const classes = useStyles()
 
   return (
-    <section className={classes.fullHeight}>
+    <section className={clsx(classes.fullHeight, className)} >
       {(title || actions) && (
         <div className={classes.headerWrapper}>
           {loading ? (

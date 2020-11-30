@@ -7,27 +7,38 @@ const ClubView = () => {
   const {
     tab,
     club,
+    myClubs,
     isMember,
     isOwner,
-    onChangeTab
+    clubRole,
+    accepted,
+    onChangeTab,
+    onJoin,
+    onLeave
   } = useClub()
 
   return (
     <>
       <ClubNavigation
-        loading={club.isLoading}
+        loading={club.isLoading || myClubs.isLoading}
         club={club.data}
         tab={tab}
         onChangeTab={onChangeTab}
         isMember={isMember}
         isOwner={isOwner}
+        accepted={accepted}
+        clubRole={clubRole}
       />
       <DashboardContainer>
         <ClubViewSelector
-          loading={club.isLoading}
+          loading={club.isLoading || myClubs.isLoading}
           tab={tab}
           club={club.data}
           isMember={isMember}
+          isOwner={isOwner}
+          accepted={accepted}
+          onJoin={onJoin}
+          onLeave={onLeave}
         />
       </DashboardContainer>
     </>
