@@ -77,10 +77,9 @@
             token="123ad023-cbb0-46e5-c7a2-7b58d217377d"
             access="open"
             visible="true"
-            club_only="true"
-            start_date="[now-1d]"
-            end_date="[now-1d]"
-            created_at="[now-3d]"
+            start_date="[now+3d]"
+            end_date="[now+3d]"
+            created_at="[now-4d]"
             club_id="1" />
     <activity
             id="2"
@@ -90,9 +89,9 @@
             token="139ad023-cbb0-46e5-c7a2-7b58d217372d"
             access="open"
             visible="true"
-            start_date="[now-1d]"
-            end_date="[now-1d]"
-            created_at="[now-3d]"
+            start_date="[now+3d]"
+            end_date="[now+3d]"
+            created_at="[now-4d]"
             club_id="1" />
     <activity
             id="3"
@@ -102,9 +101,9 @@
             token="329ad063-cbb0-46e5-c7a2-7b58d217372d"
             access="open"
             visible="true"
-            start_date="[now-2d]"
-            end_date="[now-2d]"
+            start_date="[now+2d]"
+            end_date="[now+2d]"
             created_at="[now-3d]"
             club_id="2" />
-    <activity_participation id="1" active="true" account_id="1" activity_id="1" created_at="[now-2d]" />
+    <activity_participation id="1" active="true" account_id="1" activity_id="1" created_at="[now+1d]" />
 </dataset>

@@ -136,14 +136,14 @@ export const ClubNavigation = ({
                 className={classes.root}
                 value={ClubTab.ACTIVITY}
                 icon={mobile ? <MapMarkerRadius /> : undefined}
-                disabled={!(isMember || auth?.user.role === AuthRoles.ADMIN) || !accepted}
+                disabled={!((isMember && accepted) || auth?.user.role === AuthRoles.ADMIN)}
                 label={!mobile ? 'Activities' : undefined}
               />
               <Tab
                 className={classes.root}
                 value={ClubTab.USERS}
                 icon={mobile ? <AccountMultiple /> : undefined}
-                disabled={!(isMember || auth?.user.role === AuthRoles.ADMIN) || !accepted}
+                disabled={!((isMember && accepted) || auth?.user.role === AuthRoles.ADMIN)}
                 label={!mobile ? 'Users' : undefined}
               />
               {(isOwner || auth?.user.role === AuthRoles.ADMIN) && (
